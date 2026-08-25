@@ -1,0 +1,115 @@
+Récapitulatif détaillé des missions réalisées pendant le stage
+Durant mon stage au sein de La Nouvelle École, mes missions ont principalement porté surl’amélioration des outils internes, l’automatisation des processus, la gestion de contenus pédagogiques,l’optimisation de la plateforme e-learning, l’amélioration du suivi apprenant, ainsi que le soutien auxéquipes commerciales, pédagogiques et administratives.
+Mon rôle a été très transversal. J’ai été amené à intervenir à la fois sur des problématiques techniques,pédagogiques, marketing et opérationnelles. Le fichier de suivi des missions recense 137 tâches, dont120 sont indiquées comme terminées. Cela montre que mon stage ne s’est pas limité à une seulemission isolée, mais qu’il s’est inscrit dans une logique d’amélioration continue des process internes del’organisme.
+1. Automatisation des processus internes
+Une partie importante de mes missions a consisté à automatiser des tâches répétitives afin de réduirele temps de traitement des équipes et de limiter les erreurs humaines.
+J’ai travaillé sur plusieurs automatisations liées au suivi commercial et administratif. Par exemple, unemission consistait à réfléchir à un outil permettant de relancer automatiquement un prospect B2Blorsqu’il ouvrait un devis ou un programme de formation. L’objectif était de permettre aux commerciauxde contacter le prospect au moment le plus pertinent, c’est-à-dire lorsqu’il manifeste un intérêt concret.
+J’ai également participé à des réflexions autour de l’automatisation de la création des conventions deformation. L’enjeu était de récupérer automatiquement les informations présentes dans les devis afind’éviter les doubles saisies. Cette mission répondait à un problème opérationnel important : lesgestionnaires devaient souvent rechercher manuellement des informations comme la date ou le lieu denaissance des participants, ce qui créait des allers-retours entre l’administration, le commercial etl’apprenant.
+Dans la même logique, j’ai travaillé sur l’idée d’un formulaire client permettant aux apprenants derenseigner directement les informations nécessaires à la création de leur convention. Cette missionvisait à fluidifier le parcours administratif, à responsabiliser l’apprenant et à éviter les pertes de temps.
+J’ai aussi été impliqué dans l’optimisation des SMS automatiques, notamment pour que les messagessoient envoyés depuis le bon numéro, avec les bons contenus et au bon moment. Plusieurs missionsconcernaient les rappels automatiques : rappels de rendez-vous, rappels d’examen, rappels aux jurys ouencore relances en cas de retard dans le parcours e-learning.
+2. Mise en place et amélioration d’un système de prise de rendez-vous
+Une mission importante a été la création d’un système de prise de rendez-vous inspiré de Calendly,mais adapté aux besoins de La Nouvelle École.
+L’objectif était de proposer une solution gratuite, intégrée à l’écosystème interne, permettant à unprospect de réserver un rendez-vous avec un commercial selon la formation qui l’intéressait, parexemple DIY ou Drone.
+1
+Cette mission comprenait plusieurs dimensions :
+créer une interface front sur le site, avec un design cohérent avec l’identité visuelle de LaNouvelle École ;
+connecter cette interface aux agendas des commerciaux concernés ;
+afficher les disponibilités en temps réel ;
+créer automatiquement l’événement dans l’agenda du bon commercial ;
+ajouter le client au rendez-vous ;
+envoyer un e-mail de confirmation ;
+inscrire automatiquement le lead dans Airtable ;
+prévoir une relance avant le rendez-vous.
+Cette mission m’a permis de travailler sur une problématique complète mêlant expérience utilisateur,automatisation, CRM, calendrier, e-mailing et suivi commercial.
+3. Amélioration de la plateforme e-learning “Le Club”
+J’ai également beaucoup travaillé sur la plateforme e-learning de La Nouvelle École. Plusieurs missionsconcernaient l’ajout, la correction ou l’organisation de contenus pédagogiques.
+J’ai notamment participé à la mise en ligne de contenus pour différentes formations : SketchUp, Fusion360, Blender, CNC, LightBurn, laser, impression 3D FDM et résine. Certaines missions consistaient àajouter des vidéos dans les bonnes semaines de formation, à vérifier leur ordre, à ajouter les supportscorrespondants, ou encore à intégrer des ressources complémentaires sous les vidéos.
+J’ai aussi travaillé sur des parcours pédagogiques précis, comme le Fil Rouge SketchUp, les semaines deformation SketchUp, les contenus Fusion 360, les vidéos CNC, ou encore l’ajout de ressources commedes profils slicer pour Orca.
+Ces missions avaient pour objectif d’améliorer l’expérience apprenant, de rendre les parcours plus clairset de garantir que les contenus pédagogiques soient correctement structurés dans la plateforme.
+4. Création et correction de tests pédagogiques
+Une autre partie importante de mes missions portait sur les tests initiaux, tests finaux et questionnairespédagogiques.
+J’ai travaillé sur plusieurs tests liés aux formations de La Nouvelle École : CAO, impression 3D, BlenderFDM, SketchUp, gravure laser, fabrication soustractive, XTOOL, drone ou encore test ordinateur.
+Certaines missions consistaient à créer de nouveaux tests lorsqu’ils n’existaient pas encore. D’autresconsistaient à dupliquer des tests existants, importer des questions déjà créées, corriger desparamètres dans WordPress ou QSM, vérifier les résultats, ajuster les e-mails automatiques ou intégrerles bons liens dans Airtable.
+J’ai aussi travaillé sur un système d’envoi automatique de PDF de test ordinateur, avec unedifférenciation selon le matériel de l’apprenant, Mac ou Windows. Cela permettait de fournir auxapprenants un document adapté à leur situation, tout en réduisant les manipulations manuelles côtééquipe.
+•
+•
+•
+•
+•
+•
+•
+•
+2
+Ces missions ont contribué à renforcer le suivi pédagogique et à améliorer la fiabilité des évaluations.
+5. Suivi des apprenants, assiduité et conformité Qualiopi
+J’ai également participé à des missions liées au suivi des apprenants et à la conformité qualité.
+Une mission importante portait sur la création ou l’amélioration d’une page conforme aux attentesQualiopi. L’objectif était de centraliser les projets déposés chaque semaine par les apprenants, lescommentaires du validateur, les dates de dépôt et un récapitulatif des compétences acquises. Cettemission visait à prouver que les compétences du référentiel étaient bien évaluées à travers les projets.
+J’ai aussi travaillé sur des problèmes liés à l’assiduité. Par exemple, lorsque les apprenants terminaientcertaines semaines sans projet à déposer, leur progression restait bloquée à 99 %. Il fallait donc corrigercette logique afin que l’assiduité reflète correctement l’avancement réel de l’apprenant.
+J’ai également participé à l’amélioration d’interfaces de validation, avec des fonctionnalités comme larecherche par e-mail, la priorisation par niveau d’urgence, ou encore l’historique du suivi de validationdes fichiers.
+Ces missions étaient importantes car elles touchaient directement à la qualité du suivi pédagogique, àla traçabilité et à la conformité de l’organisme de formation.
+6. Amélioration des interfaces internes
+Plusieurs missions concernaient la création ou l’amélioration d’interfaces internes utilisées par l’équipe.
+J’ai notamment travaillé sur l’interface formateur, la création des comptes formateurs, les accès à laplateforme, les transactions MemberPress et l’automatisation de l’envoi des identifiants.
+J’ai également été impliqué dans des missions liées à l’interface apprenant ou gestionnaire, commel’ajout d’un onglet “Envoi des machines”, destiné à centraliser les apprenants pour lesquels une machineou des consommables devaient être envoyés. L’objectif était d’afficher les informations utiles : identité,coordonnées, adresse, type d’envoi à prévoir, machine seule, consommables seuls ou les deux.
+J’ai aussi travaillé sur l’amélioration de la page support, avec une logique de clarté et d’ergonomie. Cettemission visait à rendre l’expérience utilisateur plus fluide, aussi bien pour les apprenants que pourl’équipe interne.
+Enfin, j’ai participé à la création d’une page “Découvrez nos autres formations” dans l’espace e-learning.L’objectif était de proposer aux apprenants des formations complémentaires de manière attractive, avecun système permettant de transmettre automatiquement leur intérêt au CRM afin qu’un commercialpuisse les recontacter.
+7. Missions marketing, SEO et amélioration du site
+Mes missions ont également concerné le site internet et les actions marketing de La Nouvelle École.
+3
+J’ai participé à la rédaction ou à l’amélioration d’articles SEO, notamment pour me familiariser avecSquarespace et les process de publication. J’ai aussi travaillé sur l’idée d’un bot de génération d’articlesSEO.
+Une autre mission consistait à refaire le design des pages de blog et à améliorer les pages locales liéesaux formations, par exemple les pages départementales, préfectures et sous-préfectures. Ces pagesétaient anciennes, peu attractives et présentaient parfois d’anciennes offres. L’objectif était donc demoderniser leur contenu, leur design et leur cohérence avec les formations actuelles.
+J’ai aussi participé à l’amélioration de pages liées aux formations CAO 3D, comme SketchUp, Fusion 360,Revit et SolidWorks, ainsi qu’à la refonte ou l’optimisation de pages de formation spécifiques comme laformation CATS.
+Ces missions avaient pour but d’améliorer la lisibilité de l’offre, l’expérience utilisateur, la conversion desprospects et la cohérence globale du site.
+8. Soutien aux actions commerciales et CRM
+J’ai aussi réalisé plusieurs missions en lien avec le suivi commercial et la relation client.
+J’ai travaillé sur les e-mails automatiques envoyés aux clients avant les rendez-vous, notamment pourcorriger les délais d’envoi et éviter les confusions. Par exemple, lorsqu’un client recevait un e-mail troptôt, il pouvait croire que le rendez-vous était prévu le jour même ou la veille. L’objectif était donc derendre les rappels plus cohérents avec la date réelle du rendez-vous.
+J’ai également participé à l’amélioration des SMS commerciaux, à la clarification de certains messagesliés à Mon Compte Formation, ainsi qu’à la création de mails spécifiques pour accompagner les citoyenseuropéens dans leurs démarches CPF.
+J’ai aussi travaillé sur des automatisations liées aux formations B2B, notamment l’ajout de liens utilesdans les mails d’onboarding ou la mise en place de suivis adaptés aux prospects et clients.
+Ces missions ont contribué à améliorer la communication avec les prospects et apprenants, à éviter lesincompréhensions et à rendre les parcours d’inscription plus fluides.
+9. Missions liées aux certifications et aux référentiels decompétences
+Une autre partie de mon travail a porté sur les certifications et les référentiels de compétences.
+J’ai participé à la création et à la mise en PDF de matrices de compétences pour différentes formations,notamment ICDL et Drone. Ces documents avaient pour objectif de rendre plus lisible le lien entre lesformations proposées, les compétences visées et les référentiels de certification.
+J’ai aussi travaillé sur des missions liées à EDOF, notamment la mise en place d’une formation à 5 000euros et la mise à jour de tableaux de suivi. J’ai également participé à l’amélioration des pages EDOF afinde les rendre plus attractives et plus professionnelles.
+4
+Ces missions étaient importantes car elles se situent au croisement du marketing, de la conformité, del’ingénierie pédagogique et du financement de la formation.
+10. Missions liées à la formation drone
+J’ai également travaillé sur plusieurs sujets en lien avec les formations drone.
+J’ai participé à des missions comme l’onboarding de nouveaux formateurs drone, l’enregistrement dematériel drone pour Lille, la correction de modules drone sur WordPress, l’automatisation del’onboarding jury, ou encore la refonte du MANEX à partir d’un site de référence.
+J’ai aussi réalisé des recherches ou prises de contact concernant du matériel drone, notamment poursavoir comment réparer un drone ARES Évolution, connaître les conditions d’envoi, les tarifs éventuels,et vérifier sa résistance à l’humidité.
+Ces missions montrent que mon travail ne s’est pas limité au digital, mais qu’il a aussi touché àl’organisation concrète des formations techniques et au suivi du matériel.
+12. Animation de la communauté Discord
+J’ai également été impliqué dans des missions liées à Discord et à l’animation de la communauté.
+J’ai travaillé sur la création d’un bot permettant de générer automatiquement des concours Discord,avec un tirage au sort toutes les deux semaines, l’annonce du gagnant et un rappel à l’équipe pourl’envoi de la récompense.
+J’ai aussi participé à des missions liées aux bons plans, aux offres d’emploi, aux annonces de gagnants, àl’organisation de nouveaux concours et à l’ajustement des messages automatiques.
+Ces missions avaient pour objectif de renforcer l’engagement de la communauté, d’animer l’espaceapprenant et de créer plus d’interactions autour de La Nouvelle École.
+13. Création de FAQ, supports et ressources apprenants
+Une mission importante a été la création d’une FAQ V2 pour répondre aux questions fréquentes desapprenants.
+L’objectif était d’identifier les questions qui revenaient souvent via le chat e-learning, pendant lesateliers ou auprès des formateurs, puis de structurer des réponses claires pouvant être intégrées dansLe Club.
+Cette mission nécessitait de collecter les questions récurrentes, de consulter les données disponibles,d’échanger avec les formateurs, puis de rédiger des réponses utiles et accessibles.
+J’ai également travaillé sur plusieurs ressources apprenants, comme des récompenses pédagogiques,des supports de raccourcis, des contenus de jargon technique ou encore des documents d’aide pour leslogiciels de bureautique de base : consulter ses mails, ouvrir une visioconférence, émarger, partagerson écran.
+5
+Ces missions ont contribué à améliorer l’autonomie des apprenants et à réduire la sollicitation deséquipes support.
+14. Correction, maintenance et amélioration continue
+Une grande partie de mon stage a aussi consisté à corriger des dysfonctionnements existants.
+J’ai travaillé sur des automatisations qui ne fonctionnaient pas correctement, des workflows n8n àdéboguer, des zaps à ajuster, des mails automatiques à corriger, des liens à remplacer, des vidéos àrepositionner, des pages à fixer, ou encore des données Airtable à nettoyer.
+J’ai également été amené à ajuster des règles de dysfonctionnement, par exemple lorsqu’un apprenante-learning devait être considéré comme en retard seulement à partir d’un certain moment précis de sonparcours.
+Ces missions m’ont permis de comprendre l’importance de la maintenance dans un environnementdigital. Il ne suffit pas de créer des outils : il faut aussi les tester, les corriger, les surveiller et lesaméliorer en continu.
+15. Bilan global des missions
+Au final, mes missions ont été très variées et m’ont permis d’intervenir sur plusieurs dimensionsstratégiques et opérationnelles de La Nouvelle École.
+Elles peuvent être regroupées en six grands axes :
+l’automatisation des tâches internes ;
+l’amélioration de la plateforme e-learning ;
+la création et la correction de contenus pédagogiques ;
+le suivi des apprenants et la conformité qualité ;
+l’optimisation marketing, commerciale et CRM ;
+la gestion logistique, technique et communautaire.
+Ce stage m’a permis de développer une vision globale du fonctionnement d’un organisme de formation.J’ai compris comment les outils digitaux, les automatisations, les contenus pédagogiques, le suiviadministratif, la relation client et la logistique doivent fonctionner ensemble pour assurer uneexpérience apprenant fluide.
+J’ai également développé des compétences concrètes en automatisation, en gestion de projet, enstructuration de contenus, en WordPress, en Airtable, en n8n, en CRM, en e-learning, en suivi qualité eten résolution de problèmes opérationnels.
+Ce stage a donc été particulièrement formateur car il m’a placé au coeur de problématiques réelles :faire gagner du temps aux équipes, améliorer l’expérience des apprenants, fiabiliser les process,renforcer la qualité du suivi et contribuer au développement de l’organisme.
+1.
+2.
+3.
+4.
+5.
+6.
+6
