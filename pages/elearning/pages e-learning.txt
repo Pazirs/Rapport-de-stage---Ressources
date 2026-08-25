@@ -1,0 +1,138 @@
+Voici l'analyse détaillée et brute de l'ensemble des fichiers HTML présents dans les ressources e-learning, structurée pour servir de base de données à une autre IA :
+
+* **01-decouvrez-nos-formations.html**
+
+* **Rôle** : Page de présentation et de découverte des formations de la plateforme.
+
+
+* **Contenu** : En-têtes structurés, blocs de texte descriptifs des cursus proposés et liens de navigation.
+
+
+
+
+* **02-recompenses.html**
+
+* **Rôle** : Espace dédié aux récompenses, badges et gratifications des apprenants.
+
+
+* **Contenu** : Sections informatives et modules visuels listant les accomplissements et succès du parcours.
+
+
+
+
+* **03-support.html**
+
+* **Rôle** : Page d'assistance et de support technique ou pédagogique.
+
+
+* **Contenu** : Coordonnées, formulaires de contact, liens d'aide et instructions pour joindre l'équipe.
+
+
+
+
+* **04-faq.html**
+
+* **Rôle** : Foire aux questions pour répondre aux interrogations fréquentes des utilisateurs.
+
+
+* **Contenu** : Paires de questions/réponses organisées en blocs de texte et listes.
+
+
+
+
+* **05-machine.html**
+
+* **Rôle** : Page listant les prérequis matériels et configurations informatiques nécessaires.
+
+
+* **Contenu** : Spécifications techniques, exigences matérielles et recommandations logicielles.
+
+
+
+
+* **blender-raccourcis.html**
+
+* **Rôle** : Répertoire des raccourcis clavier pour le logiciel Blender.
+
+
+* **Contenu** : Listes de combinaisons de touches et descriptions des actions correspondantes dans l'interface.
+
+
+
+
+* **calendly-prise-de-rdv.html**
+
+* **Rôle** : Interface ou intégration pour la planification de rendez-vous en ligne.
+
+
+* **Contenu** : Widgets, liens hypertextes ou scripts d'intégration du calendrier de réservation.
+
+
+
+
+* **fusion360-raccourcis.html**
+
+* **Rôle** : Guide des raccourcis clavier pour Autodesk Fusion 360.
+
+
+* **Contenu** : Listes et tableaux de commandes rapides spécifiques à la conception sur Fusion 360.
+
+
+
+
+* **illustrator-raccourcis.html**
+
+* **Rôle** : Guide des raccourcis clavier pour Adobe Illustrator.
+
+
+* **Contenu** : Listes de raccourcis d'outils, de menus et de manipulation vectorielle.
+
+
+
+
+* **jargon-blender.html**
+
+* **Rôle** : Lexique définissant le jargon technique propre à l'utilisation de Blender.
+
+
+* **Contenu** : Définitions de termes spécifiques, acronymes et vocabulaire 3D.
+
+
+
+
+* **jargon-fusion360.html**
+
+* **Rôle** : Glossaire technique pour Autodesk Fusion 360.
+
+
+* **Contenu** : Explications des termes de CAO, de modélisation et d'ingénierie.
+
+
+
+
+* **jargon-illustrator.html**
+
+* **Rôle** : Glossaire des termes techniques relatifs à Adobe Illustrator.
+
+
+* **Contenu** : Définitions liées au graphisme vectoriel, aux calques et aux tracés.
+
+
+
+
+* **jargon-sketchup.html**
+
+* **Rôle** : Lexique du vocabulaire technique employé sur SketchUp.
+
+
+* **Contenu** : Définitions des outils, composants, groupes et notions d'architecture 3D.
+
+
+
+
+* **sketchup-raccourcis.html**
+
+* **Rôle** : Répertoire des raccourcis clavier pour le logiciel SketchUp.
+
+
+* **Contenu** : Combinaisons de touches et fonctions associées pour optimiser la modélisation.
