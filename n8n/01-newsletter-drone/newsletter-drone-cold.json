@@ -1,0 +1,136 @@
+{
+  "name": "[APERCU] Newsletter drone cold",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableTokenApi",
+        "baseId": {
+          "__rl": true,
+          "value": "appMASQUE00000000001",
+          "mode": "id"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "tblMASQUE00000000001",
+          "mode": "id"
+        },
+        "triggerField": "Déclancheur newsletter",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [
+        880,
+        288
+      ],
+      "id": "e7cb0518-3cba-4a50-ac85-752deb278a4c",
+      "name": "Airtable Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build Email - Get newsletter (Data Table) reste intact\nconst CFG = {\n  TRACK_BASE: 'https://n8n.exemple.invalid/webhook/email-click',\n  UNSUB_BASE: 'https://n8n.exemple.invalid/webhook/unsubscribe',\n  RDV_URL: 'https://www.nouvelleecole.fr/rdv-commercials#drone',\n  PROGRAMME_URL: 'https://www.nouvelleecole.fr/formation-telepilotage-de-drone',\n};\nconst YT = {\n  Newsletter_1: 'https://www.youtube.com/watch?v=QKgT3bSc9Hs',\n  Newsletter_2: 'https://www.youtube.com/watch?v=P-OrhuGg214',\n  Newsletter_3: 'https://www.youtube.com/watch?v=GnzzT2UO10Q',\n  Newsletter_4: 'https://www.youtube.com/watch?v=vZs0_T8to6U',\n  Newsletter_5: 'https://www.youtube.com/watch?v=4gE6_xH83vI',\n  Newsletter_6: 'https://www.youtube.com/watch?v=PgJ9Z3wWtFA',\n};\nconst out = [];\nfor (const item of $input.all()) {\n  const row = item.json;\n  const lead = $('Airtable Trigger').item.json;\n  const f = lead.fields || {};\n  if (f['Stop call']) continue;\n  const col = (f['Newsletter Formule'] || '').trim().replace(/\\s+/g, '_');\n  if (!col) throw new Error('Newsletter Formule vide (lead ' + lead.id + ')');\n  const htmlRaw = row[col];\n  const subject = (row['Titre_' + col] || '').trim();\n  if (!htmlRaw) throw new Error('Colonne ' + col + ' vide dans la Data Table (formation ' + (f['Demande Formation'] || '?') + ')');\n  const email = f['Email'] || '';\n  const eEmail = encodeURIComponent(email);\n  const unsub = CFG.UNSUB_BASE + '?lead_id=' + encodeURIComponent(lead.id) + '&amp;email=' + eEmail;\n  let html = htmlRaw\n    .replaceAll('{{track_base}}', CFG.TRACK_BASE)\n    .replaceAll('{{lead_id}}', encodeURIComponent(lead.id))\n    .replaceAll('{{email}}', eEmail)\n    .replaceAll('{{prenom}}', f['Prénom'] || '')\n    .replaceAll('{{prenom_commercial}}<br/>', '')\n    .replaceAll('{{prenom_commercial}}', '')\n    .replaceAll('{{UNSUBSCRIBE_URL}}', unsub);\n  const ytUrl = YT[col] || CFG.PROGRAMME_URL;\n  html = html\n    .split('&amp;target=youtube').join('&amp;target=youtube&amp;url=' + encodeURIComponent(ytUrl))\n    .split('&amp;target=rdv').join('&amp;target=rdv&amp;url=' + encodeURIComponent(CFG.RDV_URL))\n    .split('&amp;target=programme').join('&amp;target=programme&amp;url=' + encodeURIComponent(CFG.PROGRAMME_URL));\n  out.push({ json: { to: email, subject: subject || '', html, email_id: col, lead_id: lead.id } });\n}\nreturn out;"
+      },
+      "id": "cd8914df-8ada-48ab-a042-8299bc7c7c0e",
+      "name": "Build Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1536,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "33ed1e1a-f0df-40b4-a602-acbc5bc59d3b",
+      "name": "Send email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1760,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000001",
+          "mode": "list",
+          "cachedResultName": "Plaquette formation/brochureFT"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "Nom",
+              "keyValue": "={{ $json.fields['Demande Formation'] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        288
+      ],
+      "id": "2f41dd2a-376f-49dc-91a3-df6d18edc08e",
+      "name": "Get row(s)"
+    }
+  ],
+  "connections": {
+    "Airtable Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Email": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Build Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  }
+}

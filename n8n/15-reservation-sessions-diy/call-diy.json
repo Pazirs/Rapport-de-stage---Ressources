@@ -1,0 +1,5917 @@
+{
+  "name": "[APERCU] CALL_DIY",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableTokenApi",
+        "baseId": {
+          "__rl": true,
+          "value": "appMASQUE00000000004",
+          "mode": "id"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "tblMASQUE00000000006",
+          "mode": "id"
+        },
+        "triggerField": "jour declancheur mail",
+        "additionalFields": {
+          "formula": "=AND(\n  OR(\n    {Déclencheur mails MAKE} = \"Mail 1\",\n    {Déclencheur mails MAKE} = \"Mail 2\",\n    {Déclencheur mails MAKE} = \"Mail 3\"\n  ),\n  {Type de RDV} = BLANK()\n)"
+        }
+      },
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [
+        -3088,
+        14352
+      ],
+      "id": "086a1a4f-eb2e-4067-95df-93c266c12357",
+      "name": "Airtable Trigger"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2304,
+        8192
+      ],
+      "id": "d78da2e3-6483-43e6-a491-8e697dc922fe",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000001",
+          "mode": "list",
+          "cachedResultName": "Plaquette formation/brochureFT"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "FT_Fonctionnaire",
+              "keyValue": "={{ $('Loop Over Items').item.json.fields['Demande Formation'] }}"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -1712,
+        8192
+      ],
+      "id": "6dd32d4e-39a8-4353-afc8-ff1c1130b32b",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "7"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "14"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        4528
+      ],
+      "id": "f819e733-b74b-4605-ba35-057f4cd86716",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -288,
+        4640
+      ],
+      "id": "8c2021ae-cc12-4179-970b-1e915cee29f3",
+      "name": "Send a message"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -288,
+        4832
+      ],
+      "id": "e2d053d3-5541-43aa-a9fa-d9c2fdfe2fce",
+      "name": "Send a message2"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000007",
+          "mode": "list",
+          "cachedResultName": "commercial"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "Nom",
+              "keyValue": "={{ $('Loop Over Items').item.json.fields['Call ✅'][0] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -1488,
+        8192
+      ],
+      "id": "7eacf52e-2711-4d8e-b0ae-361706eaf3e2",
+      "name": "Get row(s)1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 12",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "e4d48fe0-8432-4496-8d4d-63442f001c1e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 12"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2864660e-1da2-46d8-a26f-c9d3286cac1e",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 14",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 14"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "45a255de-0a21-4ae4-ae8f-f481887b3e7a",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 13",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 13"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b9e96d36-c5d8-4954-94b4-41f74432cbf3",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7153b484-d5bd-4a9f-a025-928512872de5",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 11",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 11"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "618f5827-c88c-44e4-87ee-f43fd14be97e",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 4",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 4"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "fd876d08-cf9b-431c-b97f-9af564ad56d1",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 10",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 10"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9c06567c-8e07-4eb2-8b1a-d0ce1c0bad0d",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 15",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 15"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1264,
+        8096
+      ],
+      "id": "95d75660-9500-4c5f-a47f-1848a2b790c5",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "7"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "14"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        5104
+      ],
+      "id": "b74e428d-2efe-4c2e-813c-b40738def7d3",
+      "name": "Switch3"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -304,
+        5232
+      ],
+      "id": "80f130a7-e140-40f8-a2f1-9145ef5f5cd5",
+      "name": "Send a message6"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -304,
+        5424
+      ],
+      "id": "efc42555-9e43-4a71-b78b-2ebc423f48bb",
+      "name": "Send a message8"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 3"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        6832
+      ],
+      "id": "f1a288c5-83f5-41d5-ac4d-5c097e543ee6",
+      "name": "Switch4"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        6960
+      ],
+      "id": "d5e589da-0823-4e6f-bd89-59c06f13c18a",
+      "name": "Send a message9"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        7152
+      ],
+      "id": "83897272-35fc-4653-a910-0ac27fc9b1da",
+      "name": "Send a message11"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "7"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "14"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        6256
+      ],
+      "id": "2308b8c6-3a5d-401c-8e09-95b8665a370d",
+      "name": "Switch5"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -304,
+        6288
+      ],
+      "id": "e0dea437-aa86-4032-80e5-88b0e8258f6c",
+      "name": "Send a message12"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -304,
+        6480
+      ],
+      "id": "3dcd7fd6-5660-4b29-b2fc-69d2613bb243",
+      "name": "Send a message14"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "65a230c3-ea37-4a97-b210-41454ab6d298",
+              "leftValue": "={{ $json.fields['Déclencheur mails MAKE'] }}",
+              "rightValue": "Mail 1",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "763c2c3b-9464-4afa-a232-9285be829ffa",
+              "leftValue": "={{ $json.fields['Déclencheur mails MAKE'] }}",
+              "rightValue": "Mail 2",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "ea023d98-6cf8-4669-9feb-a3360ec90aa7",
+              "leftValue": "={{ $json.fields['Déclencheur mails MAKE'] }}",
+              "rightValue": "Mail 3",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -2656,
+        14352
+      ],
+      "id": "80189c19-7a07-4014-83ac-d564eae30f83",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2208,
+        18576
+      ],
+      "id": "602549e7-5fc4-45d2-b932-8a1167b5371a",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "7"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "14"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        5680
+      ],
+      "id": "7e015216-552d-4782-b5c5-bebf6a79a3fb",
+      "name": "Switch14"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -304,
+        5760
+      ],
+      "id": "b375dee3-a96d-4c06-9459-63012d37c172",
+      "name": "Send a message34"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -304,
+        5952
+      ],
+      "id": "f864596c-f396-4034-8353-68f71c6dfa55",
+      "name": "Send a message35"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "7"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "14"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        3952
+      ],
+      "id": "6256979a-6d4b-4a79-9d1a-008ac779b597",
+      "name": "Switch15"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -240,
+        4080
+      ],
+      "id": "017258c7-f950-4ac7-97db-2326fcbd77f9",
+      "name": "Send a message36"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -240,
+        4272
+      ],
+      "id": "dacbb160-ef22-49a8-b0ed-667d48ec7286",
+      "name": "Send a message38"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        4096
+      ],
+      "id": "7313d556-8f54-459f-9687-a7aefb184548",
+      "name": "If6"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "boolean",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        4288
+      ],
+      "id": "3f4dc6b8-b62e-4b8e-8175-fb7ed73c18ea",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "boolean",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        4672
+      ],
+      "id": "efeb3d5c-c7e4-4789-8559-5d3115157e41",
+      "name": "If7"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        4864
+      ],
+      "id": "2cd1d979-00c9-47ea-88a1-3d8a75cce134",
+      "name": "If8"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "boolean",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        5248
+      ],
+      "id": "3f7986b1-7bed-4137-92d1-24db13ed1abf",
+      "name": "If9"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        5440
+      ],
+      "id": "64c2a558-cddf-408f-9a65-9fe7dc3cab11",
+      "name": "If10"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        6592
+      ],
+      "id": "8cbe125a-8131-4a68-ab5f-b7b6f1c78560",
+      "name": "If12"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        6400
+      ],
+      "id": "c83019b6-2734-4890-82ae-38dcb307a86f",
+      "name": "If13"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        7168
+      ],
+      "id": "6086113a-0378-458f-bae1-b5a167fcd60c",
+      "name": "If27"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        6976
+      ],
+      "id": "261e1b7f-25d1-4ad7-bfda-f137a166dce7",
+      "name": "If28"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        5824
+      ],
+      "id": "758fe7fb-9813-4a0e-9fbf-9582170e81f7",
+      "name": "If29"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        6016
+      ],
+      "id": "ff60d566-7654-4580-aa22-c7ac32ec7e30",
+      "name": "If30"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000001",
+          "mode": "list",
+          "cachedResultName": "Plaquette formation/brochureFT"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "FT_Fonctionnaire",
+              "keyValue": "={{ $json.fields['Demande Formation 2'] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -1984,
+        14400
+      ],
+      "id": "cd363bde-a6d4-46f1-924a-7a0c260a8bb7",
+      "name": "Get row(s)2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "7"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "14"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1312,
+        12944
+      ],
+      "id": "247f72be-9656-4fb6-a31e-874ea0d77cba",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        12864
+      ],
+      "id": "816d25a3-d5bc-4be9-9730-2df4e4914349",
+      "name": "Send a message3"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items1').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)2').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        13056
+      ],
+      "id": "b60c3572-8c48-4218-94bc-964f7e5ba47e",
+      "name": "Send a message5"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000007",
+          "mode": "list",
+          "cachedResultName": "commercial"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "Nom",
+              "keyValue": "={{ $('Loop Over Items1').item.json.fields['Call ✅'][0] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -1760,
+        14400
+      ],
+      "id": "9db4cf02-53da-44e2-a63e-2b4433e98747",
+      "name": "Get row(s)3"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 12",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "e4d48fe0-8432-4496-8d4d-63442f001c1e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 12"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2864660e-1da2-46d8-a26f-c9d3286cac1e",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 14",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 14"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "45a255de-0a21-4ae4-ae8f-f481887b3e7a",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 13",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 13"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b9e96d36-c5d8-4954-94b4-41f74432cbf3",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7153b484-d5bd-4a9f-a025-928512872de5",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 11",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 11"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "618f5827-c88c-44e4-87ee-f43fd14be97e",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 4",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 4"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9c71ac67-85a4-4398-a92f-2ff03b23f734",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 10",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 10"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8e45074a-eccf-4206-acbc-d50d0495bb10",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Call ✅'][0] }}",
+                    "rightValue": "Commercial 15",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Commercial 15"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1536,
+        14304
+      ],
+      "id": "ec88e3ae-94c1-4bb5-82bc-a2dbcf18adef",
+      "name": "Switch6"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "7"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "14"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1312,
+        13520
+      ],
+      "id": "6419356d-0024-401c-9466-b255e83ac605",
+      "name": "Switch8"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        13392
+      ],
+      "id": "cfbd9cda-1695-43b8-b048-5692f88e902b",
+      "name": "Send a message15"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items1').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)2').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        13584
+      ],
+      "id": "551f6cb5-6a67-440a-806d-16348faed7e8",
+      "name": "Send a message17"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 3"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1312,
+        15248
+      ],
+      "id": "7f4797f0-51d7-47c3-aef7-7e9302f865da",
+      "name": "Switch9"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        15024
+      ],
+      "id": "ab916e87-1b8b-48ea-894d-ac9d1f624d0c",
+      "name": "Send a message18"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items1').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)2').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        15216
+      ],
+      "id": "86cdb439-4f03-41af-977b-6c5a3ab5ddef",
+      "name": "Send a message20"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "7"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "14"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1312,
+        14672
+      ],
+      "id": "be5c4179-f9b1-4d05-bf45-8bf3df08e213",
+      "name": "Switch10"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        14448
+      ],
+      "id": "b97c7537-4dc2-42f7-a9d2-e94b96bf5b37",
+      "name": "Send a message21"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items1').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)2').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        14688
+      ],
+      "id": "c321790b-bda3-4848-beaf-d78807270fe4",
+      "name": "Send a message23"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "7"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "14"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1312,
+        14096
+      ],
+      "id": "64b34aff-7cdc-4e63-8601-6e748634db9e",
+      "name": "Switch16"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        13920
+      ],
+      "id": "2fa404e6-e7d2-4fa2-af75-819dee86e1c0",
+      "name": "Send a message40"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items1').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)2').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        14112
+      ],
+      "id": "3420adf3-5d1f-42cf-9243-f72def13261b",
+      "name": "Send a message41"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "0"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "7"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "14"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1312,
+        12368
+      ],
+      "id": "8760981c-f91c-4876-90b4-0570eef938bd",
+      "name": "Switch17"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        12192
+      ],
+      "id": "b31bcf04-a590-4e1d-838e-207cefffbe4d",
+      "name": "Send a message42"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items1').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)2').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        12528
+      ],
+      "id": "00559929-1638-4550-b351-c5cea860991e",
+      "name": "Send a message44"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        12192
+      ],
+      "id": "91dedfff-dba3-4d75-b949-12a6b27233d8",
+      "name": "If11"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        12576
+      ],
+      "id": "b4b6a564-8731-45f4-a799-4adeaf27167b",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        12960
+      ],
+      "id": "58274bec-c4bf-40a0-bcf9-26484eb894e7",
+      "name": "If14"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        13152
+      ],
+      "id": "5562f566-782b-445e-bd4f-45163611d239",
+      "name": "If15"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        13536
+      ],
+      "id": "502f6bb1-10c3-4b67-ab7d-8f5a450791d7",
+      "name": "If16"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        13728
+      ],
+      "id": "51659b05-8c54-4cf5-97e7-438865e9b530",
+      "name": "If17"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        14880
+      ],
+      "id": "35f5400e-43d3-407c-a3e4-4af81f2cf19c",
+      "name": "If18"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        14688
+      ],
+      "id": "4430f3d7-dbcf-4e3c-80e9-f1af91722550",
+      "name": "If19"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        15456
+      ],
+      "id": "c1b7e11f-fa46-4b9b-a554-d05c283754fb",
+      "name": "If31"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        15264
+      ],
+      "id": "fd32df83-f285-49aa-9635-b34e33b53a54",
+      "name": "If32"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        14112
+      ],
+      "id": "442614e2-c11a-43d2-be3c-e2b8372b123b",
+      "name": "If33"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        14304
+      ],
+      "id": "19f875e3-db86-4c87-9558-6156ef60f005",
+      "name": "If34"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "be86ab56-ce60-46fc-bb28-af9e473de96b",
+              "leftValue": "={{ $json.fields['Demande Formation'] }}",
+              "rightValue": "Drone",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -2528,
+        8192
+      ],
+      "id": "0ff21fd1-4964-44c9-8a11-a331bb5d8560",
+      "name": "Filter2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "be86ab56-ce60-46fc-bb28-af9e473de96b",
+              "leftValue": "={{ $json.fields['Demande Formation 2'] }}",
+              "rightValue": "Drone",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -2432,
+        18576
+      ],
+      "id": "af8a123b-a1b0-4a63-a7ef-7c84ab133b41",
+      "name": "Filter3"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 3"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        7408
+      ],
+      "id": "0ce33692-48ef-4321-b5f1-b32ee89cfe56",
+      "name": "Switch7"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        7488
+      ],
+      "id": "fc5d34a0-30cf-432f-9ff5-b1965002639b",
+      "name": "Send a message24"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        7680
+      ],
+      "id": "4431eff4-3e73-4f47-9b07-fccd2a69bdd2",
+      "name": "Send a message26"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        7744
+      ],
+      "id": "c04f7e27-4ed9-4a0c-93e2-ae9fbbc5ff68",
+      "name": "If35"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        7552
+      ],
+      "id": "ed63f06a-0c76-4f5a-b8ce-8653917b1035",
+      "name": "If36"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 3"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1312,
+        15824
+      ],
+      "id": "2f0eb915-5a0a-4231-bdaa-c2a90350e332",
+      "name": "Switch11"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        15552
+      ],
+      "id": "d3c35c2a-343e-4a9e-a449-eb9a9594ada2",
+      "name": "Send a message27"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items1').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)2').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        15744
+      ],
+      "id": "1f58ab2d-9fc6-4292-93fe-8491bf981a62",
+      "name": "Send a message29"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        16032
+      ],
+      "id": "c406565e-4071-4e3b-bc72-f87c228dcc4e",
+      "name": "If37"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        15840
+      ],
+      "id": "920671c8-a72d-457e-a5aa-e46fb4553ed1",
+      "name": "If38"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 3"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        7984
+      ],
+      "id": "08ddaacb-d939-4b2b-9452-9a55de69db93",
+      "name": "Switch12"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        8016
+      ],
+      "id": "15d590f9-0e6d-494d-97a4-ffce0a8327dd",
+      "name": "Send a message30"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        8208
+      ],
+      "id": "62731d3c-5249-4b5a-8abf-6cdb40ec7eec",
+      "name": "Send a message32"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        8320
+      ],
+      "id": "cbbb0126-4a28-45de-967e-7bc559433db8",
+      "name": "If39"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -672,
+        8128
+      ],
+      "id": "1564629e-74db-4aa0-ac58-b6a12b84cffa",
+      "name": "If40"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "=Mail 1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "be32add6-1e17-45cb-a35e-1ed03a91ead2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7d538564-1cbd-42e3-a82e-5ec2efc87e36",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "893554a2-4272-43d3-a422-4f9518d57ac2",
+                    "leftValue": "={{ $('Loop Over Items1').item.json.fields['Déclencheur mails MAKE'] }}",
+                    "rightValue": "Mail 3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mail 3"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1312,
+        16400
+      ],
+      "id": "5f4c4a19-2e6a-4cb7-8b61-d4c4d50ca3ea",
+      "name": "Switch13"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à mon précédent e-mail – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_2 }}<br><br>\n\n\nAu plaisir d'échanger à nouveau,<br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        16080
+      ],
+      "id": "56c4819c-2191-438d-b9ab-db10b939c382",
+      "name": "Send a message45"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Clôture de votre dossier {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }} {{ $('Loop Over Items1').item.json.fields['Quel est votre nom de famille ?'] }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br> {{ $('Get row(s)2').item.json.Mail_3 }}<br><br>\n\nBien à vous,<br><br>\n\n\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -496,
+        16272
+      ],
+      "id": "6961ca0d-60bc-42fa-b91f-7ae9bcb7bca5",
+      "name": "Send a message47"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        16608
+      ],
+      "id": "0d270bc8-2db1-4573-a7f8-291cc80ad336",
+      "name": "If41"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "819ad028-843f-4c04-9a6c-b14fa94d28aa",
+              "leftValue": "={{ $('Loop Over Items1').item.json.fields['Stop Call'] }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1088,
+        16416
+      ],
+      "id": "30ab534a-6d5b-42f1-a466-274eb38b190b",
+      "name": "If42"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_1 }}<br>\n<strong>📘Prochaines étapes pour votre dossier CPF\n :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> (indispensable pour sécuriser votre inscription).</li>\n  <li>Prévenez-moi une fois que c’est fait, afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant <a href=\"https://www.nouvelleecole.fr/rdv-commercials#commercial1\">ici</a><br>\n\nAu plaisir d'échanger à nouveau,<br>\n\n{{ $('Get row(s)1').item.json.signature }}\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -672,
+        4480
+      ],
+      "id": "f283869a-57b9-456f-9987-ad4a08f24562",
+      "name": "Send a message48"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_1 }}<br>\n<strong>📘Prochaines étapes pour votre dossier CPF\n :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> (indispensable pour sécuriser votre inscription).</li>\n  <li>Prévenez-moi une fois que c’est fait, afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant  <a href=https://www.nouvelleecole.fr/rdv-commercials#commercial5>ici</a></strong></li>\n\nAu plaisir d'échanger à nouveau,<br>\n\n{{ $('Get row(s)1').item.json.signature }}\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -672,
+        5056
+      ],
+      "id": "471af64d-3dee-4f3e-b095-f647d98d1c21",
+      "name": "Send a message7 (Commercial 13)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_1 }}<br>\n<strong>📘Prochaines étapes pour votre dossier CPF\n :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> (indispensable pour sécuriser votre inscription).</li>\n  <li>Prévenez-moi une fois que c’est fait, afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant  <a href=https://www.nouvelleecole.fr/rdv-commercials#commercial6>ici</a></strong></li>\n\nAu plaisir d'échanger à nouveau,<br>\n\n{{ $('Get row(s)1').item.json.signature }}\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -672,
+        6784
+      ],
+      "id": "02956c4b-4104-4714-a65b-cd16909f0a50",
+      "name": "Send a message10 (Commercial 1)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_1 }}<br>\n<strong>📘Prochaines étapes pour votre dossier CPF\n :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> (indispensable pour sécuriser votre inscription).</li>\n  <li>Prévenez-moi une fois que c’est fait, afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant <a href=https://www.nouvelleecole.fr/rdv-commercials#commercial4>ici</a></strong></li>\n\nAu plaisir d'échanger à nouveau,<br> \n\n{{ $('Get row(s)1').item.json.signature }}\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -672,
+        6208
+      ],
+      "id": "79ebff76-49a7-4e38-a787-cdfcbd6912ea",
+      "name": "Send a message13 (Commercial 11)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_1 }}<br>\n<strong>📘Prochaines étapes pour votre dossier CPF\n :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> (indispensable pour sécuriser votre inscription).</li>\n  <li>Prévenez-moi une fois que c’est fait, afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant <a href=https://www.nouvelleecole.fr/rdv-commercials#commercial8>ici</a></strong></li>\n\nAu plaisir d'échanger à nouveau,<br>\n\n{{ $('Get row(s)1').item.json.signature }}\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -672,
+        5632
+      ],
+      "id": "532b8c53-ca65-4cc1-8b8d-c014b3849b5d",
+      "name": "Send a message33 (Commercial 4)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_1 }}<br>\n<strong>📘Prochaines étapes pour votre dossier CPF\n :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> (indispensable pour sécuriser votre inscription).</li>\n  <li>Prévenez-moi une fois que c’est fait, afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant  <a href=https://www.nouvelleecole.fr/rdv-commercials#commercial3>ici</a></strong></li>\n\nAu plaisir d'échanger à nouveau,<br>\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -672,
+        7360
+      ],
+      "id": "8315f69f-67bb-411a-9a25-27f9b949d85f",
+      "name": "Send a message25 (Commercial 10)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_1 }}<br>\n<strong>📘Prochaines étapes pour votre dossier CPF\n :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> (indispensable pour sécuriser votre inscription).</li>\n  <li>Prévenez-moi une fois que c’est fait, afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant  <a href=https://www.nouvelleecole.fr/rdv-commercials#commercial7>ici</a></strong></li>\n\nAu plaisir d'échanger à nouveau,<br>\n\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -672,
+        7936
+      ],
+      "id": "b636ee43-442b-4c2d-a55b-a9f0867c0018",
+      "name": "Send a message31 (Commercial 15)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_1 }}<br>\n<strong>📘Prochaines étapes pour votre dossier CPF\n :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> (indispensable pour sécuriser votre inscription).</li>\n  <li>Prévenez-moi une fois que c’est fait, afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant <a href=https://www.nouvelleecole.fr/rdv-commercials#commercial1>ici</a></strong></li>\n\nAu plaisir d'échanger à nouveau,<br>\n\n{{ $('Get row(s)3').item.json.signature }}\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -1088,
+        12768
+      ],
+      "id": "84e59582-3243-4b3f-a17d-99e671b27940",
+      "name": "Send a message4 (Commercial 12)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_1 }}<br>\n<strong>📘Prochaines étapes pour votre dossier CPF\n :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> (indispensable pour sécuriser votre inscription).</li>\n  <li>Prévenez-moi une fois que c’est fait, afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant  <a href=https://www.nouvelleecole.fr/rdv-commercials#commercial5>ici</a></strong></li>\n\nAu plaisir d'échanger à nouveau,<br>\n\n{{ $('Get row(s)3').item.json.signature }}\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -1088,
+        13344
+      ],
+      "id": "6c294843-82a7-4596-9c20-04c222c802ee",
+      "name": "Send a message16 (Commercial 13)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_1 }}<br>\n<strong>📘Prochaines étapes pour votre dossier CPF\n :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> (indispensable pour sécuriser votre inscription).</li>\n  <li>Prévenez-moi une fois que c’est fait, afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant  <a href=https://www.nouvelleecole.fr/rdv-commercials#commercial6>ici</a></strong></li>\n\nAu plaisir d'échanger à nouveau,<br>\n\n{{ $('Get row(s)3').item.json.signature }}\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -1088,
+        15072
+      ],
+      "id": "3583e0ae-8ef3-4cc4-9a6f-3eb49d36f3ae",
+      "name": "Send a message19 (Commercial 1)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_1 }}<br>\n<strong>📘Prochaines étapes pour votre dossier CPF\n :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> (indispensable pour sécuriser votre inscription).</li>\n  <li>Prévenez-moi une fois que c’est fait, afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant <a href=https://www.nouvelleecole.fr/rdv-commercials#commercial4>ici</a></strong></li>\n\nAu plaisir d'échanger à nouveau,<br> \n\n{{ $('Get row(s)3').item.json.signature }}\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -1088,
+        14496
+      ],
+      "id": "1fdd1797-14a0-45fb-93e4-d13084e1ac07",
+      "name": "Send a message22 (Commercial 11)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_1 }}<br>\n<strong>📘Prochaines étapes pour votre dossier CPF\n :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> (indispensable pour sécuriser votre inscription).</li>\n  <li>Prévenez-moi une fois que c’est fait, afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant <a href=https://www.nouvelleecole.fr/rdv-commercials#commercial8>ici</a></strong></li>\n\nAu plaisir d'échanger à nouveau,<br>\n\n{{ $('Get row(s)3').item.json.signature }}\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -1088,
+        13920
+      ],
+      "id": "8f8682c4-cd2c-4777-bb4b-bd4acc1358f1",
+      "name": "Send a message39 (Commercial 4)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_1 }}<br>\n<strong>📘Prochaines étapes pour votre dossier CPF\n :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> (indispensable pour sécuriser votre inscription).</li>\n  <li>Prévenez-moi une fois que c’est fait, afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant  <a href=https://www.nouvelleecole.fr/rdv-commercials#commercial3>ici</a></strong></li>\n\nAu plaisir d'échanger à nouveau,<br>\n\n{{ $('Get row(s)3').item.json.signature }}\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -1088,
+        15648
+      ],
+      "id": "715d0ed3-4046-44b5-847e-a03d68a896de",
+      "name": "Send a message28 (Commercial 10)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_1 }}<br>\n<strong>📘Prochaines étapes pour votre dossier CPF\n :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> (indispensable pour sécuriser votre inscription).</li>\n  <li>Prévenez-moi une fois que c’est fait, afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant  <a href=https://www.nouvelleecole.fr/rdv-commercials#commercial7>ici</a></strong></li>\n\nAu plaisir d'échanger à nouveau,<br>\n\n{{ $('Get row(s)3').item.json.signature }}\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -1088,
+        16224
+      ],
+      "id": "22b5d9fc-e185-4b07-90f2-16698bc1489a",
+      "name": "Send a message46 (Commercial 15)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)').item.json.Mail_1 }}<br><br>\n<strong>📘 Prochaines étapes pour votre dossier CPF :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> afin de sécuriser votre inscription.</li>\n  <li>Prévenez-moi une fois que c’est fait afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant <a href=\"https://www.nouvelleecole.fr/rdv-commercials#commercial2\">ici</a>.</li>\n</ul>\n<br>\nAu plaisir d'échanger à nouveau,<br><br>\n{{ $('Get row(s)1').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -672,
+        3904
+      ],
+      "id": "89ab0168-28e1-45b2-9829-fc83cc03d347",
+      "name": "Send a message37 (Commercial 14)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Loop Over Items1').item.json.fields['Quel est votre Email ?'] }}",
+        "subject": "=Suite à notre échange – {{ $('Get row(s)2').item.json.formation_name }}",
+        "message": "=Bonjour {{ $('Loop Over Items1').item.json.fields['Quel est votre prénom ?'] }}, <br><br>{{ $('Get row(s)2').item.json.Mail_1 }}<br><br>\n<strong>📘 Prochaines étapes pour votre dossier CPF :</strong><br>\n<ul>\n  <li>Téléchargez et créez votre compte sur <strong>L’Identité Numérique La Poste</strong> afin de sécuriser votre inscription.</li>\n  <li>Prévenez-moi une fois que c’est fait afin que nous finalisions votre dossier ensemble, ou programmez un RDV avec moi en cliquant <a href=\"https://www.nouvelleecole.fr/rdv-commercials#commercial2\">ici</a>.</li>\n</ul>\n<br>\nAu plaisir d'échanger à nouveau,<br><br>\n{{ $('Get row(s)3').item.json.signature }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -1088,
+        12384
+      ],
+      "id": "d8690e43-3d96-47f4-9266-608e1767693d",
+      "name": "Send a message43 (Commercial 14)"
+    }
+  ],
+  "connections": {
+    "Airtable Trigger": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Send a message48",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch15",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch14",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch3": {
+      "main": [
+        [
+          {
+            "node": "Send a message7 (Commercial 13)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch4": {
+      "main": [
+        [
+          {
+            "node": "Send a message10 (Commercial 1)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If28",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If27",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch5": {
+      "main": [
+        [
+          {
+            "node": "Send a message13 (Commercial 11)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If13",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If12",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message6": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message8": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message12": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message14": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message9": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message11": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Filter3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filter2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get row(s)2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch14": {
+      "main": [
+        [
+          {
+            "node": "Send a message33 (Commercial 4)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If29",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If30",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch15": {
+      "main": [
+        [
+          {
+            "node": "Send a message37 (Commercial 14)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message36": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message38": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If6": {
+      "main": [
+        [
+          {
+            "node": "Send a message36",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message38",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If7": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If8": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If9": {
+      "main": [
+        [
+          {
+            "node": "Send a message6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If10": {
+      "main": [
+        [
+          {
+            "node": "Send a message8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If12": {
+      "main": [
+        [
+          {
+            "node": "Send a message14",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If13": {
+      "main": [
+        [
+          {
+            "node": "Send a message12",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If28": {
+      "main": [
+        [
+          {
+            "node": "Send a message9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If27": {
+      "main": [
+        [
+          {
+            "node": "Send a message11",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message34": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message35": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If29": {
+      "main": [
+        [
+          {
+            "node": "Send a message34",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If30": {
+      "main": [
+        [
+          {
+            "node": "Send a message35",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "Send a message4 (Commercial 12)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If14",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)3": {
+      "main": [
+        [
+          {
+            "node": "Switch6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch6": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch17",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch10",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch16",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch11",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch13",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch8": {
+      "main": [
+        [
+          {
+            "node": "Send a message16 (Commercial 13)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If16",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch9": {
+      "main": [
+        [
+          {
+            "node": "Send a message19 (Commercial 1)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If32",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If31",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch10": {
+      "main": [
+        [
+          {
+            "node": "Send a message22 (Commercial 11)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If19",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If18",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch16": {
+      "main": [
+        [
+          {
+            "node": "Send a message39 (Commercial 4)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If33",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If34",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch17": {
+      "main": [
+        [
+          {
+            "node": "Send a message43 (Commercial 14)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If11",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If11": {
+      "main": [
+        [
+          {
+            "node": "Send a message42",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send a message44",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If14": {
+      "main": [
+        [
+          {
+            "node": "Send a message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If15": {
+      "main": [
+        [
+          {
+            "node": "Send a message5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If16": {
+      "main": [
+        [
+          {
+            "node": "Send a message15",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If17": {
+      "main": [
+        [
+          {
+            "node": "Send a message17",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If18": {
+      "main": [
+        [
+          {
+            "node": "Send a message23",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If19": {
+      "main": [
+        [
+          {
+            "node": "Send a message21",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If31": {
+      "main": [
+        [
+          {
+            "node": "Send a message20",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If32": {
+      "main": [
+        [
+          {
+            "node": "Send a message18",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If33": {
+      "main": [
+        [
+          {
+            "node": "Send a message40",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If34": {
+      "main": [
+        [
+          {
+            "node": "Send a message41",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message42": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message44": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message15": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message17": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message40": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message41": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message21": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message23": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message18": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message20": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch7": {
+      "main": [
+        [
+          {
+            "node": "Send a message25 (Commercial 10)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If36",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If35",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If35": {
+      "main": [
+        [
+          {
+            "node": "Send a message26",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If36": {
+      "main": [
+        [
+          {
+            "node": "Send a message24",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message24": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message26": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch11": {
+      "main": [
+        [
+          {
+            "node": "Send a message28 (Commercial 10)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If38",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If37",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If37": {
+      "main": [
+        [
+          {
+            "node": "Send a message29",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If38": {
+      "main": [
+        [
+          {
+            "node": "Send a message27",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message27": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message29": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch12": {
+      "main": [
+        [
+          {
+            "node": "Send a message31 (Commercial 15)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If40",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If39",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If39": {
+      "main": [
+        [
+          {
+            "node": "Send a message32",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If40": {
+      "main": [
+        [
+          {
+            "node": "Send a message30",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message30": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message32": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch13": {
+      "main": [
+        [
+          {
+            "node": "Send a message46 (Commercial 15)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If42",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If41",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If41": {
+      "main": [
+        [
+          {
+            "node": "Send a message47",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If42": {
+      "main": [
+        [
+          {
+            "node": "Send a message45",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message45": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message47": {
+      "main": [
+        []
+      ]
+    },
+    "Send a message48": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message7 (Commercial 13)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message33 (Commercial 4)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message13 (Commercial 11)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message10 (Commercial 1)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message25 (Commercial 10)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message31 (Commercial 15)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message4 (Commercial 12)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message16 (Commercial 13)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message22 (Commercial 11)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message19 (Commercial 1)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message28 (Commercial 10)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message46 (Commercial 15)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message39 (Commercial 4)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message37 (Commercial 14)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message43 (Commercial 14)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

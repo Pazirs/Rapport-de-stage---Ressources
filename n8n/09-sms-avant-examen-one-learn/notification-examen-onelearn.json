@@ -1,0 +1,117 @@
+{
+  "name": "[APERCU] Notification Examen ONELEARN",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "apercu-retire-10-0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -464,
+        0
+      ],
+      "id": "92017a1d-490f-4905-9bf3-c7380d97f069",
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Mail }}",
+        "subject": "Votre examen de certification est prévu demain",
+        "message": "=<!DOCTYPE html>\n<html lang=\"fr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"x-apple-disable-message-reformatting\">\n  <title>Rappel : votre examen de certification est demain</title>\n\n  <!--[if mso]>\n  <style>\n    body, table, td, a, span {\n      font-family: Arial, sans-serif !important;\n    }\n  </style>\n  <![endif]-->\n\n  <style>\n    @media only screen and (max-width: 820px) {\n      .main-container {\n        width: 100% !important;\n        border-radius: 0 !important;\n      }\n\n      .mobile-padding {\n        padding-left: 24px !important;\n        padding-right: 24px !important;\n      }\n\n      .hero-padding {\n        padding: 36px 24px 32px !important;\n      }\n\n      .title {\n        font-size: 24px !important;\n        line-height: 1.25 !important;\n      }\n\n      .button a {\n        display: block !important;\n        padding: 16px 24px !important;\n      }\n    }\n  </style>\n</head>\n\n<body style=\"margin:0;padding:0;background-color:#f0f2f8;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;word-spacing:normal;\">\n  <div style=\"display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;\">\n    Votre examen de certification est prévu demain. Pensez à vérifier vos accès Google Meet et vos identifiants d’examen.\n  </div>\n\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#f0f2f8;margin:0;padding:0;\">\n    <tr>\n      <td align=\"center\" style=\"padding:32px 16px 48px;\">\n\n        <table role=\"presentation\" width=\"800\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"main-container\" style=\"max-width:800px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,0.06);\">\n\n          <!-- HEADER -->\n          <tr>\n            <td class=\"hero-padding\" style=\"background:linear-gradient(135deg,#c91a3d 0%,#e8254a 45%,#f4476b 100%);padding:52px 56px 44px;text-align:center;\">\n\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:20px;\">\n                    <span style=\"font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.58);\">\n                      LA NOUVELLE ÉCOLE\n                    </span>\n                  </td>\n                </tr>\n              </table>\n\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td class=\"title\" align=\"center\" style=\"font-size:32px;font-weight:800;color:#ffffff;line-height:1.2;letter-spacing:-0.6px;padding-bottom:18px;\">\n                    Votre examen de certification est demain\n                  </td>\n                </tr>\n              </table>\n\n              <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" align=\"center\">\n                <tr>\n                  <td style=\"background-color:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.20);border-radius:999px;padding:9px 20px;font-size:14px;font-weight:600;color:#ffffff;\">\n                    🗓️ {{\n                      (() => {\n                        const value = $json.body.fields['Date de certification'];\n\n                        const months = {\n                          January: 'janvier',\n                          February: 'février',\n                          March: 'mars',\n                          April: 'avril',\n                          May: 'mai',\n                          June: 'juin',\n                          July: 'juillet',\n                          August: 'août',\n                          September: 'septembre',\n                          October: 'octobre',\n                          November: 'novembre',\n                          December: 'décembre'\n                        };\n\n                        const match = String(value).match(/^([A-Za-z]+)\\s+(\\d{1,2}),\\s+(\\d{4})\\s+(\\d{2}:\\d{2})$/);\n\n                        if (!match) return value;\n\n                        const [, monthEn, day, year, time] = match;\n\n                        return `${Number(day)} ${months[monthEn]} ${year} à ${time}`;\n                      })()\n                    }}\n                  </td>\n                </tr>\n              </table>\n\n            </td>\n          </tr>\n\n          <!-- BODY -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:42px 56px 18px;\">\n\n              <!-- INTRO -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"font-size:16px;color:#13162a;line-height:1.7;padding-bottom:26px;\">\n                    Bonjour,<br><br>\n                    Nous vous rappelons que votre examen de certification est prévu demain, le <strong>{{\n                      (() => {\n                        const value = $json.body.fields['Date de certification'];\n\n                        const months = {\n                          January: 'janvier',\n                          February: 'février',\n                          March: 'mars',\n                          April: 'avril',\n                          May: 'mai',\n                          June: 'juin',\n                          July: 'juillet',\n                          August: 'août',\n                          September: 'septembre',\n                          October: 'octobre',\n                          November: 'novembre',\n                          December: 'décembre'\n                        };\n\n                        const match = String(value).match(/^([A-Za-z]+)\\s+(\\d{1,2}),\\s+(\\d{4})\\s+(\\d{2}:\\d{2})$/);\n\n                        if (!match) return value;\n\n                        const [, monthEn, day, year, time] = match;\n\n                        return `${Number(day)} ${months[monthEn]} ${year} à ${time}`;\n                      })()\n                    }}</strong>.<br><br>\n                    Afin d’aborder votre passage sereinement, pensez à vérifier dès maintenant que vous avez bien accès aux éléments nécessaires pour rejoindre la session et vous connecter à la plateforme d’examen.\n                  </td>\n                </tr>\n              </table>\n\n              <!-- MAIN CARD -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:#f7f8fc;border:1px solid #e8eaf1;border-radius:18px;padding:26px 26px 24px;\">\n\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:13px;font-weight:800;color:#8a8fa6;letter-spacing:1.4px;text-transform:uppercase;padding-bottom:18px;\">\n                          ✅ Éléments à préparer avant l’examen\n                        </td>\n                      </tr>\n                    </table>\n\n                    <!-- EMAIL 1 -->\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:14px;\">\n                      <tr>\n                        <td style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:14px;padding:18px 20px;\">\n                          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                            {{\n                              (() => {\n                                const meetLink = String($json.body.fields['Lien Meet Certification OneLearn'] || '').trim();\n\n                                if (meetLink) {\n                                  return `\n                                    <tr>\n                                      <td style=\"font-size:15px;font-weight:800;color:#13162a;padding-bottom:8px;\">\n                                        1. Votre lien Google Meet\n                                      </td>\n                                    </tr>\n                                    <tr>\n                                      <td style=\"font-size:14px;color:#5a5f7a;line-height:1.7;padding-bottom:16px;\">\n                                        🎥 Cliquez sur le bouton ci-dessous pour rejoindre votre session de certification :\n                                      </td>\n                                    </tr>\n                                    <tr>\n                                      <td align=\"center\" style=\"padding-bottom:14px;text-align:center;\">\n                                        <a href=\"${meetLink}\" target=\"_blank\" style=\"display:inline-block;background:linear-gradient(135deg,#1a73e8,#0b57d0);color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;padding:13px 24px;border-radius:10px;\">\n                                          Rejoindre la session Google Meet\n                                        </a>\n                                      </td>\n                                    </tr>\n                                    <tr>\n                                      <td align=\"center\" style=\"font-size:13px;color:#8a8fa6;line-height:1.6;word-break:break-all;text-align:center;\">\n                                        Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur<br>\n                                        <a href=\"${meetLink}\" target=\"_blank\" style=\"color:#1a73e8;font-weight:700;text-decoration:none;\">\n                                          ${meetLink}\n                                        </a>\n                                      </td>\n                                    </tr>\n                                  `;\n                                }\n\n                                return `\n                                  <tr>\n                                    <td style=\"font-size:15px;font-weight:800;color:#13162a;padding-bottom:8px;\">\n                                      1. Le lien Google Meet\n                                    </td>\n                                  </tr>\n                                  <tr>\n                                    <td style=\"font-size:14px;color:#5a5f7a;line-height:1.7;\">\n                                      Vous avez reçu un premier email envoyé par <strong>hello@cal.com</strong>.<br>\n                                      Cet email contient le lien Google Meet qui vous permettra de rejoindre votre session de certification.\n                                    </td>\n                                  </tr>\n                                `;\n                              })()\n                            }}\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n\n                    <!-- EMAIL 2 -->\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:14px;padding:18px 20px;\">\n                          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                            <tr>\n                              <td style=\"font-size:15px;font-weight:800;color:#13162a;padding-bottom:8px;\">\n                                2. Vos identifiants spécifiques à l’examen\n                              </td>\n                            </tr>\n                            <tr>\n                              <td style=\"font-size:14px;color:#5a5f7a;line-height:1.7;\">\n                                Vous avez également reçu un second email envoyé par <strong>mail@teachizy.fr</strong>.<br>\n                                Cet email contient vos identifiants de connexion spécifiques à l’examen. Ces accès vous permettent de vous connecter à la plateforme dédiée à l’examen.\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n\n                  </td>\n                </tr>\n              </table>\n\n              <!-- BUTTON -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:28px;\">\n                    <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                      <tr>\n                        <td align=\"center\" style=\"background:linear-gradient(135deg,#c91a3d,#e8254a);border-radius:14px;\">\n                          <a href=\"https://formations.one-learn.fr/\" target=\"_blank\" style=\"display:inline-block;padding:16px 34px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">\n                            Accéder à la plateforme d’examen\n                          </a>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- INFO BOX -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:rgba(232,37,74,0.04);border:1px solid rgba(232,37,74,0.09);border-radius:14px;padding:20px 22px;\">\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:14px;font-weight:700;color:#e8254a;padding-bottom:8px;\">\n                          💡 À vérifier avant demain\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:13px;color:#5a5f7a;line-height:1.7;\">\n                          Nous vous conseillons de retrouver ces deux emails dès aujourd’hui, de tester l’accès à la plateforme d’examen et de conserver le lien Google Meet à portée de main.<br>\n                          Toutes les informations utiles concernant le déroulement de l’examen sont disponibles sur la plateforme One Learn.\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n            </td>\n          </tr>\n\n          <!-- DIVIDER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:0 56px;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"height:1px;background-color:#eef0f5;font-size:0;line-height:0;\">&nbsp;</td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- FOOTER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:24px 56px 32px;text-align:center;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"font-size:13px;color:#8a8fa6;line-height:1.6;padding-bottom:6px;\">\n                    La Nouvelle École vous souhaite une bonne certification 🤝\n                  </td>\n                </tr>\n                <tr>\n                  <td align=\"center\" style=\"font-size:12px;color:#a2a7bc;line-height:1.6;\">\n                    Pensez à vous connecter quelques minutes avant le début de l’examen.\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n        </table>\n\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        0
+      ],
+      "id": "b3464870-14bf-4d3a-9d05-794902628cca",
+      "name": "Send a message"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000002",
+          "mode": "list",
+          "cachedResultName": "Gestion E-learning 🕹️"
+        },
+        "id": "={{ $json.body.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "85756732-ab8d-4376-9892-b4f0f189e7c8",
+      "name": "Get a record"
+    },
+    {
+      "parameters": {
+        "amount": 17,
+        "unit": "hours"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -96,
+        0
+      ],
+      "id": "01ae9e27-ab80-4c87-90f3-d394b48797e2",
+      "name": "Wait"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a record": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

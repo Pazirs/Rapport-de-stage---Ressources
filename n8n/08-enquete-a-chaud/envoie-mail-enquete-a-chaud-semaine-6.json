@@ -1,0 +1,343 @@
+{
+  "name": "[APERCU] Envoie mail enquête à chaud semaine 6",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000002",
+          "mode": "list",
+          "cachedResultName": "Gestion E-learning 🕹️"
+        },
+        "options": {
+          "view": {
+            "__rl": true,
+            "value": "viwMASQUE00000000002",
+            "mode": "list",
+            "cachedResultName": "(NE PAS TOUCHER) Enquête à chaud"
+          }
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1088,
+        -544
+      ],
+      "id": "ee4d5e1f-b6fc-4d0b-b957-94f3b2704404",
+      "name": "Search records"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 16
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1408,
+        -544
+      ],
+      "id": "9d1bee55-5ab5-42ea-b1fd-6d0f279eb44f",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -768,
+        -544
+      ],
+      "id": "3011ba10-a9b4-4abc-9a0e-0087b775cc5d",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Mail }}",
+        "subject": "Votre retour sur la formation",
+        "message": "=<!DOCTYPE html>\n<html lang=\"fr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"x-apple-disable-message-reformatting\">\n  <title>Enquête à chaud</title>\n\n  <!--[if mso]>\n  <style>\n    body, table, td, a, span {\n      font-family: Arial, sans-serif !important;\n    }\n  </style>\n  <![endif]-->\n\n  <style>\n    @media only screen and (max-width: 820px) {\n      .main-container {\n        width: 100% !important;\n        border-radius: 0 !important;\n      }\n\n      .mobile-padding {\n        padding-left: 24px !important;\n        padding-right: 24px !important;\n      }\n\n      .hero-padding {\n        padding: 36px 24px 32px !important;\n      }\n\n      .title {\n        font-size: 24px !important;\n        line-height: 1.25 !important;\n      }\n\n      .button a {\n        display: block !important;\n        padding: 16px 24px !important;\n      }\n    }\n  </style>\n</head>\n\n<body style=\"margin:0;padding:0;background-color:#f0f2f8;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;\">\n\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#f0f2f8;\">\n    <tr>\n      <td align=\"center\" style=\"padding:32px 16px 48px;\">\n\n        <table role=\"presentation\" width=\"800\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"main-container\" style=\"max-width:800px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,0.06);\">\n\n          <!-- HEADER -->\n          <tr>\n            <td class=\"hero-padding\" style=\"background:linear-gradient(135deg,#c91a3d 0%,#e8254a 45%,#f4476b 100%);padding:52px 56px;text-align:center;\">\n\n              <div style=\"font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.6);\">\n                LA NOUVELLE ÉCOLE\n              </div>\n\n              <div class=\"title\" style=\"font-size:32px;font-weight:800;color:#ffffff;line-height:1.2;margin-top:14px;\">\n                Enquête à chaud\n              </div>\n\n            </td>\n          </tr>\n\n          <!-- BODY -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:42px 56px 20px;\">\n\n              <p style=\"font-size:16px;color:#13162a;line-height:1.7;margin-bottom:22px;\">\n                Bonjour {{ $json[\"Prénom\"] }} 👋<br><br>\n                Nous espérons que votre formation s’est bien passée.\n              </p>\n\n              <p style=\"font-size:16px;color:#13162a;line-height:1.7;margin-bottom:22px;\">\n                Afin de continuer à améliorer nos contenus, notre accompagnement et l’expérience proposée aux apprenants, nous vous invitons à compléter notre enquête à chaud.\n              </p>\n\n              <p style=\"font-size:16px;color:#13162a;line-height:1.7;margin-bottom:26px;\">\n                Cela ne prend que quelques minutes et vos réponses nous sont vraiment utiles pour identifier ce qui fonctionne bien, mais aussi les points que nous pouvons améliorer.\n              </p>\n\n              <!-- BUTTON -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding:10px 0 30px;text-align:center;\">\n\n                    <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\" align=\"center\" style=\"margin:0 auto;\">\n                      <tr>\n                        <td align=\"center\" style=\"background:linear-gradient(135deg,#c91a3d,#e8254a);border-radius:14px;text-align:center;\">\n                          <a href=\"https://airtable.com/appMASQUE00000000003/pagMASQUE00000000001/form\" target=\"_blank\"\n                             style=\"display:inline-block;padding:16px 34px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;text-align:center;\">\n                            Remplir l’enquête\n                          </a>\n                        </td>\n                      </tr>\n                    </table>\n\n                  </td>\n                </tr>\n              </table>\n\n              <p style=\"font-size:14px;color:#5a5f7a;line-height:1.7;margin-bottom:0;\">\n                Merci d’avance pour votre retour. Votre avis nous aide concrètement à améliorer l’expérience proposée aux futurs apprenants.\n              </p>\n\n            </td>\n          </tr>\n\n          <!-- FOOTER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:24px 56px 32px;text-align:center;\">\n              <div style=\"font-size:13px;color:#8a8fa6;\">\n                Bonne journée,<br>\n                L’équipe La Nouvelle École ✨\n              </div>\n            </td>\n          </tr>\n\n        </table>\n\n      </td>\n    </tr>\n  </table>\n\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        368,
+        -528
+      ],
+      "id": "32cdcac7-a0e7-4aad-bee2-d17072b2a404",
+      "name": "Send a message"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000004",
+          "mode": "list",
+          "cachedResultName": "Enquête à chaud 🔥"
+        },
+        "filterByFormula": "=={{\n  (() => {\n    const mail = String($json.Mail || '')\n      .trim()\n      .toLowerCase()\n      .replace(/\\\\/g, '\\\\\\\\')\n      .replace(/\"/g, '\\\\\"');\n\n    return `LOWER(TRIM({Mail})) = \"${mail}\"`;\n  })()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -512,
+        -768
+      ],
+      "id": "54febe42-2614-48e8-8d19-e27291627465",
+      "name": "Recherche par mail",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000004",
+          "mode": "list",
+          "cachedResultName": "Enquête à chaud 🔥"
+        },
+        "filterByFormula": "={{\n  (() => {\n    const normalizeInput = (value) =>\n      String(value || '')\n        .trim()\n        .toLowerCase()\n        .normalize('NFD')\n        .replace(/[\\u0300-\\u036f]/g, '')\n        .replace(/œ/g, 'oe')\n        .replace(/æ/g, 'ae')\n        .replace(/[’']/g, '')\n        .replace(/[-_.\\s]/g, '')\n        .replace(/\\\\/g, '\\\\\\\\')\n        .replace(/\"/g, '\\\\\"');\n\n    const prenom = normalizeInput($json['Prénom']);\n    const nom = normalizeInput($json.Nom);\n\n    if (!prenom || !nom) {\n      return 'FALSE()';\n    }\n\n    const airtableNormalize = (fieldName) => {\n      let f = 'LOWER(TRIM({' + fieldName + '}))';\n\n      const replacements = [\n        ['é', 'e'],\n        ['è', 'e'],\n        ['ê', 'e'],\n        ['ë', 'e'],\n        ['à', 'a'],\n        ['â', 'a'],\n        ['ä', 'a'],\n        ['î', 'i'],\n        ['ï', 'i'],\n        ['ô', 'o'],\n        ['ö', 'o'],\n        ['ù', 'u'],\n        ['û', 'u'],\n        ['ü', 'u'],\n        ['ç', 'c'],\n        ['œ', 'oe'],\n        ['æ', 'ae'],\n        ['’', ''],\n        [\"'\", ''],\n        [' ', ''],\n        ['-', ''],\n        ['_', ''],\n        ['.', '']\n      ];\n\n      for (const pair of replacements) {\n        const from = pair[0];\n        const to = pair[1];\n\n        f = 'SUBSTITUTE(' + f + ', \"' + from + '\", \"' + to + '\")';\n      }\n\n      return f;\n    };\n\n    const prenomField = airtableNormalize('Prénom');\n    const nomField = airtableNormalize('Nom');\n\n    return 'OR(' +\n      'AND(' +\n        prenomField + ' = \"' + prenom + '\", ' +\n        nomField + ' = \"' + nom + '\"' +\n      '), ' +\n      'AND(' +\n        prenomField + ' = \"' + nom + '\", ' +\n        nomField + ' = \"' + prenom + '\"' +\n      '), ' +\n      'CONCATENATE(' + prenomField + ', ' + nomField + ') = \"' + prenom + nom + '\", ' +\n      'CONCATENATE(' + prenomField + ', ' + nomField + ') = \"' + nom + prenom + '\", ' +\n      'CONCATENATE(' + nomField + ', ' + prenomField + ') = \"' + prenom + nom + '\", ' +\n      'CONCATENATE(' + nomField + ', ' + prenomField + ') = \"' + nom + prenom + '\"' +\n    ')';\n  })()\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -512,
+        -608
+      ],
+      "id": "243b4f12-37e0-4cc4-bd84-508042866219",
+      "name": "Recherche par nom+prenom",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const mailItems = $('Recherche par mail').all();\nconst nameItems = $('Recherche par nom+prenom').all();\nconst loopItems = $('Loop Over Items').all();\n\nconst allItems = [\n  ...mailItems.map(item => ({\n    source: 'Recherche par mail',\n    item\n  })),\n  ...nameItems.map(item => ({\n    source: 'Recherche par nom+prenom',\n    item\n  }))\n];\n\n// Évite les doublons si les deux recherches trouvent le même record Airtable\nconst uniqueRecords = [];\nconst seenIds = new Set();\n\nfor (const entry of allItems) {\n  const json = entry.item.json || {};\n  const recordId = json.id || json.recordId;\n\n  const uniqueKey = recordId || JSON.stringify(json);\n\n  if (!seenIds.has(uniqueKey)) {\n    seenIds.add(uniqueKey);\n    uniqueRecords.push(entry);\n  }\n}\n\nfunction getFields(item) {\n  return item?.json?.fields || item?.json || {};\n}\n\nfunction hasValue(value) {\n  if (value === undefined || value === null) return false;\n\n  if (typeof value === 'string') {\n    return value.trim() !== '';\n  }\n\n  if (Array.isArray(value)) {\n    return value.length > 0;\n  }\n\n  if (typeof value === 'object') {\n    return Object.keys(value).length > 0;\n  }\n\n  return true;\n}\n\nfunction getValue(primaryValue, fallbackValue) {\n  if (hasValue(primaryValue)) return primaryValue;\n  if (hasValue(fallbackValue)) return fallbackValue;\n  return '';\n}\n\nconst records = uniqueRecords.map(entry => {\n  const fields = getFields(entry.item);\n\n  return {\n    source: entry.source,\n    id: entry.item.json.id || entry.item.json.recordId || '',\n    fields\n  };\n});\n\nconst recordAvecNote = records.find(record =>\n  hasValue(record.fields['Note'])\n);\n\nconst bestRecord = recordAvecNote || records[0] || null;\nconst fields = bestRecord?.fields || {};\n\n// Données venant du Loop Over Items, utilisées seulement si les champs des Search Records sont vides\nconst loopFields = getFields(loopItems[0]);\n\nconst mailFinal = getValue(fields['Mail'], loopFields['Mail']);\nconst prenomFinal = getValue(fields['Prénom'], loopFields['Prénom']);\nconst nomFinal = getValue(fields['Nom'], loopFields['Nom']);\n\nreturn [\n  {\n    json: {\n      statut: recordAvecNote ? \"a déjà rempli l'enquête\" : \"n'a pas encore rempli\",\n      note_existe: !!recordAvecNote,\n\n      Mail: mailFinal,\n      Prénom: prenomFinal,\n      Nom: nomFinal,\n\n      record_id: bestRecord?.id || '',\n      source_match: bestRecord?.source || '',\n      nombre_records_trouves: records.length,\n      sources_trouvees: [...new Set(records.map(record => record.source))]\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        -544
+      ],
+      "id": "9292ba7d-bcc9-4089-a90b-c1444defabb9",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -256,
+        -576
+      ],
+      "id": "bc7aa459-df04-450a-86ee-dbc9d5184d8f",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a3598279-ea11-44f8-9b69-7e0a84092438",
+              "leftValue": "={{ $json.statut }}",
+              "rightValue": "a déjà rempli l'enquête",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        128,
+        -544
+      ],
+      "id": "e9bc54ec-ba3d-4ea5-8137-220170571372",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "content": "# Vérifie si le lendemain ou à J+7, l'enquête à chaud n'a pas été remplie\n\n## Envoie un mail si ce n'est pas rempli",
+        "height": 464,
+        "width": 656,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -96,
+        -768
+      ],
+      "typeVersion": 1,
+      "id": "8cd9a81c-10a8-4dd9-b497-909e31133e8d",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Recherche par mail",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Recherche par nom+prenom",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recherche par mail": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recherche par nom+prenom": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

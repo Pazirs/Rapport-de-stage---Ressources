@@ -1,0 +1,455 @@
+{
+  "name": "[APERCU] concours discord 2 semaines",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 4"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -256,
+        -224
+      ],
+      "id": "420fd094-4eff-4b8e-8c23-d03995654b6f",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// n8n Code node (JavaScript)\n// Mode: \"Run Once for Each Item\"\n\nconst item = $json;\n\nconst objectif = (item.Objectif || \"\").trim();\nlet contenu = (item.contenu || \"\").trim();\n\n// IDs des salons (mets les bons IDs)\nconst TRAVAUX_CONCOURS_CHANNEL_ID = \"000000000000000001\";\nconst GENERAL_CHANNEL_ID = \"000000000000000002\"; // TODO: remplace par l'ID du salon #général\n\nconst travauxConcoursMention = `<#${TRAVAUX_CONCOURS_CHANNEL_ID}>`;\nconst generalMention = `<#${GENERAL_CHANNEL_ID}>`;\n\n// Remplace \"#général\" par un mention cliquable (gère plusieurs variantes)\ncontenu = contenu\n  .replaceAll(\"#général\", generalMention)\n  .replaceAll(\"#general\", generalMention)\n  .replaceAll(\"#Général\", generalMention)\n  .replaceAll(\"#General\", generalMention);\n\nconst message =\n`⚡ CONCOURS DE LA SEMAINE ⚡\n\nSalut à tous,\n\nVoici le défi de cette semaine. Amusez vous bien, et soyez créatifs 😄\nVous pouvez envoyer vos travaux dans ce canal ${travauxConcoursMention}.\n\n🎯 Objectif :\n${objectif}\n\n${contenu}\n`;\n\nreturn { message };\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        -224
+      ],
+      "id": "8dae1718-7871-401e-9273-df7d4f5aaa80",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000002",
+          "mode": "list",
+          "cachedResultName": "table concours 2 semaines"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "Concours_numero",
+              "keyValue": "={{ $('Get row(s)').item.json.Concours_numero }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "publier": true
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Concours_numero",
+              "displayName": "Concours_numero",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Objectif",
+              "displayName": "Objectif",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "contenu",
+              "displayName": "contenu",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "publier",
+              "displayName": "publier",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        992,
+        -224
+      ],
+      "id": "53668b60-7647-4191-8679-b4f8094c1456",
+      "name": "Update row(s)"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000002",
+          "mode": "list",
+          "cachedResultName": "table concours 2 semaines"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "publier",
+              "condition": "isFalse"
+            },
+            {
+              "keyName": "publier",
+              "condition": "isEmpty"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        336,
+        -224
+      ],
+      "id": "b9b3c25a-6f9f-4b51-93ab-193c9b334737",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "days"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1216,
+        -224
+      ],
+      "id": "0d80b39f-e358-424b-9731-58bcb9617c7a",
+      "name": "Wait"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "https://discord.com/channels/000000000000000002",
+          "mode": "url"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "000000000000000001",
+          "mode": "list",
+          "cachedResultName": "🎁travaux-concours"
+        },
+        "content": "={{ $json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        768,
+        -224
+      ],
+      "id": "90a55827-e707-4e2e-92ef-8e14b8eab45b",
+      "name": "Send a message1 (principal)"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "000000000000000002",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "000000000000000001",
+          "mode": "list",
+          "cachedResultName": "🎁travaux-concours"
+        },
+        "content": "={{ $json.message_rappel }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1664,
+        -224
+      ],
+      "id": "e123f4ed-7602-45c0-92d6-27780fa92e52",
+      "name": "Send a message (rappel)"
+    },
+    {
+      "parameters": {
+        "resume": "specificTime",
+        "dateTime": "={{ $now.setZone('Europe/Paris').plus({ days: 1 }).set({ hour: 23, minute: 59, second: 0, millisecond: 0 }).toISO() }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1888,
+        -224
+      ],
+      "id": "73abb893-7fd9-4668-8dbd-f398dd236de5",
+      "name": "Wait1"
+    },
+    {
+      "parameters": {
+        "sendTo": "salarie1@nouvelleecole.fr",
+        "subject": "Fin Concours Discord : Participant à élire ",
+        "emailType": "text",
+        "message": "Hello, c'est un message automatique pour te prévenir que le concours des travaux est terminé.",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2560,
+        -224
+      ],
+      "id": "b4201b7e-446d-43b4-b13e-b6244a1d9bae",
+      "name": "Send a message"
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  message_rappel: \"⏰ **Rappel concours** ⏰\\n\\nVous avez encore jusqu’à **lundi soir ** pour participer au concours en cours.\\n\\nN’oubliez pas de poster dans <#000000000000000001> :\\n\\n• La vue de votre modélisation 3D\\n• La photo de votre objet imprimé\\n• Une courte description de son usage\\n\\nNous avons hâte de découvrir vos créations.\\n\\nBonne fin de création à tous, et amusez vous bien 🚀\"\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        -224
+      ],
+      "id": "a3cd75ce-8d74-4450-92de-582811324c31",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  message_fin: \"🏁 **Fin du concours** 🏁\\n\\nMerci à tous pour votre participation et pour les projets partagés. C’est toujours un plaisir de voir vos idées prendre forme.\\n\\nLes soumissions sont désormais closes, nous allons examiner les réalisations envoyées.\\n\\nLe gagnant sera annoncé **mardi** .\\n\\nEncore bravo à tous les participants, et restez prêts pour le prochain concours ⚡\"\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2112,
+        -224
+      ],
+      "id": "46c820ab-68a7-46b7-8a42-3a585b5388fb",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "000000000000000002",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "000000000000000001",
+          "mode": "list",
+          "cachedResultName": "🎁travaux-concours"
+        },
+        "content": "={{ $json.message_fin }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        2336,
+        -224
+      ],
+      "id": "463903e7-2ab3-4f4d-ac02-cdc623c725c3",
+      "name": "Send a message (cloture)"
+    },
+    {
+      "parameters": {
+        "jsCode": "function getISOWeekNumber(date) {\n  const tempDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));\n  const dayNum = tempDate.getUTCDay() || 7;\n  tempDate.setUTCDate(tempDate.getUTCDate() + 4 - dayNum);\n  const yearStart = new Date(Date.UTC(tempDate.getUTCFullYear(), 0, 1));\n  return Math.ceil((((tempDate - yearStart) / 86400000) + 1) / 7);\n}\n\nconst now = new Date();\nconst semaine = getISOWeekNumber(now);\n\nif (semaine % 2 !== 0) {\n  return items; // semaine impaire → continue\n}\n\nreturn []; // semaine paire → stop"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        48,
+        -224
+      ],
+      "id": "dc21246c-a0fb-48dc-a033-894f40d05142",
+      "name": "Code in JavaScript3"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message1 (principal)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row(s)": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1 (principal)": {
+      "main": [
+        [
+          {
+            "node": "Update row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message (rappel)": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Send a message (rappel)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Send a message (cloture)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message (cloture)": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "name": "[APERCU] Renvoi des accès E-learning",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "apercu-retire-13-0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -176,
+        0
+      ],
+      "id": "cc9c693d-8949-4964-88cd-fe4f1b90e817",
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5e61a475-ef19-4ad5-a546-cf28fbbaba06",
+              "leftValue": "={{ $json.body.fields.Mail }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        64,
+        0
+      ],
+      "id": "4b125ad3-e50c-4049-a674-cee895a177cb",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.body.fields.Mail }}",
+        "subject": "Lien d'accès à la formation",
+        "message": "=<!DOCTYPE html>\n<html lang=\"fr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"x-apple-disable-message-reformatting\">\n  <title>Ta formation commence demain</title>\n\n  <!--[if mso]>\n  <style>\n    body, table, td, a, span {\n      font-family: Arial, sans-serif !important;\n    }\n  </style>\n  <![endif]-->\n\n  <style>\n    @media only screen and (max-width: 820px) {\n      .main-container {\n        width: 100% !important;\n        border-radius: 0 !important;\n      }\n\n      .mobile-padding {\n        padding-left: 24px !important;\n        padding-right: 24px !important;\n      }\n\n      .hero-padding {\n        padding: 36px 24px 32px !important;\n      }\n\n      .title {\n        font-size: 24px !important;\n        line-height: 1.25 !important;\n      }\n\n      .button a {\n        display: block !important;\n        padding: 16px 24px !important;\n      }\n\n      .code-value {\n        font-size: 15px !important;\n      }\n    }\n  </style>\n</head>\n\n<body style=\"margin:0;padding:0;background-color:#f0f2f8;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;word-spacing:normal;\">\n  <div style=\"display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;\">\n    Ton accès e-learning est prêt. Retrouve ici ton lien de connexion et tes identifiants pour commencer ta formation demain.\n  </div>\n\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#f0f2f8;margin:0;padding:0;\">\n    <tr>\n      <td align=\"center\" style=\"padding:32px 16px 48px;\">\n\n        <table role=\"presentation\" width=\"800\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"main-container\" style=\"max-width:800px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,0.06);\">\n\n          <!-- HEADER -->\n          <tr>\n            <td class=\"hero-padding\" style=\"background:linear-gradient(135deg,#c91a3d 0%,#e8254a 45%,#f4476b 100%);padding:52px 56px 44px;text-align:center;\">\n\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:20px;\">\n                    <span style=\"font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.58);\">\n                      LA NOUVELLE ÉCOLE\n                    </span>\n                  </td>\n                </tr>\n              </table>\n\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td class=\"title\" align=\"center\" style=\"font-size:32px;font-weight:800;color:#ffffff;line-height:1.2;letter-spacing:-0.6px;padding-bottom:18px;\">\n                    Tes accès pour la formation !\n                  </td>\n                </tr>\n              </table>\n\n              <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" align=\"center\">\n                <tr>\n                  <td style=\"background-color:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.20);border-radius:999px;padding:9px 20px;font-size:14px;font-weight:600;color:#ffffff;\">\n                    📖 {{ $json.body.fields.Formation }}\n                  </td>\n                </tr>\n              </table>\n\n            </td>\n          </tr>\n\n          <!-- BODY -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:42px 56px 18px;\">\n\n              <!-- INTRO -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"font-size:16px;color:#13162a;line-height:1.7;padding-bottom:26px;\">\n                    Bonjour {{ $json.body.fields['Prénom'] }} 👋,<br><br>\n                    Ton accès à la plateforme e-learning est prêt.<br>\n                    Tu trouveras ci-dessous ton lien de connexion ainsi que tes identifiants pour te connecter simplement.\n                  </td>\n                </tr>\n              </table>\n\n              <!-- ACCESS CARD -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:#f7f8fc;border:1px solid #e8eaf1;border-radius:18px;padding:26px 26px 24px;\">\n\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:13px;font-weight:800;color:#8a8fa6;letter-spacing:1.4px;text-transform:uppercase;padding-bottom:16px;\">\n                          🔑 Tes codes d'accès\n                        </td>\n                      </tr>\n                    </table>\n\n                    <!-- IDENTIFIANT -->\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:12px;\">\n                      <tr>\n                        <td style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:12px;padding:14px 18px;\">\n                          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                            <tr>\n                              <td style=\"font-size:11px;font-weight:700;color:#8a8fa6;letter-spacing:0.6px;text-transform:uppercase;padding-bottom:5px;\">\n                                Identifiant\n                              </td>\n                            </tr>\n                            <tr>\n                              <td class=\"code-value\" style=\"font-size:16px;font-weight:700;color:#13162a;font-family:'Courier New',Courier,monospace;letter-spacing:0.3px;word-break:break-word;\">\n                                {{ $json.body.fields['Identifiant E-learning'] }}\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n\n                    <!-- MOT DE PASSE -->\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:12px;padding:14px 18px;\">\n                          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                            <tr>\n                              <td style=\"font-size:11px;font-weight:700;color:#8a8fa6;letter-spacing:0.6px;text-transform:uppercase;padding-bottom:5px;\">\n                                Mot de passe\n                              </td>\n                            </tr>\n                            <tr>\n                              <td class=\"code-value\" style=\"font-size:16px;font-weight:700;color:#13162a;font-family:'Courier New',Courier,monospace;letter-spacing:0.3px;word-break:break-word;\">\n                                {{ $json.body.fields['Mot de passe'] }}\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n\n                  </td>\n                </tr>\n              </table>\n\n              <!-- BUTTON -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:16px;\">\n                    <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                      <tr>\n                        <td align=\"center\" style=\"background:linear-gradient(135deg,#c91a3d,#e8254a);border-radius:14px;\">\n                          <a href=\"https://nouvelleecole.club/index.php/app/\" target=\"_blank\" style=\"display:inline-block;padding:16px 34px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">\n                            Accéder à ma formation\n                          </a>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:28px;font-size:13px;line-height:1.7;color:#5a5f7a;word-break:break-word;\">\n                    Si le bouton ne marche pas, essayez le lien suivant :<br>\n                    <a href=\"https://nouvelleecole.club/index.php/app/\" target=\"_blank\" style=\"color:#e8254a;text-decoration:underline;\">\n                      https://nouvelleecole.club/index.php/app/\n                    </a>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- INFO BOX -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:rgba(232,37,74,0.04);border:1px solid rgba(232,37,74,0.09);border-radius:14px;padding:20px 22px;\">\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:14px;font-weight:700;color:#e8254a;padding-bottom:8px;\">\n                          💡 Petit conseil\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:13px;color:#5a5f7a;line-height:1.7;\">\n                          Connecte-toi dès aujourd'hui pour découvrir ton espace de formation et commencer sereinement.<br>\n                          En cas de difficulté de connexion, notre équipe reste disponible pour t'aider.\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n            </td>\n          </tr>\n\n          <!-- DIVIDER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:0 56px;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"height:1px;background-color:#eef0f5;font-size:0;line-height:0;\"></td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- FOOTER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:24px 56px 32px;text-align:center;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"font-size:13px;color:#8a8fa6;line-height:1.6;padding-bottom:6px;\">\n                    La Nouvelle École t'accompagne tout au long de ta formation 🤝\n                  </td>\n                </tr>\n                <tr>\n                  <td align=\"center\" style=\"font-size:12px;color:#a2a7bc;line-height:1.6;\">\n                    À très vite sur la plateforme\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n        </table>\n\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        432,
+        -96
+      ],
+      "id": "7847c44f-78ee-4abc-be8c-f11241aa9448",
+      "name": "Send a message"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Mail }}",
+        "subject": "Lien d'accès à la formation",
+        "message": "=```html\n<!DOCTYPE html>\n<html lang=\"fr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"x-apple-disable-message-reformatting\">\n  <title>Ta formation commence demain</title>\n\n  <!--[if mso]>\n  <style>\n    body, table, td, a, span {\n      font-family: Arial, sans-serif !important;\n    }\n  </style>\n  <![endif]-->\n\n  <style>\n    @media only screen and (max-width: 820px) {\n      .main-container {\n        width: 100% !important;\n        border-radius: 0 !important;\n      }\n\n      .mobile-padding {\n        padding-left: 24px !important;\n        padding-right: 24px !important;\n      }\n\n      .hero-padding {\n        padding: 36px 24px 32px !important;\n      }\n\n      .title {\n        font-size: 24px !important;\n        line-height: 1.25 !important;\n      }\n\n      .button a {\n        display: block !important;\n        padding: 16px 24px !important;\n      }\n\n      .code-value {\n        font-size: 15px !important;\n      }\n    }\n  </style>\n</head>\n\n<body style=\"margin:0;padding:0;background-color:#f0f2f8;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;word-spacing:normal;\">\n  <div style=\"display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;\">\n    Ton accès e-learning est prêt. Retrouve ici ton lien de connexion et tes identifiants pour commencer ta formation demain.\n  </div>\n\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#f0f2f8;margin:0;padding:0;\">\n    <tr>\n      <td align=\"center\" style=\"padding:32px 16px 48px;\">\n\n        <table role=\"presentation\" width=\"800\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"main-container\" style=\"max-width:800px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,0.06);\">\n\n          <!-- HEADER -->\n          <tr>\n            <td class=\"hero-padding\" style=\"background:linear-gradient(135deg,#c91a3d 0%,#e8254a 45%,#f4476b 100%);padding:52px 56px 44px;text-align:center;\">\n\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:20px;\">\n                    <span style=\"font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.58);\">\n                      LA NOUVELLE ÉCOLE\n                    </span>\n                  </td>\n                </tr>\n              </table>\n\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td class=\"title\" align=\"center\" style=\"font-size:32px;font-weight:800;color:#ffffff;line-height:1.2;letter-spacing:-0.6px;padding-bottom:18px;\">\n                    Tes accès pour la formation !\n                  </td>\n                </tr>\n              </table>\n\n              <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" align=\"center\">\n                <tr>\n                  <td style=\"background-color:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.20);border-radius:999px;padding:9px 20px;font-size:14px;font-weight:600;color:#ffffff;\">\n                    📖 {{ $json.Formation }}\n                  </td>\n                </tr>\n              </table>\n\n            </td>\n          </tr>\n\n          <!-- BODY -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:42px 56px 18px;\">\n\n              <!-- INTRO -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"font-size:16px;color:#13162a;line-height:1.7;padding-bottom:26px;\">\n                    Bonjour {{ $json['Prénom'] }} 👋,<br><br>\n                    Ton accès à la plateforme e-learning est prêt.<br>\n                    Tu trouveras ci-dessous ton lien de connexion ainsi que tes identifiants pour te connecter simplement.\n                  </td>\n                </tr>\n              </table>\n\n              <!-- ACCESS CARD -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:#f7f8fc;border:1px solid #e8eaf1;border-radius:18px;padding:26px 26px 24px;\">\n\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:13px;font-weight:800;color:#8a8fa6;letter-spacing:1.4px;text-transform:uppercase;padding-bottom:16px;\">\n                          🔑 Tes codes d'accès\n                        </td>\n                      </tr>\n                    </table>\n\n                    <!-- IDENTIFIANT -->\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:12px;\">\n                      <tr>\n                        <td style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:12px;padding:14px 18px;\">\n                          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                            <tr>\n                              <td style=\"font-size:11px;font-weight:700;color:#8a8fa6;letter-spacing:0.6px;text-transform:uppercase;padding-bottom:5px;\">\n                                Identifiant\n                              </td>\n                            </tr>\n                            <tr>\n                              <td class=\"code-value\" style=\"font-size:16px;font-weight:700;color:#13162a;font-family:'Courier New',Courier,monospace;letter-spacing:0.3px;word-break:break-word;\">\n                                {{ $json['Identifiant E-learning'] }}\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n\n                    <!-- MOT DE PASSE -->\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:12px;padding:14px 18px;\">\n                          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                            <tr>\n                              <td style=\"font-size:11px;font-weight:700;color:#8a8fa6;letter-spacing:0.6px;text-transform:uppercase;padding-bottom:5px;\">\n                                Mot de passe\n                              </td>\n                            </tr>\n                            <tr>\n                              <td class=\"code-value\" style=\"font-size:16px;font-weight:700;color:#13162a;font-family:'Courier New',Courier,monospace;letter-spacing:0.3px;word-break:break-word;\">\n                                {{ $json['Mot de passe'] }}\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n\n                  </td>\n                </tr>\n              </table>\n\n              <!-- BUTTON -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:16px;\">\n                    <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                      <tr>\n                        <td align=\"center\" style=\"background:linear-gradient(135deg,#c91a3d,#e8254a);border-radius:14px;\">\n                          <a href=\"https://nouvelleecole.club/index.php/app/\" target=\"_blank\" style=\"display:inline-block;padding:16px 34px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">\n                            Accéder à ma formation\n                          </a>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:28px;font-size:13px;line-height:1.7;color:#5a5f7a;word-break:break-word;\">\n                    Si le bouton ne marche pas, essayez le lien suivant :<br>\n                    <a href=\"https://nouvelleecole.club/index.php/app/\" target=\"_blank\" style=\"color:#e8254a;text-decoration:underline;\">\n                      https://nouvelleecole.club/index.php/app/\n                    </a>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- INFO BOX -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:rgba(232,37,74,0.04);border:1px solid rgba(232,37,74,0.09);border-radius:14px;padding:20px 22px;\">\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:14px;font-weight:700;color:#e8254a;padding-bottom:8px;\">\n                          💡 Petit conseil\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:13px;color:#5a5f7a;line-height:1.7;\">\n                          Connecte-toi dès aujourd'hui pour découvrir ton espace de formation et commencer sereinement.<br>\n                          En cas de difficulté de connexion, notre équipe reste disponible pour t'aider.\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n            </td>\n          </tr>\n\n          <!-- DIVIDER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:0 56px;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"height:1px;background-color:#eef0f5;font-size:0;line-height:0;\"> </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- FOOTER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:24px 56px 32px;text-align:center;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"font-size:13px;color:#8a8fa6;line-height:1.6;padding-bottom:6px;\">\n                    La Nouvelle École t'accompagne tout au long de ta formation 🤝\n                  </td>\n                </tr>\n                <tr>\n                  <td align=\"center\" style=\"font-size:12px;color:#a2a7bc;line-height:1.6;\">\n                    À très vite sur la plateforme\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n        </table>\n\n      </td>\n    </tr>\n  </table>\n</body>\n</html>\n```\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        128
+      ],
+      "id": "36e61a74-fa71-4c96-a0f1-9f66b619929f",
+      "name": "Send a message1"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000002",
+          "mode": "list",
+          "cachedResultName": "Gestion E-learning 🕹️"
+        },
+        "id": "={{ $json.body.gestionRecordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        432,
+        128
+      ],
+      "id": "ef9b0673-0cac-4762-b3b9-a3f997984552",
+      "name": "Get a record1"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Get a record1": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

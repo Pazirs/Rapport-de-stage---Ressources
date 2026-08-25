@@ -1,0 +1,708 @@
+{
+  "name": "[APERCU] Renvoi convocation elearning",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "fromEmail": "formation@nouvelleecole.club",
+        "toEmail": "={{ $('Loop Over Items3').item.json.Mail }}",
+        "subject": "=Convocation à votre formation ",
+        "html": "=<p>Bonjour {{ $('Loop Over Items3').item.json['Prénom'] }},</p>\n\n<p>\nVotre <strong>convocation de formation</strong> a été mise à jour.\n</p>\n\n<p>\nVous la trouverez en pièce jointe de cet email.\n</p>\n\n<p>\nMerci d’en prendre connaissance avant le début de votre formation.\n</p>\n\n<p>\nBien cordialement,<br>\n<strong>L’équipe de La Nouvelle École</strong>\n</p>",
+        "options": {
+          "appendAttribution": false,
+          "attachments": "=Convocation de formation {{ $('Loop Over Items3').item.json['Prénom'] }}{{ $('Loop Over Items3').item.json.Nom }}.pdf"
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        2016,
+        4544
+      ],
+      "id": "562a3264-0747-44c2-bb18-013fd6e7763e",
+      "name": "Send email"
+    },
+    {
+      "parameters": {
+        "fromEmail": "formation@nouvelleecole.club",
+        "toEmail": "={{ $('Code in JavaScript2').item.json.Mail }}",
+        "subject": "=Convocation à votre formation – {{ $('Code in JavaScript2').item.json.Formation }}",
+        "html": "=<p>Bonjour {{ $('Code in JavaScript2').item.json['Prénom'] }},</p>\n\n<p>\nVotre <strong>convocation de formation</strong> a été mise à jour.\n</p>\n\n<p>\nVous la trouverez en pièce jointe de cet email.\n</p>\n\n<p>\nMerci d’en prendre connaissance avant le début de votre formation.\n</p>\n\n<p>\nBien cordialement,<br>\n<strong>L’équipe de La Nouvelle École</strong>\n</p>",
+        "options": {
+          "appendAttribution": false,
+          "attachments": "=Convocation de formation {{ $('Loop Over Items3').item.json['Prénom'] }}{{ $('Loop Over Items3').item.json.Nom }}.pdf"
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        2016,
+        4736
+      ],
+      "id": "1ade5b5a-e661-4cda-b7e5-a388a44ec2ef",
+      "name": "Send email1"
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.documentId }}",
+          "mode": "id"
+        },
+        "name": "=Convocation de fomation {{ $json.fields['Prénom'] }}{{ $json.fields.Nom }}.pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        224,
+        4512
+      ],
+      "id": "7fe7ac15-65ac-42c7-920f-b74184de4334",
+      "name": "Copy file"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000005",
+          "mode": "list",
+          "cachedResultName": "Sessions E-learning 🕹️"
+        },
+        "id": "={{ $('Loop Over Items3').item.json.Session[0] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        672,
+        4512
+      ],
+      "id": "f2e0fd36-be58-4c6a-beed-240312db0d8b",
+      "name": "Get a record"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000002",
+          "mode": "list",
+          "cachedResultName": "Gestion E-learning 🕹️"
+        },
+        "id": "={{ $json.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -448,
+        4944
+      ],
+      "id": "2c012d20-f27d-4529-a521-5e419153a240",
+      "name": "Get a record1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -672,
+        4896
+      ],
+      "id": "ff9053ca-ebc0-4026-9c43-3d0622492997",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f2e08948-80ad-4e2b-af5e-3562cee796f2",
+              "leftValue": "={{ $json.Formation }}",
+              "rightValue": "Fusion 360",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "10970f3e-b798-4aab-ad02-ea8744f228eb",
+              "leftValue": "={{ $json.Formation }}",
+              "rightValue": "SketchUp",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -448,
+        4752
+      ],
+      "id": "2c9a56ed-61d0-47f1-9815-583027ecddd8",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "jsCode": "const certificateur = $input.first().json.Certificateur || '';\n\nconst documentId = certificateur === 'Aucun'\n  ? 'GOOGLE-DOC-MASQUE-1'\n  : 'GOOGLE-DOC-MASQUE-2';\n\nreturn [{ json: { documentId } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        4512
+      ],
+      "id": "64abb829-23fd-43e3-8b42-f9f6f518eb7f",
+      "name": "choix de la bonne template"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -224,
+        4752
+      ],
+      "id": "f2d97558-0daa-4519-ae38-176f7622aa2c",
+      "name": "Loop Over Items3"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.documentId }}",
+          "mode": "id"
+        },
+        "options": {
+          "binaryPropertyName": "=Convocation de formation {{ $('Loop Over Items3').item.json[\"Prénom\"] }}{{ $('Loop Over Items3').item.json.Nom }}.pdf",
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf",
+              "drawingsToFormat": "application/pdf",
+              "slidesToFormat": "application/pdf",
+              "sheetsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1792,
+        4464
+      ],
+      "id": "aaa6949f-05c3-478f-a3bd-c35189fc7226",
+      "name": "Download file6"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000005",
+          "mode": "list",
+          "cachedResultName": "Contrats et Convocations"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "Formation",
+              "keyValue": "={{ $('Loop Over Items3').item.json.Formation }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        448,
+        4512
+      ],
+      "id": "ecb51dd2-ea15-4781-b567-7726baf67c97",
+      "name": "Get row(s)2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Code node n8n\n// Sortie : 1 item avec 3 variables\n// - Atelier : [\"Atelier 1\", ...]\n// - Creneau : [\"27/03/2026 de 18:00 à 19:00 ou 29/03/2026 de 16:00 à 17:00\", ...]\n// - Modalite : [\"En visioconférence\", ...]\n\nconst input = $json;\nconst certificateur = (input.Certificateur || \"\").trim();\n\nlet totalAteliers = 0;\n\nif (certificateur === \"One Learn\" || certificateur === \"Aucun\") {\n  totalAteliers = 5;\n} else if (certificateur === \"ICDL\") {\n  totalAteliers = 4;\n} else {\n  throw new Error(`Certificateur non géré : ${certificateur}`);\n}\n\nfunction addOneHour(timeStr) {\n  if (!timeStr || typeof timeStr !== \"string\") return \"\";\n\n  let [hours, minutes] = timeStr.split(\":\").map(Number);\n  hours = (hours + 1) % 24;\n\n  return `${String(hours).padStart(2, \"0\")}:${String(minutes).padStart(2, \"0\")}`;\n}\n\nfunction formatDateCreneauSansDecalage(isoString) {\n  if (!isoString || typeof isoString !== \"string\") return \"\";\n\n  const [datePart, timePartRaw] = isoString.split(\"T\");\n  if (!datePart || !timePartRaw) return isoString;\n\n  const [year, month, day] = datePart.split(\"-\");\n  const heureDebut = timePartRaw.slice(0, 5);\n  const heureFin = addOneHour(heureDebut);\n\n  return `${day}/${month}/${year} de ${heureDebut} à ${heureFin}`;\n}\n\nconst Atelier = [];\nconst Creneau = [];\nconst Modalite = [];\n\nfor (let i = 1; i <= totalAteliers; i++) {\n  const index1 = (i * 2) - 1;\n  const index2 = i * 2;\n\n  const date1 = input[`Date atelier ${index1}`];\n  const date2 = input[`Date atelier ${index2}`];\n\n  Atelier.push(`Atelier ${i}`);\n  Creneau.push(\n    `${formatDateCreneauSansDecalage(date1)} ou ${formatDateCreneauSansDecalage(date2)}`\n  );\n  Modalite.push(\"En visio\");\n}\n\nreturn [\n  {\n    json: {\n      Atelier,\n      Creneau,\n      Modalite,\n    },\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        4512
+      ],
+      "id": "abfee240-78f0-4afa-be77-fb42fdfb614b",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://docs.googleapis.com/v1/documents/{{ $('Copy file').item.json.id }}:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDocsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { requests: $json.requests } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1344,
+        4512
+      ],
+      "id": "7d1441b0-3700-4f10-a45f-1f66520c7d0c",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const documentId = $('Copy file').first().json.id;\n\nconst loopJson = $('Loop Over Items3').item.json || {};\nconst stagiaire = loopJson.fields || loopJson || {};\n\nconst session = $('Get a record').first().json || {};\nconst dataRow = $('Get row(s)2').first().json || {};\n\n// Helper pour toujours renvoyer une string propre\nfunction toText(value) {\n  if (value === undefined || value === null) return '';\n  if (Array.isArray(value)) return value.map(v => String(v ?? '')).join('\\n');\n  return String(value);\n}\n\n// Helper pour formater une date en jj/mm/aaaa\nfunction toFrenchDate(value) {\n  if (!value) return '';\n\n  const str = String(value);\n\n  if (str.includes('T')) {\n    const [datePart] = str.split('T');\n    const [year, month, day] = datePart.split('-');\n    if (year && month && day) {\n      return `${day}/${month}/${year}`;\n    }\n  }\n\n  const parts = str.split('-');\n  if (parts.length === 3) {\n    const [year, month, day] = parts;\n    return `${day}/${month}/${year}`;\n  }\n\n  return str;\n}\n\nconst replacements = [\n  {\n    oldText: '{{Formation}}',\n    newText: toText(stagiaire.Formation),\n  },\n  {\n    oldText: '{{Periode}}',\n    newText: toText(session.Session),\n  },\n  {\n    oldText: '{{Duree_totale}}',\n    newText: toText(dataRow.Duree_totale),\n  },\n  {\n    oldText: '{{Objectifs}}',\n    newText: toText(dataRow.Objectifs),\n  },\n  {\n    oldText: '{{Numero_et_nom_RS}}',\n    newText: toText(dataRow.Numero_et_nom_RS),\n  },\n  {\n    oldText: '{{Lien_RS}}',\n    newText: toText(dataRow.Lien_RS || dataRow['Lien_RS']),\n  },\n  {\n    oldText: '{{heure_foad}}',\n    newText: toText(dataRow.Heure_foad),\n  },\n  {\n    oldText: '{{heure_synchrone}}',\n    newText: toText(dataRow.Heure_synchrone),\n  },\n  {\n    oldText: '{{Aujourd_hui}}',\n    newText: toFrenchDate(stagiaire['Date de création de la ligne']),\n  },\n  {\n    oldText: '{{Prenom}}',\n    newText: toText(stagiaire['Prénom']),\n  },\n  {\n    oldText: '{{Nom}}',\n    newText: toText(stagiaire.Nom),\n  },\n  {\n    oldText: '{{Atelier_X}}',\n    newText: toText($json.Atelier),\n  },\n  {\n    oldText: '{{Date_Heure_X}}',\n    newText: toText($json.Creneau),\n  },\n  {\n    oldText: '{{Modalite}}',\n    newText: toText($json.Modalite),\n  },\n];\n\nconst requests = replacements.map(item => ({\n  replaceAllText: {\n    containsText: {\n      text: item.oldText,\n      matchCase: true,\n    },\n    replaceText: item.newText,\n  },\n}));\n\nreturn [\n  {\n    json: {\n      documentId,\n      requests,\n    },\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        4512
+      ],
+      "id": "2ac4c29d-eab5-4098-a956-db677e8e4b60",
+      "name": "Code in JavaScript5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d82f0fc5-d0e4-420d-b68e-7660f6dc779f",
+              "leftValue": "={{ $('Loop Over Items3').item.json.Certificateur }}",
+              "rightValue": "One Learn",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "0854237d-366e-4f3c-ad70-13478e6e6af3",
+              "leftValue": "={{ $('Loop Over Items3').item.json.Certificateur }}",
+              "rightValue": "Aucun",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1568,
+        4512
+      ],
+      "id": "6e28a12d-044e-48ea-a004-e950f06f21cd",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.documentId }}",
+          "mode": "id"
+        },
+        "options": {
+          "binaryPropertyName": "=Convocation de formation {{ $('Loop Over Items3').item.json[\"Prénom\"] }}{{ $('Loop Over Items3').item.json.Nom }}.pdf",
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf",
+              "drawingsToFormat": "application/pdf",
+              "slidesToFormat": "application/pdf",
+              "sheetsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1792,
+        4656
+      ],
+      "id": "77214a9b-2617-4cf4-84ac-fa8048ec39e3",
+      "name": "Download file2"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000005",
+          "mode": "list",
+          "cachedResultName": "Sessions E-learning 🕹️"
+        },
+        "filterByFormula": "{Session} = \"4 mai à 28 juin\"",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1344,
+        4896
+      ],
+      "id": "1f92f968-3986-4690-b7d8-b27230ac7384",
+      "name": "Search records2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst apprenantsInscrits = items.flatMap(item => {\n  const data = item.json.fields || item.json || {};\n\n  return Array.isArray(data[\"Apprenants Inscrits\"])\n    ? data[\"Apprenants Inscrits\"]\n    : [];\n});\n\n// Supprime les doublons\nconst idsUniques = [...new Set(apprenantsInscrits)];\n\n// Génère une formule Airtable utilisable dans Search Records\nconst formuleSearchRecords = idsUniques.length\n  ? `OR(${idsUniques.map(id => `RECORD_ID() = \"${id}\"`).join(\", \")})`\n  : `FALSE()`;\n\nreturn [\n  {\n    json: {\n      total_apprenants: idsUniques.length,\n      ids_apprenants: idsUniques,\n      formule_search_records: formuleSearchRecords\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1120,
+        4896
+      ],
+      "id": "e8223585-49d1-41e5-9731-2ba52bc1311d",
+      "name": "Code in JavaScript7"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000002",
+          "mode": "list",
+          "cachedResultName": "Gestion E-learning 🕹️"
+        },
+        "filterByFormula": "={{ $json.formule_search_records }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -896,
+        4896
+      ],
+      "id": "341e8e9f-9ca3-40c4-b2bf-6502e422bb52",
+      "name": "Search records3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1584,
+        4864
+      ],
+      "id": "3f941b3e-9355-46a5-b12f-ac7c7dc581d2",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "content": "filtrer sur mai hors fusion",
+        "height": 272,
+        "width": 326
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -608,
+        5168
+      ],
+      "typeVersion": 1,
+      "id": "c16acbe8-7121-4389-84d0-bfc74d179afd",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "Send email1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copy file": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a record": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a record1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "choix de la bonne template": {
+      "main": [
+        [
+          {
+            "node": "Copy file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [],
+        [
+          {
+            "node": "choix de la bonne template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file6": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)2": {
+      "main": [
+        [
+          {
+            "node": "Get a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Download file6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file2": {
+      "main": [
+        [
+          {
+            "node": "Send email1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript7": {
+      "main": [
+        [
+          {
+            "node": "Search records3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Search records2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

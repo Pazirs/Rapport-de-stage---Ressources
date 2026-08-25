@@ -1,0 +1,154 @@
+{
+  "name": "[APERCU] Envoi sms 1h avant examen one learn",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000002",
+          "mode": "list",
+          "cachedResultName": "Gestion E-learning 🕹️"
+        },
+        "options": {
+          "view": {
+            "__rl": true,
+            "value": "viwMASQUE00000000003",
+            "mode": "list",
+            "cachedResultName": "(NE PAS TOUCHER) Envoi sms 10min avant one learn"
+          }
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        80,
+        128
+      ],
+      "id": "cdc1c752-be80-4391-9994-64821bd4579e",
+      "name": "Search records"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -160,
+        128
+      ],
+      "id": "9b5d7c93-f6a6-480f-9cf9-0cc0830c1b5b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nfunction toText(value) {\n  if (value === null || value === undefined) return '';\n  if (Array.isArray(value)) return value.length ? toText(value[0]) : '';\n  return String(value).trim();\n}\n\nfunction formatNumeroRingover(value) {\n  const raw = toText(value);\n  if (!raw) return '';\n\n  let cleaned = raw.replace(/\\s+/g, '').replace(/[().-]/g, '');\n\n  if (cleaned.startsWith('00')) cleaned = `+${cleaned.slice(2)}`;\n  if (cleaned.startsWith('+')) return `+${cleaned.slice(1).replace(/\\D/g, '')}`;\n\n  const digits = cleaned.replace(/\\D/g, '');\n\n  if (digits.startsWith('0') && digits.length === 10) {\n    return `+33${digits.slice(1)}`;\n  }\n\n  if (digits.length === 9 && /^[1-9]/.test(digits)) {\n    return `+33${digits}`;\n  }\n\n  if (digits.startsWith('33')) {\n    return `+${digits}`;\n  }\n\n  return digits ? `+${digits}` : '';\n}\n\nfunction formatDateFr(date) {\n  return new Intl.DateTimeFormat('fr-FR', {\n    timeZone: 'Europe/Paris',\n    day: '2-digit',\n    month: '2-digit',\n    year: 'numeric',\n  }).format(date);\n}\n\nfunction formatHeureFr(date) {\n  return new Intl.DateTimeFormat('fr-FR', {\n    timeZone: 'Europe/Paris',\n    hour: '2-digit',\n    minute: '2-digit',\n    hour12: false,\n  }).format(date);\n}\n\nreturn items.map(item => {\n  const data = item.json.fields || item.json;\n\n  const prenom = toText(data['Prénom']);\n  const numeroRingover = formatNumeroRingover(data['Numéro']);\n\n  const rawDate = toText(data['Date de certification']);\n  const dateCertification = new Date(rawDate);\n\n  if (isNaN(dateCertification.getTime())) {\n    return {\n      json: {\n        ...item.json,\n        prenom_apprenant: prenom,\n        numero_ringover: numeroRingover,\n        erreur_date_certification: `Date invalide : ${rawDate}`,\n      },\n    };\n  }\n\n  const waitDate = new Date(dateCertification.getTime() - 60 * 60 * 1000);\n\n  return {\n    json: {\n      ...item.json,\n\n      prenom_apprenant: prenom,\n      numero_ringover: numeroRingover,\n\n      date_certification_fr: formatDateFr(dateCertification),\n      heure_certification_fr: formatHeureFr(dateCertification),\n      date_heure_certification_fr: `${formatDateFr(dateCertification)} à ${formatHeureFr(dateCertification)}`,\n\n      wait_jusqua_iso_utc: waitDate.toISOString(),\n      wait_jusqua_fr: `${formatDateFr(waitDate)} à ${formatHeureFr(waitDate)}`,\n\n      erreur_date_certification: '',\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        128
+      ],
+      "id": "86afba21-3445-4049-93a0-b85aabd25e1c",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.withallo.com/v1/api/sms#france",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "***RETIRE-POUR-APERCU***"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "sender_id",
+              "value": "AdminLNE"
+            },
+            {
+              "name": "to",
+              "value": "={{ $('Code in JavaScript').item.json.numero_ringover }}"
+            },
+            {
+              "name": "message",
+              "value": "=Bonjour {{ $('Code in JavaScript').item.json.prenom_apprenant }},\nvotre certification est prévue à {{ $json.heure_certification_fr }}.\nPensez à bien vérifier :\n- Votre lien Google Meet pour l'examen\n(envoyé par mail par \"hello@cal.com\")\n- Le lien de connexion à la plateforme One Learn : https://formations.one-learn.fr\n(Identifiants d'examens envoyés par \"mail@teachizy.fr\")\n\nLa Nouvelle École"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        912,
+        128
+      ],
+      "id": "a7ddb433-8dd5-4aa5-a7fc-1645e95971bc",
+      "name": "Envoi sms"
+    }
+  ],
+  "connections": {
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Envoi sms",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,502 @@
+{
+  "name": "[APERCU] Bouton création Compte formateurs",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://nouvelleecole.club/index.php/wp-json/mp/v1/members",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "MEMBERPRESS-API-KEY",
+              "value": "***RETIRE-POUR-APERCU***"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1552,
+        -192
+      ],
+      "id": "7d9925ea-dfd5-4acd-b8a3-7f0132f5d235",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const i = items[0].json;\n\nreturn [\n  {\n    json: {\n      email: i[\"Mail\"],\n      username: i[\"Mail\"],\n      password: i[\"Mot de passe\"],\n      first_name: i[\"Prénom\"] || \"\",\n      last_name: i[\"Nom\"] || \"\",\n      transaction: [\n        {\n          membership: i.membershipId,\n          amount: Number(i.amount),\n          total: Number(i.total),\n          status: i.status,\n          gateway: i.gateway\n        }\n      ],\n      send_password_email: Boolean(i.send_password_email),\n      send_welcome_email: Boolean(i.send_welcome_email),\n      token: i[\"Token\"] || \"\"\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1328,
+        -192
+      ],
+      "id": "7b1f9cc1-6b85-42c7-86cc-11b4a4c4bfff",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const m = items[0].json;\n\nconst existingMembership =\n  $('Code in JavaScript1').first().json.transaction[0].membership;\n\nreturn [\n  {\n    json: {\n      member: m.id,\n      membership: existingMembership,\n      amount: 0,\n      total: 0,\n      status: 'complete',\n      gateway: 'manual',\n    },\n  },\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1776,
+        -192
+      ],
+      "id": "49226369-3fae-4ad7-9596-80ef16a3068a",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://nouvelleecole.club/index.php/wp-json/mp/v1/transactions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "MEMBERPRESS-API-KEY",
+              "value": "***RETIRE-POUR-APERCU***"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2000,
+        -192
+      ],
+      "id": "7b7313b1-c8ee-4076-ad80-72e49a77b319",
+      "name": "HTTP Request3"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "apercu-retire-17-4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        656,
+        -192
+      ],
+      "id": "9f51dfc4-248d-48d8-8c3c-ebc994397cde",
+      "name": "Webhook1"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000006",
+          "mode": "list",
+          "cachedResultName": "table des formateurs"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nom_formateur": "={{ $('Webhook1').item.json.body.prenom }} {{ $('Webhook1').item.json.body.nom }}",
+            "email": "={{ $('Webhook1').item.json.body.mail }}",
+            "mot_de_passe": "={{ $('Code in JavaScript3').item.json.password }}",
+            "token": "={{ $('Code in JavaScript3').item.json.token }}",
+            "lien_consultation": "=https://nouvelleecole.club/index.php/interface-formateur/?t={{ $('Code in JavaScript3').item.json.token }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nom_formateur",
+              "displayName": "Nom_formateur",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "token",
+              "displayName": "token",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "lien_consultation",
+              "displayName": "lien_consultation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "mot_de_passe",
+              "displayName": "mot_de_passe",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        2224,
+        -192
+      ],
+      "id": "4958dd52-d607-44aa-bac2-85c740282516",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3a0e1d39-fe7a-466a-a07e-61511813f9f2",
+              "name": "username",
+              "value": "={{ $('Webhook').item.json.body.identifiant }}",
+              "type": "string"
+            },
+            {
+              "id": "7ef312a7-e5ca-499c-a22a-d240616c15bb",
+              "name": "email",
+              "value": "={{ $('Webhook').item.json.body.identifiant }}",
+              "type": "string"
+            },
+            {
+              "id": "88c07c47-3605-40f1-a164-fb4d17cfbca5",
+              "name": "password",
+              "value": "={{ $('Webhook').item.json.body.mot_de_passe }}",
+              "type": "string"
+            },
+            {
+              "id": "a4a0f146-3967-4bf2-bacb-9c2169c4d7da",
+              "name": "membershipId",
+              "value": "=6276",
+              "type": "number"
+            },
+            {
+              "id": "3c6cb211-d743-42e1-8eb2-bcf4adf89891",
+              "name": "amount",
+              "value": "0",
+              "type": "string"
+            },
+            {
+              "id": "f043b360-9663-4014-8db8-dd62813e72ae",
+              "name": "total",
+              "value": "0",
+              "type": "string"
+            },
+            {
+              "id": "696b16aa-a493-4e41-aebc-d4edf0bf002f",
+              "name": "status",
+              "value": "complete",
+              "type": "string"
+            },
+            {
+              "id": "7e58ca77-db60-4fc4-89c3-b2ec1e1b6bd4",
+              "name": "gateway",
+              "value": "manual",
+              "type": "string"
+            },
+            {
+              "id": "2312d7ab-f542-4337-9b7d-a10ad4306f81",
+              "name": "send_password_email",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "bea3802d-833a-4e82-b717-1a08d893c0fb",
+              "name": "send_welcome_email",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "b951be88-afc5-4761-a853-bee0bedead2e",
+              "name": "",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "d2233ddb-7309-4c4d-8354-d3b7cea3455e",
+              "name": "",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "bd97eaf3-fcc1-49b6-b954-3c53ebfe0335",
+              "name": "",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "4eeee689-3d13-48ed-9610-22ce2d6fa809",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        -400
+      ],
+      "id": "9ac1f061-934f-4dc2-a351-41abd411f123",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const i = items[0].json;\n\nreturn [\n  {\n    json: {\n      email: i.email,                    // obligatoire\n      username: i.username,              // obligatoire\n      password: i.password,              // facultatif mais accepté\n      first_name: \"\",\n      last_name: \"\",\n      transaction: [\n        {\n          membership: i.membershipId,    // obligatoire\n          amount: Number(i.amount),\n          total: Number(i.total),\n          status: i.status,\n          gateway: i.gateway\n        }\n      ],\n      send_password_email: Boolean(i.send_password_email),\n      send_welcome_email: Boolean(i.send_welcome_email)\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1328,
+        -400
+      ],
+      "id": "80f52197-8289-473d-98bd-66e7644fa257",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a4a0f146-3967-4bf2-bacb-9c2169c4d7da",
+              "name": "membershipId",
+              "value": "=6276",
+              "type": "number"
+            },
+            {
+              "id": "3c6cb211-d743-42e1-8eb2-bcf4adf89891",
+              "name": "amount",
+              "value": "0",
+              "type": "string"
+            },
+            {
+              "id": "f043b360-9663-4014-8db8-dd62813e72ae",
+              "name": "total",
+              "value": "0",
+              "type": "string"
+            },
+            {
+              "id": "696b16aa-a493-4e41-aebc-d4edf0bf002f",
+              "name": "status",
+              "value": "complete",
+              "type": "string"
+            },
+            {
+              "id": "7e58ca77-db60-4fc4-89c3-b2ec1e1b6bd4",
+              "name": "gateway",
+              "value": "manual",
+              "type": "string"
+            },
+            {
+              "id": "2312d7ab-f542-4337-9b7d-a10ad4306f81",
+              "name": "send_password_email",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "bea3802d-833a-4e82-b717-1a08d893c0fb",
+              "name": "send_welcome_email",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "b951be88-afc5-4761-a853-bee0bedead2e",
+              "name": "Nom",
+              "value": "={{ $('Webhook1').item.json.body.nom }}",
+              "type": "string"
+            },
+            {
+              "id": "d2233ddb-7309-4c4d-8354-d3b7cea3455e",
+              "name": "Prénom",
+              "value": "={{ $('Webhook1').item.json.body.prenom }}",
+              "type": "string"
+            },
+            {
+              "id": "bd97eaf3-fcc1-49b6-b954-3c53ebfe0335",
+              "name": "Mail",
+              "value": "={{ $('Webhook1').item.json.body.mail }}",
+              "type": "string"
+            },
+            {
+              "id": "4eeee689-3d13-48ed-9610-22ce2d6fa809",
+              "name": "Mot de passe",
+              "value": "={{ $json.password }}",
+              "type": "string"
+            },
+            {
+              "id": "80eaafcb-b30d-48fa-8bae-a95371158d1d",
+              "name": "Token",
+              "value": "={{ $json.token }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        -192
+      ],
+      "id": "ab6af65e-2ff7-4774-b2f2-7a57be889c25",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "function randomString(length, chars) {\n  let result = \"\";\n  for (let i = 0; i < length; i++) {\n    const index = Math.floor(Math.random() * chars.length);\n    result += chars.charAt(index);\n  }\n  return result;\n}\n\nconst passwordChars =\n  \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%!&*\";\n\nconst tokenChars =\n  \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";\n\nreturn [\n  {\n    json: {\n      password: randomString(12, passwordChars),\n      token: randomString(48, tokenChars)\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        -192
+      ],
+      "id": "e0c61d58-f03b-491a-805b-7bf50579bb51",
+      "name": "Code in JavaScript3"
+    }
+  ],
+  "connections": {
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

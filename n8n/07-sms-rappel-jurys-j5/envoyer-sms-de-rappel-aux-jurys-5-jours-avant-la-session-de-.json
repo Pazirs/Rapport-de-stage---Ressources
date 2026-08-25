@@ -1,0 +1,213 @@
+{
+  "name": "[APERCU] Envoyer sms de rappel aux jurys 5 jours avant la session de formation",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        896,
+        -64
+      ],
+      "id": "a164e35a-08ed-47fd-9f90-4420a69330d6",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion des apprenants"
+        },
+        "options": {
+          "view": {
+            "__rl": true,
+            "value": "viwMASQUE00000000001",
+            "mode": "list",
+            "cachedResultName": "(NE PAS TOUCHER) Certif drone dans 5 jours"
+          }
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        256,
+        -64
+      ],
+      "id": "fa3d2aae-448b-47ab-bc5e-b604a1a58178",
+      "name": "Search records"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        48,
+        -64
+      ],
+      "id": "bcb7af7e-c0f8-4c1c-affd-264ff37427aa",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst juryPhones = {\n  \"Jury 1 - Immo\": \"+33600000001\",\n  \"Jury 2 - Drone\": \"+33600000002\",\n  \"Jury 3 - Immo\": \"+33600000003\",\n  \"Jury 4 - Drone\": \"+33600000004\",\n  \"Jury 5 - Drone\": \"+33600000005\",\n  \"Jury 6 - Immo\": \"+33600000006\",\n  \"Jury 7 - Drone\": \"+33600000007\",\n  \"Jury 8 - Drone\": \"+33600000008\",\n  \"Jury 9 - Drone\": \"+33600000008\",\n  \"Jury 10 - Drone\": \"+33600000004\",\n  \"Jury 11 - Immo\": \"+33600000009\",\n  \"Jury 12 - Drone\": \"+33600000010\",\n  \"Jury 13 - Drone\": \"+33600000011\",\n  \"Jury 14 - Drone\": \"+33600000012\",\n  \"Jury 15 - Drone\": \"+33600000013\",\n  \"Jury 16 - Drone\": \"+33600000014\",\n  \"Jury 17 - Immo\": \"+33600000015\",\n  \"Jury 18 - Immo\": \"+33600000016\",\n  \"Jury 19 - Drone\": \"+33600000017\",\n  \"Jury 20 - Drone\": \"+33600000018\",\n  \"Jury 21 - Drone\": \"+33600000019\",\n  \"Jury 22 - Immo\": \"+33600000020\",\n  \"Jury 23 - Drone\": \"+33600000021\",\n  \"Jury 24 - Drone\": \"+33600000022\",\n  \"Jury 24 - Immo\": \"+33600000022\",\n  \"Jury 25 - Drone\": \"+33600000023\",\n  \"Jury 25 - Immo\": \"+33600000023\",\n  \"Jury 26 - Immo\": \"+33600000024\",\n  \"Jury 26 - Drone\": \"+33600000024\",\n  \"Jury 27 - Drone\": \"+33600000025\"\n};\n\nfunction normalizeJuryName(value) {\n  if (!value) return \"\";\n\n  return String(value)\n    .normalize(\"NFC\")\n    .replace(/\\u00A0/g, \" \")\n    .replace(/\\s+/g, \" \")\n    .replace(/\\s*-\\s*/g, \" - \")\n    .trim();\n}\n\nconst normalizedJuryPhones = {};\n\nfor (const [name, phone] of Object.entries(juryPhones)) {\n  normalizedJuryPhones[normalizeJuryName(name)] = phone;\n}\n\nconst seen = new Set();\nconst output = [];\n\nfor (const item of items) {\n  const data = item.json.fields || item.json;\n\n  const jurys = Array.isArray(data.Jurys)\n    ? data.Jurys\n    : data.Jurys\n      ? [data.Jurys]\n      : [];\n\n  for (const rawJury of jurys) {\n    const nomJury = normalizeJuryName(rawJury);\n    const numero = normalizedJuryPhones[nomJury];\n\n    if (!numero) continue;\n\n    const key = numero;\n\n    if (seen.has(key)) continue;\n    seen.add(key);\n\n    output.push({\n      json: {\n        jury_1_nom: nomJury.split(\" - \")[0].trim(),\n        jury_1_numero: numero\n      }\n    });\n  }\n}\n\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        528,
+        -64
+      ],
+      "id": "109bb7d1-6b62-419f-8a3a-b500ac2876cd",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1312,
+        -48
+      ],
+      "id": "f883c01a-fc72-4a5d-a730-134a97a79f85",
+      "name": "Wait"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.withallo.com/v1/api/sms#france",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "***RETIRE-POUR-APERCU***"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "sender_id",
+              "value": "AdminLNE"
+            },
+            {
+              "name": "to",
+              "value": "={{ $json.jury_1_numero }}"
+            },
+            {
+              "name": "message",
+              "value": "=Bonjour {{ $json.jury_1_nom }},\nPetit rappel : votre session jury est prévue dans 5 jours 😊\nÀ bientôt\n\nLa Nouvelle École"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1536,
+        -48
+      ],
+      "id": "2a4dfe32-e945-4e3b-ae79-f4d2eb2e1bfc",
+      "name": "Envoi sms",
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Envoi sms",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envoi sms": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

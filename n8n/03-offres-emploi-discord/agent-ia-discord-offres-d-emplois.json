@@ -1,0 +1,879 @@
+{
+  "name": "[APERCU] Agent IA discord(offres d'emplois)",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        2496,
+        2880
+      ],
+      "id": "7bd092ff-9fa3-45a2-9275-18f357870448",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "url": "https://jsearch.p.rapidapi.com/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{ $json.query }}"
+            },
+            {
+              "name": "num_pages",
+              "value": "1"
+            },
+            {
+              "name": "country",
+              "value": "fr"
+            },
+            {
+              "name": "language",
+              "value": "fr"
+            },
+            {
+              "name": "date_posted",
+              "value": "week"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-RapidAPI-Key",
+              "value": "={{ $json.rapidapi_key }}"
+            },
+            {
+              "name": "X-RapidAPI-Host",
+              "value": "jsearch.p.rapidapi.com"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3248,
+        2608
+      ],
+      "id": "1e7b2068-55b1-4061-86be-b042ef6cc345",
+      "name": "HTTP Request10"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000003",
+          "mode": "list",
+          "cachedResultName": "test_agent_discord"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "lien",
+              "keyValue": "={{ $json.lien }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {
+            "deja_publie": false
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "domaine",
+              "displayName": "domaine",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "brut_source",
+              "displayName": "brut_source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "deja_publie",
+              "displayName": "deja_publie",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "date_publication_discord",
+              "displayName": "date_publication_discord",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "texte_offre_discord",
+              "displayName": "texte_offre_discord",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "type",
+              "displayName": "type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "titre",
+              "displayName": "titre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "entreprise",
+              "displayName": "entreprise",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "localisation",
+              "displayName": "localisation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "date_publication",
+              "displayName": "date_publication",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "lien",
+              "displayName": "lien",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        3776,
+        2608
+      ],
+      "id": "38c5aa00-8164-4159-9765-5bfc66ae457a",
+      "name": "Upsert row(s)9"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000003",
+          "mode": "list",
+          "cachedResultName": "test_agent_discord"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "deja_publie",
+              "condition": "isFalse"
+            },
+            {
+              "keyName": "domaine",
+              "keyValue": "DRONE"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        2848,
+        2896
+      ],
+      "id": "5208f275-c4bf-4f8c-97f0-8022670cb7f4",
+      "name": "Get row(s)1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "000000000000000002",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "000000000000000004",
+          "mode": "list",
+          "cachedResultName": "🧑‍💼・offres-d’emploi"
+        },
+        "content": "={{ $json.texte_offre_discord }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        3136,
+        2896
+      ],
+      "id": "a213bcc6-1f8c-4889-b1ec-579f87ed4f10",
+      "name": "Send a message1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000003",
+          "mode": "list",
+          "cachedResultName": "test_agent_discord"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $('Get row(s)1').item.json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "deja_publie": true,
+            "date_publication_discord": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "domaine",
+              "displayName": "domaine",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "brut_source",
+              "displayName": "brut_source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "deja_publie",
+              "displayName": "deja_publie",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "date_publication_discord",
+              "displayName": "date_publication_discord",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "texte_offre_discord",
+              "displayName": "texte_offre_discord",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "type",
+              "displayName": "type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "titre",
+              "displayName": "titre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "entreprise",
+              "displayName": "entreprise",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "localisation",
+              "displayName": "localisation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "date_publication",
+              "displayName": "date_publication",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "lien",
+              "displayName": "lien",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "dryRun": false
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        3392,
+        2896
+      ],
+      "id": "fdb1d785-d05e-4e1e-af0f-d90c60b863cd",
+      "name": "Update row(s)1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000004",
+          "mode": "list",
+          "cachedResultName": "API"
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        2768,
+        2608
+      ],
+      "id": "9c8bad35-f791-49c4-a906-f53b6e569ec2",
+      "name": "Get row(s)9"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all();\n\nconst row = rows.find(item => {\n  const j = item.json || {};\n  return j.rapidapi_key || j.access_token || j.api_key || j.key;\n});\n\nconst rapidapiKey =\n  row?.json?.rapidapi_key ||\n  row?.json?.access_token ||\n  row?.json?.api_key ||\n  row?.json?.key;\n\nif (!rapidapiKey) {\n  throw new Error('Clé RapidAPI introuvable.');\n}\n\nconst key = String(rapidapiKey).replace(/[\\r\\n\\t]/g, '').trim();\n\nreturn [\n  {\n    json: {\n      rapidapi_key: key,\n      query: 'impression 3D France'\n    }\n  },\n  {\n    json: {\n      rapidapi_key: key,\n      query: 'CNC France'\n    }\n  },\n  {\n    json: {\n      rapidapi_key: key,\n      query: 'télépilote drone France'\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2992,
+        2608
+      ],
+      "id": "98dca0d0-522a-4044-b4d9-25069f2f5717",
+      "name": "Préparer clé RapidAPI + query tout en 1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000003",
+          "mode": "list",
+          "cachedResultName": "test_agent_discord"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "deja_publie",
+              "condition": "isFalse"
+            },
+            {
+              "keyName": "domaine",
+              "condition": "neq",
+              "keyValue": "DRONE"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        2832,
+        3152
+      ],
+      "id": "afb3857c-a221-46d7-9713-c99697f4c537",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "000000000000000002",
+          "mode": "id"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "000000000000000005",
+          "mode": "list",
+          "cachedResultName": "🧑‍💼-offres-d’emploi"
+        },
+        "content": "={{ $json.texte_offre_discord }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        3120,
+        3152
+      ],
+      "id": "dc30f6db-e859-4af4-a6c9-f203f81b8d24",
+      "name": "Send a message"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000003",
+          "mode": "list",
+          "cachedResultName": "test_agent_discord"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $('Get row(s)').item.json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "deja_publie": true,
+            "date_publication_discord": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "domaine",
+              "displayName": "domaine",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "brut_source",
+              "displayName": "brut_source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "deja_publie",
+              "displayName": "deja_publie",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "date_publication_discord",
+              "displayName": "date_publication_discord",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "texte_offre_discord",
+              "displayName": "texte_offre_discord",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "type",
+              "displayName": "type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "titre",
+              "displayName": "titre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "entreprise",
+              "displayName": "entreprise",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "localisation",
+              "displayName": "localisation",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "date_publication",
+              "displayName": "date_publication",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "lien",
+              "displayName": "lien",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "dryRun": false
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        3376,
+        3152
+      ],
+      "id": "2d0cdaf2-f055-4211-b715-a6fe7b792f2e",
+      "name": "Update row(s)"
+    },
+    {
+      "parameters": {
+        "jsCode": "const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;\nconst minTime = Date.now() - FIVE_DAYS_MS;\n\nconst seenLinks = new Set();\nconst out = [];\n\nlet jobs = [];\n\nfor (const item of items) {\n  if (Array.isArray(item.json?.data)) {\n    jobs.push(...item.json.data);\n  } else if (item.json) {\n    jobs.push(item.json);\n  }\n}\n\nfor (const job of jobs) {\n  const dateStr = job.job_posted_at_datetime_utc || job.job_posted_at;\n  if (!dateStr) continue;\n\n  const t = Date.parse(dateStr);\n  if (Number.isNaN(t) || t < minTime) continue;\n\n  const titreStr = (job.job_title || '').trim();\n  const titre = titreStr.toLowerCase();\n\n  if (\n    titre.includes('stage') ||\n    titre.includes('stagiaire') ||\n    titre.includes('intern') ||\n    titre.includes('alternance') ||\n    titre.includes('apprenti') ||\n    titre.includes('apprentissage')\n  ) continue;\n\n  const entreprise = (job.employer_name || '').trim();\n  const localisation = [job.job_city, job.job_country].filter(Boolean).join(', ');\n  const lien = job.job_apply_link || job.job_apply_url || job.job_google_link || '';\n  const desc = job.job_description || '';\n\n  if (!titreStr || !lien || seenLinks.has(lien)) continue;\n  seenLinks.add(lien);\n\n  const txt = `${titreStr} ${desc}`.toLowerCase();\n\n  let domaine = '';\n  if (\n    txt.includes('impression 3d') ||\n    txt.includes('fabrication additive') ||\n    txt.includes('additive manufacturing') ||\n    txt.includes('modélisation 3d') ||\n    txt.includes('modelisation 3d') ||\n    txt.includes('3d printing')\n  ) domaine = '3D';\n  else if (\n    txt.includes('cnc') ||\n    txt.includes('fraisage') ||\n    txt.includes('usinage') ||\n    txt.includes('découpe laser') ||\n    txt.includes('decoupe laser') ||\n    txt.includes('gravure laser') ||\n    txt.includes('milling')\n  ) domaine = 'CNC';\n  else if (\n    txt.includes('drone') ||\n    txt.includes('télépilote') ||\n    txt.includes('telepilote') ||\n    txt.includes('uas') ||\n    txt.includes('uav')\n  ) domaine = 'DRONE';\n\n  if (!domaine) continue;\n\n  const texteDiscord =\n`🎯 ${titreStr}\n📍 Localisation : ${localisation || 'Non précisée'}\n🏢 Entreprise : ${entreprise || 'Non précisée'}\n\n🔗 Voir l’offre complète et postuler : ${lien}`;\n\n  out.push({\n    json: {\n      type: 'emploi',\n      source: 'JSearch',\n      titre: titreStr,\n      entreprise,\n      localisation,\n      lien,\n      date_publication: dateStr,\n      domaine,\n      brut_source: JSON.stringify(job).slice(0, 5000),\n      texte_offre_discord: texteDiscord,\n      deja_publie: false,\n    },\n  });\n}\n\nreturn out.slice(0, 10);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3488,
+        2224
+      ],
+      "id": "6135a07d-6d28-4a88-88a0-6f0ded690ba5",
+      "name": "Code in JavaScript10 de debug"
+    },
+    {
+      "parameters": {
+        "jsCode": "const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;\nconst minTime = Date.now() - FIVE_DAYS_MS;\n\nconst seenLinks = new Set();\nconst selectedByGroup = {\n  DIY: null,\n  DRONE: null,\n};\n\nlet jobs = [];\n\nfor (const item of items) {\n  if (Array.isArray(item.json?.data)) {\n    jobs.push(...item.json.data);\n  } else if (item.json) {\n    jobs.push(item.json);\n  }\n}\n\nfunction normalizeText(value) {\n  return String(value || '')\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase()\n    .trim();\n}\n\nfor (const job of jobs) {\n  const dateStr = job.job_posted_at_datetime_utc || job.job_posted_at;\n  if (!dateStr) continue;\n\n  const t = Date.parse(dateStr);\n  if (Number.isNaN(t) || t < minTime) continue;\n\n  const titreStr = (job.job_title || '').trim();\n  const titre = normalizeText(titreStr);\n\n  if (\n    titre.includes('stage') ||\n    titre.includes('stagiaire') ||\n    titre.includes('intern') ||\n    titre.includes('alternance') ||\n    titre.includes('apprenti') ||\n    titre.includes('apprentissage')\n  ) continue;\n\n  const entreprise = (job.employer_name || '').trim();\n  const localisation = [job.job_city, job.job_country].filter(Boolean).join(', ');\n  const lien = job.job_apply_link || job.job_apply_url || job.job_google_link || '';\n  const desc = job.job_description || '';\n\n  if (!titreStr || !lien || seenLinks.has(lien)) continue;\n  seenLinks.add(lien);\n\n  const txt = normalizeText(`${titreStr} ${desc}`);\n\n  const isDrone =\n    txt.includes('drone') ||\n    txt.includes('telepilote') ||\n    txt.includes('pilote drone') ||\n    txt.includes('pilotage drone') ||\n    txt.includes('uas') ||\n    txt.includes('uav') ||\n    txt.includes('aeronef sans equipage') ||\n    txt.includes('aeronefs sans equipage') ||\n    txt.includes('photogrammetrie par drone') ||\n    txt.includes('inspection par drone');\n\n  const isCnc =\n    txt.includes('cnc') ||\n    txt.includes('fraisage') ||\n    txt.includes('usinage') ||\n    txt.includes('decoupe laser') ||\n    txt.includes('gravure laser') ||\n    txt.includes('milling');\n\n  const is3D =\n    txt.includes('impression 3d') ||\n    txt.includes('fabrication additive') ||\n    txt.includes('additive manufacturing') ||\n    txt.includes('modelisation 3d') ||\n    txt.includes('3d printing');\n\n  let domaine = '';\n\n  if (isDrone) domaine = 'DRONE';\n  else if (isCnc) domaine = 'CNC';\n  else if (is3D) domaine = '3D';\n\n  if (!domaine) continue;\n\n  const group = domaine === 'DRONE' ? 'DRONE' : 'DIY';\n\n  if (selectedByGroup[group]) continue;\n\n  const texteDiscord =\n`🎯 ${titreStr}\n📍 Localisation : ${localisation || 'Non précisée'}\n🏢 Entreprise : ${entreprise || 'Non précisée'}\n\n🔗 Voir l’offre complète et postuler : ${lien}`;\n\n  selectedByGroup[group] = {\n    json: {\n      type: 'emploi',\n      source: 'JSearch',\n      titre: titreStr,\n      entreprise,\n      localisation,\n      lien,\n      date_publication: dateStr,\n      domaine,\n      brut_source: JSON.stringify(job).slice(0, 5000),\n      texte_offre_discord: texteDiscord,\n      deja_publie: false,\n    },\n  };\n\n  if (selectedByGroup.DIY && selectedByGroup.DRONE) break;\n}\n\nreturn Object.values(selectedByGroup).filter(Boolean);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3504,
+        2608
+      ],
+      "id": "47eafb02-8df2-4e35-a2af-6795a5148857",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;\nconst minTime = Date.now() - FIVE_DAYS_MS;\n\nconst seenLinks = new Set();\nconst out = [];\n\nlet jobs = [];\n\nfor (const item of items) {\n  if (Array.isArray(item.json?.data)) {\n    jobs.push(...item.json.data);\n  } else if (item.json) {\n    jobs.push(item.json);\n  }\n}\n\nfunction normalizeText(value) {\n  return String(value || '')\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase()\n    .trim();\n}\n\nfor (const job of jobs) {\n  const dateStr = job.job_posted_at_datetime_utc || job.job_posted_at;\n  if (!dateStr) continue;\n\n  const t = Date.parse(dateStr);\n  if (Number.isNaN(t) || t < minTime) continue;\n\n  const titreStr = (job.job_title || '').trim();\n  const titre = normalizeText(titreStr);\n\n  if (\n    titre.includes('stage') ||\n    titre.includes('stagiaire') ||\n    titre.includes('intern') ||\n    titre.includes('alternance') ||\n    titre.includes('apprenti') ||\n    titre.includes('apprentissage')\n  ) continue;\n\n  const entreprise = (job.employer_name || '').trim();\n  const localisation = [job.job_city, job.job_country].filter(Boolean).join(', ');\n  const lien = job.job_apply_link || job.job_apply_url || job.job_google_link || '';\n  const desc = job.job_description || '';\n\n  if (!titreStr || !lien || seenLinks.has(lien)) continue;\n  seenLinks.add(lien);\n\n  const txt = normalizeText(`${titreStr} ${desc}`);\n\n  const isDrone =\n    txt.includes('drone') ||\n    txt.includes('telepilote') ||\n    txt.includes('pilote drone') ||\n    txt.includes('pilotage drone') ||\n    txt.includes('uas') ||\n    txt.includes('uav') ||\n    txt.includes('aeronef sans equipage') ||\n    txt.includes('aeronefs sans equipage') ||\n    txt.includes('photogrammetrie par drone') ||\n    txt.includes('inspection par drone');\n\n  const isCnc =\n    txt.includes('cnc') ||\n    txt.includes('fraisage') ||\n    txt.includes('usinage') ||\n    txt.includes('decoupe laser') ||\n    txt.includes('gravure laser') ||\n    txt.includes('milling');\n\n  const is3D =\n    txt.includes('impression 3d') ||\n    txt.includes('fabrication additive') ||\n    txt.includes('additive manufacturing') ||\n    txt.includes('modelisation 3d') ||\n    txt.includes('3d printing');\n\n  let domaine = '';\n\n  // Priorité au drone pour éviter qu'une offre drone avec \"modélisation 3D\" parte en 3D\n  if (isDrone) domaine = 'DRONE';\n  else if (isCnc) domaine = 'CNC';\n  else if (is3D) domaine = '3D';\n\n  if (!domaine) continue;\n\n  const texteDiscord =\n`🎯 ${titreStr}\n📍 Localisation : ${localisation || 'Non précisée'}\n🏢 Entreprise : ${entreprise || 'Non précisée'}\n\n🔗 Voir l’offre complète et postuler : ${lien}`;\n\n  out.push({\n    json: {\n      type: 'emploi',\n      source: 'JSearch',\n      titre: titreStr,\n      entreprise,\n      localisation,\n      lien,\n      date_publication: dateStr,\n      domaine,\n      brut_source: JSON.stringify(job).slice(0, 5000),\n      texte_offre_discord: texteDiscord,\n      deja_publie: false,\n    },\n  });\n}\n\nreturn out.slice(0, 10);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3712,
+        2224
+      ],
+      "id": "b89a6fac-886b-4e46-9a20-52b0dbab5c5f",
+      "name": "Code in JavaScript10 de debug 2.0"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s)9",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request10": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)1": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Update row(s)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)9": {
+      "main": [
+        [
+          {
+            "node": "Préparer clé RapidAPI + query tout en 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer clé RapidAPI + query tout en 1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript10 de debug": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Upsert row(s)9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript10 de debug 2.0": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

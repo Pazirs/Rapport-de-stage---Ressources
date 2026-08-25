@@ -1,0 +1,3610 @@
+{
+  "name": "[APERCU] Inscription auto-certif ICDL",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "apercu-retire-5-0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        112,
+        0
+      ],
+      "id": "660f033f-52b1-48c7-bdeb-18729ed52c5e",
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000002",
+          "mode": "list",
+          "cachedResultName": "Gestion E-learning 🕹️"
+        },
+        "id": "={{ $json.body.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "8029aaf2-6cad-43a7-af46-f7ddc86bd073",
+      "name": "Get a record"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1f1f1a1d-a168-47f8-ba94-74d474df45b6",
+              "leftValue": "={{ $json.fields['MDP examen ICDL'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c3fd18b1-c6f9-4a66-b58c-1dc467e967db",
+              "leftValue": "={{ $json.fields['MDP examen ICDL'] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        832,
+        0
+      ],
+      "id": "2187508a-7d20-4108-bcf7-9a7e25ad4835",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.fields.Mail }}",
+        "subject": "Confirmation d’inscription à votre examen ICDL",
+        "message": "=<!DOCTYPE html>\n<html lang=\"fr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"x-apple-disable-message-reformatting\">\n  <title>Confirmation d’inscription à votre examen ICDL</title>\n\n  <!--[if mso]>\n  <style>\n    body, table, td, a, span {\n      font-family: Arial, sans-serif !important;\n    }\n  </style>\n  <![endif]-->\n\n  <style>\n    @media only screen and (max-width: 820px) {\n      .main-container {\n        width: 100% !important;\n        border-radius: 0 !important;\n      }\n\n      .mobile-padding {\n        padding-left: 24px !important;\n        padding-right: 24px !important;\n      }\n\n      .hero-padding {\n        padding: 36px 24px 32px !important;\n      }\n\n      .title {\n        font-size: 24px !important;\n        line-height: 1.25 !important;\n      }\n\n      .button a {\n        display: block !important;\n        padding: 16px 24px !important;\n      }\n\n      .code-value {\n        font-size: 15px !important;\n      }\n    }\n  </style>\n\n</head>\n\n<body style=\"margin:0;padding:0;background-color:#f0f2f8;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;word-spacing:normal;\">\n  <div style=\"display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;\">\n    Votre inscription à l’examen ICDL est confirmée. Vous devez passer l’examen dans les 3 jours.\n  </div>\n\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#f0f2f8;margin:0;padding:0;\">\n    <tr>\n      <td align=\"center\" style=\"padding:32px 16px 48px;\">\n\n        <table role=\"presentation\" width=\"800\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"main-container\" style=\"max-width:800px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,0.06);\">\n\n          <!-- HEADER -->\n          <tr>\n            <td class=\"hero-padding\" style=\"background:linear-gradient(135deg,#c91a3d 0%,#e8254a 45%,#f4476b 100%);padding:52px 56px 44px;text-align:center;\">\n\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:20px;\">\n                    <span style=\"font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.58);\">\n                      LA NOUVELLE ÉCOLE\n                    </span>\n                  </td>\n                </tr>\n              </table>\n\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td class=\"title\" align=\"center\" style=\"font-size:32px;font-weight:800;color:#ffffff;line-height:1.2;letter-spacing:-0.6px;padding-bottom:18px;\">\n                    Votre inscription à l’examen ICDL est confirmée\n                  </td>\n                </tr>\n              </table>\n\n              <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" align=\"center\">\n                <tr>\n                  <td style=\"background-color:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.20);border-radius:999px;padding:9px 20px;font-size:14px;font-weight:600;color:#ffffff;\">\n                    📝 Examen QCM ICDL\n                  </td>\n                </tr>\n              </table>\n\n            </td>\n          </tr>\n\n          <!-- BODY -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:42px 56px 18px;\">\n\n              <!-- INTRO -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"font-size:16px;color:#13162a;line-height:1.7;padding-bottom:26px;\">\n                    Bonjour {{ $json.fields['Prénom'] }} 👋<br><br>\n                    Votre inscription à l’examen ICDL est bien confirmée.<br>\n                    Vous devez maintenant passer cet examen dans un délai de <strong>3 jours</strong>.\n                  </td>\n                </tr>\n              </table>\n\n              <!-- IMPORTANT BOX -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:rgba(232,37,74,0.06);border:1px solid rgba(232,37,74,0.14);border-radius:16px;padding:22px 24px;\">\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:15px;font-weight:800;color:#e8254a;padding-bottom:8px;\">\n                          ⚠️ Important\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:14px;color:#5a5f7a;line-height:1.7;\">\n                          Le passage de l’examen est obligatoire et fait partie intégrante de votre parcours de formation.<br>\n                          Après ces 3 jours, si l’examen n’a pas été passé, vous ne pourrez pas accéder au contenu e-learning tant que l’examen n’aura pas été réalisé.\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- EXAM CARD -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:#f7f8fc;border:1px solid #e8eaf1;border-radius:18px;padding:26px 26px 24px;\">\n\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:13px;font-weight:800;color:#8a8fa6;letter-spacing:1.4px;text-transform:uppercase;padding-bottom:18px;\">\n                          📌 Informations sur l’examen\n                        </td>\n                      </tr>\n                    </table>\n\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:14px;\">\n                      <tr>\n                        <td style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:14px;padding:18px 20px;\">\n                          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                            <tr>\n                              <td style=\"font-size:15px;font-weight:800;color:#13162a;padding-bottom:8px;\">\n                                Format\n                              </td>\n                            </tr>\n                            <tr>\n                              <td style=\"font-size:14px;color:#5a5f7a;line-height:1.7;\">\n                                L’examen ICDL est un <strong>QCM de 36 questions</strong>.<br>\n                                La durée prévue est de <strong>35 minutes</strong>.\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:14px;padding:18px 20px;\">\n                          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                            <tr>\n                              <td style=\"font-size:15px;font-weight:800;color:#13162a;padding-bottom:8px;\">\n                                Réussite\n                              </td>\n                            </tr>\n                            <tr>\n                              <td style=\"font-size:14px;color:#5a5f7a;line-height:1.7;\">\n                                Pour réussir l’examen, vous devez obtenir au minimum <strong>75 % de bonnes réponses</strong>.\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n\n                  </td>\n                </tr>\n              </table>\n\n              <!-- ACCESS CARD -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:#f7f8fc;border:1px solid #e8eaf1;border-radius:18px;padding:26px 26px 24px;\">\n\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:13px;font-weight:800;color:#8a8fa6;letter-spacing:1.4px;text-transform:uppercase;padding-bottom:16px;\">\n                          🔑 Vos accès pour l’examen\n                        </td>\n                      </tr>\n                    </table>\n\n                    <!-- IDENTIFIANT -->\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:12px;\">\n                      <tr>\n                        <td style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:12px;padding:14px 18px;\">\n                          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                            <tr>\n                              <td style=\"font-size:11px;font-weight:700;color:#8a8fa6;letter-spacing:0.6px;text-transform:uppercase;padding-bottom:5px;\">\n                                Identifiant\n                              </td>\n                            </tr>\n                            <tr>\n                              <td class=\"code-value\" style=\"font-size:16px;font-weight:700;color:#13162a;font-family:'Courier New',Courier,monospace;letter-spacing:0.3px;word-break:break-word;\">\n                                {{ $json.fields['Identifiant ICDL'] }}\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n\n                    <!-- MOT DE PASSE -->\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:12px;padding:14px 18px;\">\n                          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                            <tr>\n                              <td style=\"font-size:11px;font-weight:700;color:#8a8fa6;letter-spacing:0.6px;text-transform:uppercase;padding-bottom:5px;\">\n                                Mot de passe\n                              </td>\n                            </tr>\n                            <tr>\n                              <td class=\"code-value\" style=\"font-size:16px;font-weight:700;color:#13162a;font-family:'Courier New',Courier,monospace;letter-spacing:0.3px;word-break:break-word;\">\n                                {{ $json.fields['MDP examen ICDL'] }}\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n\n                  </td>\n                </tr>\n              </table>\n\n              <!-- EXAM PLATFORM LINK -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:#f7f8fc;border:1px solid #e8eaf1;border-radius:18px;padding:24px 26px;\">\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:14px;font-weight:800;color:#13162a;padding-bottom:8px;\">\n                          🔗 Lien pour passer l’examen\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:14px;color:#5a5f7a;line-height:1.7;padding-bottom:18px;\">\n                          Vous pourrez vous connecter à la plateforme candidat ICDL avec les identifiants indiqués ci-dessus.\n                        </td>\n                      </tr>\n                      <tr>\n                        <td align=\"center\">\n                          <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                            <tr>\n                              <td align=\"center\" style=\"background-color:#ffffff;border:1px solid #e8254a;border-radius:14px;\">\n                                <a href=\"https://candidat.icdlfrance.org/\" target=\"_blank\" style=\"display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#e8254a;text-decoration:none;letter-spacing:0.2px;\">\n                                  Accéder à la plateforme ICDL\n                                </a>\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- DISCREET ICDL EMAIL NOTE -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:#ffffff;border:1px solid #eef0f5;border-radius:12px;padding:14px 16px;\">\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:12px;color:#8a8fa6;line-height:1.6;\">\n                          Un email automatique peut également vous être envoyé par <strong>no-reply@icdlfrance.org</strong>. Pensez à vérifier vos spams si besoin.\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- NOTICE TEXT -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"font-size:15px;color:#13162a;line-height:1.7;\">\n                    Avant de passer l’examen, merci de lire attentivement la notice officielle ICDL. Elle vous explique comment vous connecter et lancer votre examen en autonomie.<br><br>\n                    Pour le passage de l’examen, prévoyez simplement un <strong>ordinateur connecté à Internet</strong> et une <strong>webcam fonctionnelle</strong>.\n                  </td>\n                </tr>\n              </table>\n\n              <!-- NOTICE BUTTON -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:22px;\">\n                    <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                      <tr>\n                        <td align=\"center\" style=\"background:linear-gradient(135deg,#c91a3d,#e8254a);border-radius:14px;\">\n                          <a href=\"https://nouvelleecole.club/wp-content/uploads/2026/05/Notice-dutilisation-Auto-Certif-Candidat.pdf\" target=\"_blank\" style=\"display:inline-block;padding:16px 34px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">\n                            Consulter la notice ICDL\n                          </a>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n              {{ String($('Get a record').item.json.Formation || '').toLowerCase().includes('fusion') ? `\n              <!-- REVISION SUPPORT -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:#f7f8fc;border:1px solid #e8eaf1;border-radius:18px;padding:24px 26px;\">\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:14px;font-weight:800;color:#13162a;padding-bottom:8px;\">\n                          📚 Support complémentaire de révision\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:14px;color:#5a5f7a;line-height:1.7;padding-bottom:18px;\">\n                          Vous pouvez également consulter ce mémo de révision pour revoir les points essentiels avant votre examen.\n                        </td>\n                      </tr>\n                      <tr>\n                        <td align=\"center\">\n                          <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                            <tr>\n                              <td align=\"center\" style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:14px;\">\n                                <a href=\"https://nouvelleecole.club/wp-content/uploads/2026/06/2025_Fusion360_memo-revision.pdf\" target=\"_blank\" style=\"display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#e8254a;text-decoration:none;letter-spacing:0.2px;\">\n                                  Consulter le support de révision\n                                </a>\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n              ` : '' }}\n\n              <!-- FINAL INFO BOX -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:rgba(232,37,74,0.04);border:1px solid rgba(232,37,74,0.09);border-radius:14px;padding:20px 22px;\">\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:14px;font-weight:700;color:#e8254a;padding-bottom:8px;\">\n                          💡 À retenir\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:13px;color:#5a5f7a;line-height:1.7;\">\n                          L’examen peut être passé en autonomie, au moment qui vous convient, dans le délai imparti de 3 jours.<br>\n                          Nous vous conseillons de ne pas attendre le dernier moment afin d’éviter tout problème technique.\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n            </td>\n          </tr>\n\n          <!-- DIVIDER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:0 56px;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"height:1px;background-color:#eef0f5;font-size:0;line-height:0;\">&nbsp;</td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- FOOTER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:24px 56px 32px;text-align:center;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"font-size:13px;color:#8a8fa6;line-height:1.6;padding-bottom:6px;\">\n                    La Nouvelle École\n                  </td>\n                </tr>\n                <tr>\n                  <td align=\"center\" style=\"font-size:12px;color:#a2a7bc;line-height:1.6;\">\n\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n        </table>\n\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1136,
+        -192
+      ],
+      "id": "6315efa5-1e7d-48aa-94b4-0dce1cdfb0ce",
+      "name": "Send a message2"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.fields.Mail }}",
+        "subject": "Confirmation d’inscription à votre examen ICDL",
+        "message": "=<!DOCTYPE html>\n<html lang=\"fr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"x-apple-disable-message-reformatting\">\n  <title>Confirmation d’inscription à votre examen ICDL</title>\n\n  <!--[if mso]>\n  <style>\n    body, table, td, a, span {\n      font-family: Arial, sans-serif !important;\n    }\n  </style>\n  <![endif]-->\n\n  <style>\n    @media only screen and (max-width: 820px) {\n      .main-container {\n        width: 100% !important;\n        border-radius: 0 !important;\n      }\n\n      .mobile-padding {\n        padding-left: 24px !important;\n        padding-right: 24px !important;\n      }\n\n      .hero-padding {\n        padding: 36px 24px 32px !important;\n      }\n\n      .title {\n        font-size: 24px !important;\n        line-height: 1.25 !important;\n      }\n\n      .button a {\n        display: block !important;\n        padding: 16px 24px !important;\n      }\n\n      .code-value {\n        font-size: 15px !important;\n      }\n    }\n  </style>\n\n</head>\n\n<body style=\"margin:0;padding:0;background-color:#f0f2f8;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;word-spacing:normal;\">\n  <div style=\"display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;\">\n    Votre inscription à l’examen ICDL est confirmée. Vous devez passer l’examen dans les 3 jours.\n  </div>\n\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#f0f2f8;margin:0;padding:0;\">\n    <tr>\n      <td align=\"center\" style=\"padding:32px 16px 48px;\">\n\n        <table role=\"presentation\" width=\"800\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"main-container\" style=\"max-width:800px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,0.06);\">\n\n          <!-- HEADER -->\n          <tr>\n            <td class=\"hero-padding\" style=\"background:linear-gradient(135deg,#c91a3d 0%,#e8254a 45%,#f4476b 100%);padding:52px 56px 44px;text-align:center;\">\n\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:20px;\">\n                    <span style=\"font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.58);\">\n                      LA NOUVELLE ÉCOLE\n                    </span>\n                  </td>\n                </tr>\n              </table>\n\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td class=\"title\" align=\"center\" style=\"font-size:32px;font-weight:800;color:#ffffff;line-height:1.2;letter-spacing:-0.6px;padding-bottom:18px;\">\n                    Votre inscription à l’examen ICDL est confirmée\n                  </td>\n                </tr>\n              </table>\n\n              <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" align=\"center\">\n                <tr>\n                  <td style=\"background-color:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.20);border-radius:999px;padding:9px 20px;font-size:14px;font-weight:600;color:#ffffff;\">\n                    📝 Examen QCM ICDL\n                  </td>\n                </tr>\n              </table>\n\n            </td>\n          </tr>\n\n          <!-- BODY -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:42px 56px 18px;\">\n\n              <!-- INTRO -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"font-size:16px;color:#13162a;line-height:1.7;padding-bottom:26px;\">\n                    Bonjour {{ $json.fields['Prénom'] }} 👋<br><br>\n                    Votre inscription à l’examen ICDL est bien confirmée.<br>\n                    Vous devez maintenant passer cet examen dans un délai de <strong>3 jours</strong>.\n                  </td>\n                </tr>\n              </table>\n\n              <!-- IMPORTANT BOX -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:rgba(232,37,74,0.06);border:1px solid rgba(232,37,74,0.14);border-radius:16px;padding:22px 24px;\">\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:15px;font-weight:800;color:#e8254a;padding-bottom:8px;\">\n                          ⚠️ Important\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:14px;color:#5a5f7a;line-height:1.7;\">\n                          Le passage de l’examen est obligatoire et fait partie intégrante de votre parcours de formation.<br>\n                          Après ces 3 jours, si l’examen n’a pas été passé, vous ne pourrez pas accéder au contenu e-learning tant que l’examen n’aura pas été réalisé.\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- EXAM CARD -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:#f7f8fc;border:1px solid #e8eaf1;border-radius:18px;padding:26px 26px 24px;\">\n\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:13px;font-weight:800;color:#8a8fa6;letter-spacing:1.4px;text-transform:uppercase;padding-bottom:18px;\">\n                          📌 Informations sur l’examen\n                        </td>\n                      </tr>\n                    </table>\n\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:14px;\">\n                      <tr>\n                        <td style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:14px;padding:18px 20px;\">\n                          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                            <tr>\n                              <td style=\"font-size:15px;font-weight:800;color:#13162a;padding-bottom:8px;\">\n                                Format\n                              </td>\n                            </tr>\n                            <tr>\n                              <td style=\"font-size:14px;color:#5a5f7a;line-height:1.7;\">\n                                L’examen ICDL est un <strong>QCM de 36 questions</strong>.<br>\n                                La durée prévue est de <strong>35 minutes</strong>.\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:14px;padding:18px 20px;\">\n                          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                            <tr>\n                              <td style=\"font-size:15px;font-weight:800;color:#13162a;padding-bottom:8px;\">\n                                Réussite\n                              </td>\n                            </tr>\n                            <tr>\n                              <td style=\"font-size:14px;color:#5a5f7a;line-height:1.7;\">\n                                Pour réussir l’examen, vous devez obtenir au minimum <strong>75 % de bonnes réponses</strong>.\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n\n                  </td>\n                </tr>\n              </table>\n\n              <!-- EXAM PLATFORM LINK -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:#f7f8fc;border:1px solid #e8eaf1;border-radius:18px;padding:24px 26px;\">\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:14px;font-weight:800;color:#13162a;padding-bottom:8px;\">\n                          🔗 Lien pour passer l’examen\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:14px;color:#5a5f7a;line-height:1.7;padding-bottom:18px;\">\n                          Vous pourrez vous connecter à la plateforme candidat ICDL avec vos identifiants.\n                        </td>\n                      </tr>\n                      <tr>\n                        <td align=\"center\">\n                          <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                            <tr>\n                              <td align=\"center\" style=\"background-color:#ffffff;border:1px solid #e8254a;border-radius:14px;\">\n                                <a href=\"https://candidat.icdlfrance.org/\" target=\"_blank\" style=\"display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#e8254a;text-decoration:none;letter-spacing:0.2px;\">\n                                  Accéder à la plateforme ICDL\n                                </a>\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- DISCREET ICDL EMAIL NOTE -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:#ffffff;border:1px solid #eef0f5;border-radius:12px;padding:14px 16px;\">\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:12px;color:#8a8fa6;line-height:1.6;\">\n                          Un email automatique peut également vous être envoyé par <strong>no-reply@icdlfrance.org</strong>. Pensez à vérifier vos spams si besoin.\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- NOTICE TEXT -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"font-size:15px;color:#13162a;line-height:1.7;\">\n                    Avant de passer l’examen, merci de lire attentivement la notice officielle ICDL. Elle vous explique comment vous connecter et lancer votre examen en autonomie.<br><br>\n                    Pour le passage de l’examen, prévoyez simplement un <strong>ordinateur connecté à Internet</strong> et une <strong>webcam fonctionnelle</strong>.\n                  </td>\n                </tr>\n              </table>\n\n              <!-- NOTICE BUTTON -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:22px;\">\n                    <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                      <tr>\n                        <td align=\"center\" style=\"background:linear-gradient(135deg,#c91a3d,#e8254a);border-radius:14px;\">\n                          <a href=\"https://nouvelleecole.club/wp-content/uploads/2026/05/Notice-dutilisation-Auto-Certif-Candidat.pdf\" target=\"_blank\" style=\"display:inline-block;padding:16px 34px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">\n                            Consulter la notice ICDL\n                          </a>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n              {{ String($('Get a record').item.json.Formation || '').toLowerCase().includes('fusion') ? `\n              <!-- REVISION SUPPORT -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:#f7f8fc;border:1px solid #e8eaf1;border-radius:18px;padding:24px 26px;\">\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:14px;font-weight:800;color:#13162a;padding-bottom:8px;\">\n                          📚 Support complémentaire de révision\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:14px;color:#5a5f7a;line-height:1.7;padding-bottom:18px;\">\n                          Vous pouvez également consulter ce mémo de révision pour revoir les points essentiels avant votre examen.\n                        </td>\n                      </tr>\n                      <tr>\n                        <td align=\"center\">\n                          <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                            <tr>\n                              <td align=\"center\" style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:14px;\">\n                                <a href=\"https://nouvelleecole.club/wp-content/uploads/2026/06/2025_Fusion360_memo-revision.pdf\" target=\"_blank\" style=\"display:inline-block;padding:14px 28px;font-size:15px;font-weight:700;color:#e8254a;text-decoration:none;letter-spacing:0.2px;\">\n                                  Consulter le support de révision\n                                </a>\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n              ` : '' }}\n\n              <!-- FINAL INFO BOX -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:rgba(232,37,74,0.04);border:1px solid rgba(232,37,74,0.09);border-radius:14px;padding:20px 22px;\">\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:14px;font-weight:700;color:#e8254a;padding-bottom:8px;\">\n                          💡 À retenir\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:13px;color:#5a5f7a;line-height:1.7;\">\n                          L’examen peut être passé en autonomie, au moment qui vous convient, dans le délai imparti de 3 jours.<br>\n                          Nous vous conseillons de ne pas attendre le dernier moment afin d’éviter tout problème technique.\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n            </td>\n          </tr>\n\n          <!-- DIVIDER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:0 56px;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"height:1px;background-color:#eef0f5;font-size:0;line-height:0;\">&nbsp;</td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- FOOTER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:24px 56px 32px;text-align:center;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"font-size:13px;color:#8a8fa6;line-height:1.6;padding-bottom:6px;\">\n                    La Nouvelle École\n                  </td>\n                </tr>\n                <tr>\n                  <td align=\"center\" style=\"font-size:12px;color:#a2a7bc;line-height:1.6;\">\n\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n        </table>\n\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        224
+      ],
+      "id": "a82bf706-1276-425e-956b-9dbacd953b2f",
+      "name": "Send a message3"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000002",
+          "mode": "list",
+          "cachedResultName": "Gestion E-learning 🕹️"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "Inscription à l'auto-certif ICDL faite ?": true,
+            "Date inscription auto-certif ICDL": "={{ $now.setZone('Europe/Paris').toISO() }}",
+            "Résultat d'examen": "Attente",
+            "Résultats Définitifs ICDL": "={{ null }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Apprenant",
+              "displayName": "Apprenant",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Numéro",
+              "displayName": "Numéro",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Formation",
+              "displayName": "Formation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Réaliser son fichier numérique pour la fabrication additive - Fusion 360 et FDM",
+                  "value": "Réaliser son fichier numérique pour la fabrication additive - Fusion 360 et FDM"
+                },
+                {
+                  "name": "Réaliser son fichier numérique pour la fabrication additive - Fusion 360 et Résine",
+                  "value": "Réaliser son fichier numérique pour la fabrication additive - Fusion 360 et Résine"
+                },
+                {
+                  "name": "Réaliser son fichier numérique pour la fabrication additive - Blender et FDM",
+                  "value": "Réaliser son fichier numérique pour la fabrication additive - Blender et FDM"
+                },
+                {
+                  "name": "Réaliser son fichier numérique pour la fabrication additive - Blender et Résine",
+                  "value": "Réaliser son fichier numérique pour la fabrication additive - Blender et Résine"
+                },
+                {
+                  "name": "Fusion 360",
+                  "value": "Fusion 360"
+                },
+                {
+                  "name": "Fusion 360 pour le Fraisage",
+                  "value": "Fusion 360 pour le Fraisage"
+                },
+                {
+                  "name": "Fusion 360 pour la gravure laser",
+                  "value": "Fusion 360 pour la gravure laser"
+                },
+                {
+                  "name": "Adobe Illustrator pour la gravure laser",
+                  "value": "Adobe Illustrator pour la gravure laser"
+                },
+                {
+                  "name": "Annulé 😞",
+                  "value": "Annulé 😞"
+                },
+                {
+                  "name": "SketchUp",
+                  "value": "SketchUp"
+                },
+                {
+                  "name": "Autodesk Revit",
+                  "value": "Autodesk Revit"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Mail",
+              "displayName": "Mail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Date d'inscription",
+              "displayName": "Date d'inscription",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Technologie",
+              "displayName": "Technologie",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "FDM",
+                  "value": "FDM"
+                },
+                {
+                  "name": "Résine",
+                  "value": "Résine"
+                },
+                {
+                  "name": "Gravure",
+                  "value": "Gravure"
+                },
+                {
+                  "name": "SLA",
+                  "value": "SLA"
+                },
+                {
+                  "name": "Fraisage",
+                  "value": "Fraisage"
+                },
+                {
+                  "name": "Annulé",
+                  "value": "Annulé"
+                },
+                {
+                  "name": "CAO",
+                  "value": "CAO"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Certificateur",
+              "displayName": "Certificateur",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Aucun",
+                  "value": "Aucun"
+                },
+                {
+                  "name": "ICDL",
+                  "value": "ICDL"
+                },
+                {
+                  "name": "One Learn",
+                  "value": "One Learn"
+                },
+                {
+                  "name": "Annulé",
+                  "value": "Annulé"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Session",
+              "displayName": "Session",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Identifiant E-learning",
+              "displayName": "Identifiant E-learning",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Mot de passe",
+              "displayName": "Mot de passe",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Renvoi du lien et des IDs",
+              "displayName": "Renvoi du lien et des IDs",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Renvoyer",
+                  "value": "Renvoyer"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Financement",
+              "displayName": "Financement",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "CPF",
+                  "value": "CPF"
+                },
+                {
+                  "name": "OPCO",
+                  "value": "OPCO"
+                },
+                {
+                  "name": "Particulier",
+                  "value": "Particulier"
+                },
+                {
+                  "name": "France Travail",
+                  "value": "France Travail"
+                },
+                {
+                  "name": "B2B",
+                  "value": "B2B"
+                },
+                {
+                  "name": "Entreprise",
+                  "value": "Entreprise"
+                },
+                {
+                  "name": "Service Public",
+                  "value": "Service Public"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Prix",
+              "displayName": "Prix",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Mail Financeur",
+              "displayName": "Mail Financeur",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Test initial fait ?",
+              "displayName": "Test initial fait ?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "✅",
+                  "value": "✅"
+                },
+                {
+                  "name": "🟥",
+                  "value": "🟥"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Progression Semaine 1",
+              "displayName": "Progression Semaine 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Projet 1",
+              "displayName": "Projet 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Émargement visio 1",
+              "displayName": "Émargement visio 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Projet 1 valide",
+              "displayName": "Projet 1 valide",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Progression Semaine 2",
+              "displayName": "Progression Semaine 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Projet 2",
+              "displayName": "Projet 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Émargement visio 2",
+              "displayName": "Émargement visio 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Projet 2 valide",
+              "displayName": "Projet 2 valide",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Progression Semaine 3",
+              "displayName": "Progression Semaine 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Projet 3",
+              "displayName": "Projet 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Émargement visio 3",
+              "displayName": "Émargement visio 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Projet 3 valide",
+              "displayName": "Projet 3 valide",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Progression Semaine 4",
+              "displayName": "Progression Semaine 4",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Projet 4",
+              "displayName": "Projet 4",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Émargement visio 4",
+              "displayName": "Émargement visio 4",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Projet 4 valide",
+              "displayName": "Projet 4 valide",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Progression Semaine 5",
+              "displayName": "Progression Semaine 5",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Projet 5",
+              "displayName": "Projet 5",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Émargement visio 5",
+              "displayName": "Émargement visio 5",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Projet 5 valide",
+              "displayName": "Projet 5 valide",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Progression Semaine 6",
+              "displayName": "Progression Semaine 6",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Projet 6",
+              "displayName": "Projet 6",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Suivi Kit",
+              "displayName": "Suivi Kit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Dysfonctionnement",
+              "displayName": "Dysfonctionnement",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "Dysfonctionnement phoning",
+                  "value": "Dysfonctionnement phoning"
+                },
+                {
+                  "name": "CR formateur manquant",
+                  "value": "CR formateur manquant"
+                },
+                {
+                  "name": "Absent",
+                  "value": "Absent"
+                },
+                {
+                  "name": "Attente de retour",
+                  "value": "Attente de retour"
+                },
+                {
+                  "name": "Session décalée",
+                  "value": "Session décalée"
+                },
+                {
+                  "name": "Présence non signée",
+                  "value": "Présence non signée"
+                },
+                {
+                  "name": "Annulée",
+                  "value": "Annulée"
+                },
+                {
+                  "name": "Test initial non effectué",
+                  "value": "Test initial non effectué"
+                },
+                {
+                  "name": "Certif non passée",
+                  "value": "Certif non passée"
+                },
+                {
+                  "name": "Contrôle CDC",
+                  "value": "Contrôle CDC"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Rdv supp 1",
+              "displayName": "Rdv supp 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Émargement RDV supp 1",
+              "displayName": "Émargement RDV supp 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Formateur 1",
+              "displayName": "Formateur 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "Commercial 18",
+                  "value": "Commercial 18"
+                },
+                {
+                  "name": "formateur blabla 1",
+                  "value": "formateur blabla 1"
+                },
+                {
+                  "name": "Commercial 9",
+                  "value": "Commercial 9"
+                },
+                {
+                  "name": "Commercial 7",
+                  "value": "Commercial 7"
+                },
+                {
+                  "name": "Commercial 8",
+                  "value": "Commercial 8"
+                },
+                {
+                  "name": "Commercial 5",
+                  "value": "Commercial 5"
+                },
+                {
+                  "name": "Commercial 2",
+                  "value": "Commercial 2"
+                },
+                {
+                  "name": "Commercial 6",
+                  "value": "Commercial 6"
+                },
+                {
+                  "name": "Commercial 3",
+                  "value": "Commercial 3"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Rdv supp 2",
+              "displayName": "Rdv supp 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Émargement RDV supp 2",
+              "displayName": "Émargement RDV supp 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Formateur 2",
+              "displayName": "Formateur 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "Commercial 18",
+                  "value": "Commercial 18"
+                },
+                {
+                  "name": "fdsfd",
+                  "value": "fdsfd"
+                },
+                {
+                  "name": "formateur blabla 1",
+                  "value": "formateur blabla 1"
+                },
+                {
+                  "name": "formateur blabla 2",
+                  "value": "formateur blabla 2"
+                },
+                {
+                  "name": "Commercial 8",
+                  "value": "Commercial 8"
+                },
+                {
+                  "name": "Commercial 7",
+                  "value": "Commercial 7"
+                },
+                {
+                  "name": "Commercial 9",
+                  "value": "Commercial 9"
+                },
+                {
+                  "name": "Commercial 5",
+                  "value": "Commercial 5"
+                },
+                {
+                  "name": "Commercial 2",
+                  "value": "Commercial 2"
+                },
+                {
+                  "name": "Commercial 6",
+                  "value": "Commercial 6"
+                },
+                {
+                  "name": "Commercial 3",
+                  "value": "Commercial 3"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Remarques Globales",
+              "displayName": "Remarques Globales",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Certificat",
+              "displayName": "Certificat",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Progression Totale",
+              "displayName": "Progression Totale",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Fin",
+              "displayName": "Fin",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Fin partielle",
+              "displayName": "Fin partielle",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Facture",
+              "displayName": "Facture",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Montant réel facturé",
+              "displayName": "Montant réel facturé",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "N° Devis",
+              "displayName": "N° Devis",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Contact pour récupérer l'argent",
+              "displayName": "Contact pour récupérer l'argent",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Argent reçu ?",
+              "displayName": "Argent reçu ?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Commentaires sur kit",
+              "displayName": "Commentaires sur kit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Adresse",
+              "displayName": "Adresse",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Code Postal",
+              "displayName": "Code Postal",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ville",
+              "displayName": "Ville",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Devis",
+              "displayName": "Devis",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Convention de formation",
+              "displayName": "Convention de formation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Organisme financeur",
+              "displayName": "Organisme financeur",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "AFDAS",
+                  "value": "AFDAS"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Puissance de l’ordinateur",
+              "displayName": "Puissance de l’ordinateur",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Oui",
+                  "value": "Oui"
+                },
+                {
+                  "name": "Va acheter (l’envoi de la machine sera mis en pause)",
+                  "value": "Va acheter (l’envoi de la machine sera mis en pause)"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Niveau informatique",
+              "displayName": "Niveau informatique",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Repassage certif (One Learn)",
+              "displayName": "Repassage certif (One Learn)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ID contrat/hash",
+              "displayName": "ID contrat/hash",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Rdv supp 3",
+              "displayName": "Rdv supp 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Rdv supp 4",
+              "displayName": "Rdv supp 4",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Rdv supp 5",
+              "displayName": "Rdv supp 5",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Rdv supp 6",
+              "displayName": "Rdv supp 6",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Formateur 3",
+              "displayName": "Formateur 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "Commercial 18",
+                  "value": "Commercial 18"
+                },
+                {
+                  "name": "Commercial 8",
+                  "value": "Commercial 8"
+                },
+                {
+                  "name": "Commercial 7",
+                  "value": "Commercial 7"
+                },
+                {
+                  "name": "Commercial 9",
+                  "value": "Commercial 9"
+                },
+                {
+                  "name": "Commercial 5",
+                  "value": "Commercial 5"
+                },
+                {
+                  "name": "Commercial 2",
+                  "value": "Commercial 2"
+                },
+                {
+                  "name": "Commercial 6",
+                  "value": "Commercial 6"
+                },
+                {
+                  "name": "Commercial 3",
+                  "value": "Commercial 3"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Signé par",
+              "displayName": "Signé par",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "Commercial 10",
+                  "value": "Commercial 10"
+                },
+                {
+                  "name": "Commercial 12",
+                  "value": "Commercial 12"
+                },
+                {
+                  "name": "Commercial 13",
+                  "value": "Commercial 13"
+                },
+                {
+                  "name": "Commercial 14",
+                  "value": "Commercial 14"
+                },
+                {
+                  "name": "Commercial 1",
+                  "value": "Commercial 1"
+                },
+                {
+                  "name": "Commercial 4",
+                  "value": "Commercial 4"
+                },
+                {
+                  "name": "Commercial 11",
+                  "value": "Commercial 11"
+                },
+                {
+                  "name": "Commercial 15",
+                  "value": "Commercial 15"
+                },
+                {
+                  "name": "Commercial 17",
+                  "value": "Commercial 17"
+                },
+                {
+                  "name": "Commercial 16",
+                  "value": "Commercial 16"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Projet 6 valide",
+              "displayName": "Projet 6 valide",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Prime traiter a 100%",
+              "displayName": "Prime traiter a 100%",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Commentaire Projet",
+              "displayName": "Commentaire Projet",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ID calendrier RDV 4",
+              "displayName": "ID calendrier RDV 4",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Émargement RDV supp 3",
+              "displayName": "Émargement RDV supp 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Émargement RDV supp 4",
+              "displayName": "Émargement RDV supp 4",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Émargement RDV supp 5",
+              "displayName": "Émargement RDV supp 5",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Émargement RDV supp 6",
+              "displayName": "Émargement RDV supp 6",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Commentaire de l'Apprenant (Projet)",
+              "displayName": "Commentaire de l'Apprenant (Projet)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Score Test final",
+              "displayName": "Score Test final",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Date de certification",
+              "displayName": "Date de certification",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Certification passée ?",
+              "displayName": "Certification passée ?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Oui",
+                  "value": "Oui"
+                },
+                {
+                  "name": "Non",
+                  "value": "Non"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Résultat d'examen",
+              "displayName": "Résultat d'examen",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Réussite",
+                  "value": "Réussite"
+                },
+                {
+                  "name": "Échec",
+                  "value": "Échec"
+                },
+                {
+                  "name": "Attente",
+                  "value": "Attente"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Enqûete à chaud accessible ?",
+              "displayName": "Enqûete à chaud accessible ?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Identifiant ICDL",
+              "displayName": "Identifiant ICDL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Inscription à l'auto-certif ICDL faite ?",
+              "displayName": "Inscription à l'auto-certif ICDL faite ?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Date inscription auto-certif ICDL",
+              "displayName": "Date inscription auto-certif ICDL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Jours depuis inscription auto-certif ICDL",
+              "displayName": "Jours depuis inscription auto-certif ICDL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Prénom",
+              "displayName": "Prénom",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Nom",
+              "displayName": "Nom",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Date de début",
+              "displayName": "Date de début",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Score test initial",
+              "displayName": "Score test initial",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CR 1",
+              "displayName": "CR 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CR 2",
+              "displayName": "CR 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CR 3",
+              "displayName": "CR 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CR 4",
+              "displayName": "CR 4",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CR 5",
+              "displayName": "CR 5",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Confirmation envoi Machine ⚙️",
+              "displayName": "Confirmation envoi Machine ⚙️",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Achat particulier Machine 💸",
+              "displayName": "Achat particulier Machine 💸",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Confirmation achat particulier Machine 💸",
+              "displayName": "Confirmation achat particulier Machine 💸",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "À envoyer",
+              "displayName": "À envoyer",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Kit envoyé",
+              "displayName": "Kit envoyé",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "OUI",
+                  "value": "OUI"
+                },
+                {
+                  "name": "En attente ⚠",
+                  "value": "En attente ⚠"
+                },
+                {
+                  "name": "NON",
+                  "value": "NON"
+                },
+                {
+                  "name": "En attente ⚠",
+                  "value": "En attente ⚠"
+                },
+                {
+                  "name": "50 %",
+                  "value": "50 %"
+                },
+                {
+                  "name": "Annulé",
+                  "value": "Annulé"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "CR 6",
+              "displayName": "CR 6",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Création rdv 1",
+              "displayName": "Création rdv 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Ajout formateur 1",
+              "displayName": "Ajout formateur 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ID calendrier RDV 1",
+              "displayName": "ID calendrier RDV 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Lien rdv 1",
+              "displayName": "Lien rdv 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ID calendrier RDV 2",
+              "displayName": "ID calendrier RDV 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Lien rdv 2",
+              "displayName": "Lien rdv 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Besoins apprenants",
+              "displayName": "Besoins apprenants",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Historique formation (pour annulation)",
+              "displayName": "Historique formation (pour annulation)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Kit apprenant",
+              "displayName": "Kit apprenant",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "Neptune 4 Pro",
+                  "value": "Neptune 4 Pro"
+                },
+                {
+                  "name": "Genmitsu 3018-PROVer V2",
+                  "value": "Genmitsu 3018-PROVer V2"
+                },
+                {
+                  "name": "Mars 5 + Wash & Cure",
+                  "value": "Mars 5 + Wash & Cure"
+                },
+                {
+                  "name": "Centauri carbon 1",
+                  "value": "Centauri carbon 1"
+                },
+                {
+                  "name": "1KG PLA",
+                  "value": "1KG PLA"
+                },
+                {
+                  "name": "PAS DE MACHINES",
+                  "value": "PAS DE MACHINES"
+                },
+                {
+                  "name": "Mars 5",
+                  "value": "Mars 5"
+                },
+                {
+                  "name": "Sculpfun S30 Pro",
+                  "value": "Sculpfun S30 Pro"
+                },
+                {
+                  "name": "2KG PLA",
+                  "value": "2KG PLA"
+                },
+                {
+                  "name": "=1KG de résine",
+                  "value": "=1KG de résine"
+                },
+                {
+                  "name": "=Elegoo Centauri Carbon 1 + 1KG de PLA",
+                  "value": "=Elegoo Centauri Carbon 1 + 1KG de PLA"
+                },
+                {
+                  "name": "=Elegoo Mars 5 + 1KG de résine",
+                  "value": "=Elegoo Mars 5 + 1KG de résine"
+                },
+                {
+                  "name": "=1KG de PLA",
+                  "value": "=1KG de PLA"
+                },
+                {
+                  "name": "=Sculpfun S30 Pro 10W + Honeycomb",
+                  "value": "=Sculpfun S30 Pro 10W + Honeycomb"
+                },
+                {
+                  "name": "=Genmitsu 3018 Prover v2 + Planches A5",
+                  "value": "=Genmitsu 3018 Prover v2 + Planches A5"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Date de création de la ligne",
+              "displayName": "Date de création de la ligne",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Declencheur mail",
+              "displayName": "Declencheur mail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Declancheur discord",
+              "displayName": "Declancheur discord",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "déclencheur manuel contrat + convocation",
+              "displayName": "déclencheur manuel contrat + convocation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Envoi Contrat et convocation",
+              "displayName": "Envoi Contrat et convocation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date de fin",
+              "displayName": "Date de fin",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Visio 1.1",
+              "displayName": "Lien Émargement Visio 1.1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Visio 1.2",
+              "displayName": "Lien Émargement Visio 1.2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Visio 2.1",
+              "displayName": "Lien Émargement Visio 2.1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Visio 2.2",
+              "displayName": "Lien Émargement Visio 2.2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Visio 3.1",
+              "displayName": "Lien Émargement Visio 3.1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Visio 3.2",
+              "displayName": "Lien Émargement Visio 3.2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Visio 4.1",
+              "displayName": "Lien Émargement Visio 4.1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Visio 4.2",
+              "displayName": "Lien Émargement Visio 4.2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Visio 5.1",
+              "displayName": "Lien Émargement Visio 5.1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Visio 5.2",
+              "displayName": "Lien Émargement Visio 5.2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Formateur 4",
+              "displayName": "Formateur 4",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "Commercial 18",
+                  "value": "Commercial 18"
+                },
+                {
+                  "name": "Commercial 8",
+                  "value": "Commercial 8"
+                },
+                {
+                  "name": "Commercial 7",
+                  "value": "Commercial 7"
+                },
+                {
+                  "name": "Commercial 9",
+                  "value": "Commercial 9"
+                },
+                {
+                  "name": "Commercial 5",
+                  "value": "Commercial 5"
+                },
+                {
+                  "name": "Commercial 2",
+                  "value": "Commercial 2"
+                },
+                {
+                  "name": "Commercial 6",
+                  "value": "Commercial 6"
+                },
+                {
+                  "name": "Commercial 3",
+                  "value": "Commercial 3"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Formateur 5",
+              "displayName": "Formateur 5",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "Commercial 18",
+                  "value": "Commercial 18"
+                },
+                {
+                  "name": "formateur blabla 5",
+                  "value": "formateur blabla 5"
+                },
+                {
+                  "name": "Commercial 8",
+                  "value": "Commercial 8"
+                },
+                {
+                  "name": "Commercial 7",
+                  "value": "Commercial 7"
+                },
+                {
+                  "name": "Commercial 9",
+                  "value": "Commercial 9"
+                },
+                {
+                  "name": "Commercial 5",
+                  "value": "Commercial 5"
+                },
+                {
+                  "name": "Commercial 2",
+                  "value": "Commercial 2"
+                },
+                {
+                  "name": "Commercial 6",
+                  "value": "Commercial 6"
+                },
+                {
+                  "name": "Commercial 3",
+                  "value": "Commercial 3"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Formateur 6",
+              "displayName": "Formateur 6",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "Commercial 18",
+                  "value": "Commercial 18"
+                },
+                {
+                  "name": "Commercial 8",
+                  "value": "Commercial 8"
+                },
+                {
+                  "name": "Commercial 7",
+                  "value": "Commercial 7"
+                },
+                {
+                  "name": "Commercial 9",
+                  "value": "Commercial 9"
+                },
+                {
+                  "name": "Commercial 5",
+                  "value": "Commercial 5"
+                },
+                {
+                  "name": "Commercial 2",
+                  "value": "Commercial 2"
+                },
+                {
+                  "name": "Commercial 6",
+                  "value": "Commercial 6"
+                },
+                {
+                  "name": "Commercial 3",
+                  "value": "Commercial 3"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Lien rdv 3",
+              "displayName": "Lien rdv 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Lien rdv 4",
+              "displayName": "Lien rdv 4",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Lien rdv 5",
+              "displayName": "Lien rdv 5",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Lien rdv 6",
+              "displayName": "Lien rdv 6",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Résumé des pièces jointes (Projet 1)",
+              "displayName": "Résumé des pièces jointes (Projet 1)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "marge",
+              "displayName": "marge",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Mois en cours",
+              "displayName": "Mois en cours",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Décompte Semaine 1",
+              "displayName": "Décompte Semaine 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Décompte Semaine 2",
+              "displayName": "Décompte Semaine 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Décompte Semaine 3",
+              "displayName": "Décompte Semaine 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Décompte Semaine 4",
+              "displayName": "Décompte Semaine 4",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Décompte Semaine 5",
+              "displayName": "Décompte Semaine 5",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Décompte Semaine 6",
+              "displayName": "Décompte Semaine 6",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Semaine en retard",
+              "displayName": "Semaine en retard",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Nombre de jours de retard",
+              "displayName": "Nombre de jours de retard",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Mois prime commercial",
+              "displayName": "Mois prime commercial",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Prime",
+              "displayName": "Prime",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Statut Phoning Actuel",
+              "displayName": "Statut Phoning Actuel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "À appeler",
+                  "value": "À appeler"
+                },
+                {
+                  "name": "À relancer",
+                  "value": "À relancer"
+                },
+                {
+                  "name": "OK",
+                  "value": "OK"
+                },
+                {
+                  "name": "Dysfonctionnement",
+                  "value": "Dysfonctionnement"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Score priorité phoning",
+              "displayName": "Score priorité phoning",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Dernier appel phoning",
+              "displayName": "Dernier appel phoning",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Dernier résultat phoning",
+              "displayName": "Dernier résultat phoning",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Appel sans réponse",
+                  "value": "Appel sans réponse"
+                },
+                {
+                  "name": "Appel répondu",
+                  "value": "Appel répondu"
+                },
+                {
+                  "name": "Rappel demandé",
+                  "value": "Rappel demandé"
+                },
+                {
+                  "name": "Dysfonctionnement",
+                  "value": "Dysfonctionnement"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Nombre d'appels",
+              "displayName": "Nombre d'appels",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Dernier commentaire Phoning",
+              "displayName": "Dernier commentaire Phoning",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Personne en charge Phoning",
+              "displayName": "Personne en charge Phoning",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "Ando",
+                  "value": "Ando"
+                },
+                {
+                  "name": "Commercial 18",
+                  "value": "Commercial 18"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Historique Phoning",
+              "displayName": "Historique Phoning",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Tous les commentaires Phoning",
+              "displayName": "Tous les commentaires Phoning",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "À appeler aujourd'hui",
+              "displayName": "À appeler aujourd'hui",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Rappel E learning",
+              "displayName": "Rappel E learning",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Replay 1",
+              "displayName": "Lien Émargement Replay 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Replay 2",
+              "displayName": "Lien Émargement Replay 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Replay 3",
+              "displayName": "Lien Émargement Replay 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Replay 4",
+              "displayName": "Lien Émargement Replay 4",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Replay 5",
+              "displayName": "Lien Émargement Replay 5",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Semaine en cours",
+              "displayName": "Semaine en cours",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Nb Rdv Pris/Restants",
+              "displayName": "Nb Rdv Pris/Restants",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ID Dysfonctionnement",
+              "displayName": "ID Dysfonctionnement",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Dysfonctionnements",
+              "displayName": "Dysfonctionnements",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Supp 1",
+              "displayName": "Lien Émargement Supp 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Supp 2",
+              "displayName": "Lien Émargement Supp 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Supp 3",
+              "displayName": "Lien Émargement Supp 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Supp 4",
+              "displayName": "Lien Émargement Supp 4",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Supp 5",
+              "displayName": "Lien Émargement Supp 5",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Supp 6",
+              "displayName": "Lien Émargement Supp 6",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Adhésion Wordpress",
+              "displayName": "Adhésion Wordpress",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ID calendrier RDV 3",
+              "displayName": "ID calendrier RDV 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ID calendrier RDV 5",
+              "displayName": "ID calendrier RDV 5",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ID calendrier RDV 6",
+              "displayName": "ID calendrier RDV 6",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Mois",
+              "displayName": "Mois",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien logiciel",
+              "displayName": "Lien logiciel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Déclencheur email Rdv supp (non-signé)",
+              "displayName": "Déclencheur email Rdv supp (non-signé)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date de dépôt - Projet 1",
+              "displayName": "Date de dépôt - Projet 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date de dépôt - Projet 2",
+              "displayName": "Date de dépôt - Projet 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date de dépôt - Projet 3",
+              "displayName": "Date de dépôt - Projet 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date de dépôt - Projet 4",
+              "displayName": "Date de dépôt - Projet 4",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date de dépôt - Projet 5",
+              "displayName": "Date de dépôt - Projet 5",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date de dépôt - Projet 6",
+              "displayName": "Date de dépôt - Projet 6",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Annuler la formation",
+              "displayName": "Annuler la formation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Annulation d'onboarding",
+              "displayName": "Annulation d'onboarding",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Annulation mois prime commercial",
+              "displayName": "Annulation mois prime commercial",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date argent reçu",
+              "displayName": "Date argent reçu",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Argent reçu mois prime commercial",
+              "displayName": "Argent reçu mois prime commercial",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Historique Prix (pour annulation)",
+              "displayName": "Historique Prix (pour annulation)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Déclancheur machine",
+              "displayName": "Déclancheur machine",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Date déclancheur machine",
+              "displayName": "Date déclancheur machine",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Non validé",
+              "displayName": "Non validé",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Date d'inscription à la certification",
+              "displayName": "Date d'inscription à la certification",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Consommable à envoyer ?",
+              "displayName": "Consommable à envoyer ?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "OUI",
+                  "value": "OUI"
+                },
+                {
+                  "name": "NON",
+                  "value": "NON"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Entrée traitée ?",
+              "displayName": "Entrée traitée ?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Confirmation de livraison",
+              "displayName": "Confirmation de livraison",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Outremer ?",
+              "displayName": "Outremer ?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Service déclaré ?",
+              "displayName": "Service déclaré ?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Statut Examen Onelearn",
+              "displayName": "Statut Examen Onelearn",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien test initial",
+              "displayName": "Lien test initial",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "remarque financeur",
+              "displayName": "remarque financeur",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Lien Signature Contrat",
+              "displayName": "Lien Signature Contrat",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Mail certification",
+              "displayName": "Mail certification",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "MAJ Table Dysfonctionnement",
+              "displayName": "MAJ Table Dysfonctionnement",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Historique de rdv supp",
+              "displayName": "Historique de rdv supp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Consommable des badges",
+              "displayName": "Consommable des badges",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Débloqué",
+                  "value": "Débloqué"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Envoi de la récompense confirmée ?",
+              "displayName": "Envoi de la récompense confirmée ?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Date d'envoi enquête à chaud",
+              "displayName": "Date d'envoi enquête à chaud",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date de naissance",
+              "displayName": "Date de naissance",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Lieu de naissance",
+              "displayName": "Lieu de naissance",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Informations pour inscription ICDL",
+              "displayName": "Informations pour inscription ICDL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "MDP examen ICDL",
+              "displayName": "MDP examen ICDL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Création de compte ICDL",
+              "displayName": "Création de compte ICDL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Détails de paiement Machine - Stripe",
+              "displayName": "Détails de paiement Machine - Stripe",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "User_ID_ICDL",
+              "displayName": "User_ID_ICDL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Envoi attestation fin de formation",
+              "displayName": "Envoi attestation fin de formation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Visio 6.1",
+              "displayName": "Lien Émargement Visio 6.1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Émargement Visio 6.2",
+              "displayName": "Lien Émargement Visio 6.2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Émargement visio 6",
+              "displayName": "Émargement visio 6",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Déclencheur Enquête à Froid et Enquête financeur",
+              "displayName": "Déclencheur Enquête à Froid et Enquête financeur",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Envoi Avenant + Convocation",
+              "displayName": "Envoi Avenant + Convocation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Déclencheur Avenant & Convocation",
+              "displayName": "Déclencheur Avenant & Convocation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Lien Avenant",
+              "displayName": "Lien Avenant",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ID avenant/hash",
+              "displayName": "ID avenant/hash",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Résultats Définitifs ICDL",
+              "displayName": "Résultats Définitifs ICDL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Échec",
+                  "value": "Échec"
+                },
+                {
+                  "name": "Réussite",
+                  "value": "Réussite"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Date de dernier examen ICDL",
+              "displayName": "Date de dernier examen ICDL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Historique de passage d'examen",
+              "displayName": "Historique de passage d'examen",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Date de validation Projet 1",
+              "displayName": "Date de validation Projet 1",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date de validation Projet 2",
+              "displayName": "Date de validation Projet 2",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date de validation Projet 3",
+              "displayName": "Date de validation Projet 3",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date de validation Projet 4",
+              "displayName": "Date de validation Projet 4",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date de validation Projet 5",
+              "displayName": "Date de validation Projet 5",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date de validation Projet 6",
+              "displayName": "Date de validation Projet 6",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Gestion des apprenants",
+              "displayName": "Gestion des apprenants",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Date de signature Contrat",
+              "displayName": "Date de signature Contrat",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Dernière modification Repasage Certif",
+              "displayName": "Dernière modification Repasage Certif",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Date d'ajout du certificat",
+              "displayName": "Date d'ajout du certificat",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Informations boutiques consommables",
+              "displayName": "Informations boutiques consommables",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Lien Meet Certification OneLearn",
+              "displayName": "Lien Meet Certification OneLearn",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Kit payé au bout de 6 semaines ?",
+              "displayName": "Kit payé au bout de 6 semaines ?",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "OUI",
+                  "value": "OUI"
+                },
+                {
+                  "name": "NON",
+                  "value": "NON"
+                },
+                {
+                  "name": "RENVOYÉ",
+                  "value": "RENVOYÉ"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        640,
+        0
+      ],
+      "id": "443aa347-bc18-4bec-beb7-6cef2a15201f",
+      "name": "Update record"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a record": {
+      "main": [
+        [
+          {
+            "node": "Update record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  }
+}

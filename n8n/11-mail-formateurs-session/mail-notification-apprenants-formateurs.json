@@ -1,0 +1,530 @@
+{
+  "name": "[APERCU] Mail Notification apprenants + formateurs",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "apercu-retire-14-0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        64,
+        -176
+      ],
+      "id": "3546281c-35c9-4c27-84e6-b2f7c3259835",
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000005",
+          "mode": "list",
+          "cachedResultName": "Sessions E-learning 🕹️"
+        },
+        "id": "={{ $json.body.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        640,
+        0
+      ],
+      "id": "49b6cc55-34c3-4893-b3c1-b1f1bdcf8cf9",
+      "name": "Get a record"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst apprenants = item['Apprenants Inscrits'] || [];\n\nif (!Array.isArray(apprenants)) {\n  throw new Error('\"Apprenants Inscrits\" doit être un tableau');\n}\n\nfunction isTomorrow(dateString) {\n  if (!dateString) return false;\n\n  const date = new Date(dateString);\n  if (isNaN(date.getTime())) return false;\n\n  const now = new Date();\n\n  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());\n  const tomorrow = new Date(today);\n  tomorrow.setDate(today.getDate() + 1);\n\n  const target = new Date(date.getFullYear(), date.getMonth(), date.getDate());\n\n  return target.getTime() === tomorrow.getTime();\n}\n\nfunction getEmargementLabel(numeroAtelier) {\n  if (!numeroAtelier) return \"\";\n\n  if (numeroAtelier === 1 || numeroAtelier === 2) return \"Émargement visio 1\";\n  if (numeroAtelier === 3 || numeroAtelier === 4) return \"Émargement visio 2\";\n  if (numeroAtelier === 5 || numeroAtelier === 6) return \"Émargement visio 3\";\n  if (numeroAtelier === 7 || numeroAtelier === 8) return \"Émargement visio 4\";\n  if (numeroAtelier === 9 || numeroAtelier === 10) return \"Émargement visio 5\";\n\n  return \"\";\n}\n\nlet atelierDemain = null;\n\nfor (let i = 1; i <= 12; i++) {\n  const dateField = item[`Date atelier ${i}`];\n\n  if (isTomorrow(dateField)) {\n    atelierDemain = {\n      numero: i,\n      date: dateField || \"\",\n      lien: item[`Lien Atelier ${i}`] || \"\",\n      id_calendrier: item[`ID Calendrier Atelier ${i}`] || \"\",\n      emargement_a_verifier: getEmargementLabel(i)\n    };\n    break;\n  }\n}\n\nreturn apprenants.map((apprenant, index) => {\n  return {\n    json: {\n      index,\n      apprenant,\n      atelier_demain_numero: atelierDemain ? atelierDemain.numero : null,\n      atelier_demain_date: atelierDemain ? atelierDemain.date : \"\",\n      atelier_demain_lien: atelierDemain ? atelierDemain.lien : \"\",\n      atelier_demain_id_calendrier: atelierDemain ? atelierDemain.id_calendrier : \"\",\n      emargement_a_verifier: atelierDemain ? atelierDemain.emargement_a_verifier : \"\"\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        0
+      ],
+      "id": "54454fd7-be62-4ed3-8abc-b6b67c50fb3e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000002",
+          "mode": "list",
+          "cachedResultName": "Gestion E-learning 🕹️"
+        },
+        "id": "={{ $json.apprenant }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1536,
+        -240
+      ],
+      "id": "4e4c7b6c-b774-42f1-85dc-4a91c4330fb3",
+      "name": "Get a record1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1168,
+        -192
+      ],
+      "id": "c1fb946b-4aee-4299-abda-76b26e16671b",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "hours"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        384,
+        -16
+      ],
+      "id": "b6de695f-698b-4881-b143-ad5135df0672",
+      "name": "Wait"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1728,
+        -160
+      ],
+      "id": "699a6b43-b747-4b6c-8d55-38aae168bed4",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  const data = item.json || {};\n  const champEmargement = data.emargement_a_verifier || \"\";\n\n  let statut_emargement = \"à envoyer\";\n\n  if (champEmargement) {\n    const valeur = data[champEmargement];\n\n    const estRempli =\n      valeur !== undefined &&\n      valeur !== null &&\n      (\n        (Array.isArray(valeur) && valeur.length > 0) ||\n        (!Array.isArray(valeur) && String(valeur).trim() !== \"\")\n      );\n\n    if (estRempli) {\n      statut_emargement = \"déjà présent\";\n    }\n  }\n\n  return {\n    json: {\n      id: data.id || \"\",\n      apprenant: data.apprenant || \"\",\n      prenom: data[\"Prénom\"] || \"\",\n      nom: data[\"Nom\"] || \"\",\n      mail: data[\"Mail\"] || \"\",\n      numero: data[\"Numéro\"] || \"\",\n      formation: data[\"Formation\"] || \"\",\n      session: data[\"Session\"] || [],\n      atelier_demain_numero: data.atelier_demain_numero || null,\n      atelier_demain_date: data.atelier_demain_date || \"\",\n      atelier_demain_lien: data.atelier_demain_lien || \"\",\n      atelier_demain_id_calendrier: data.atelier_demain_id_calendrier || \"\",\n      emargement_a_verifier: champEmargement,\n      statut_emargement\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1952,
+        -160
+      ],
+      "id": "7c63b4f7-50fa-455b-9729-7ef3daf1f5ec",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d7067bf3-d93c-4640-b319-fb0197655de7",
+              "leftValue": "={{ $json.statut_emargement }}",
+              "rightValue": "déjà présent",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2176,
+        -160
+      ],
+      "id": "b424c09c-2d94-4592-8e90-c79ca0c0336a",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000005",
+          "mode": "list",
+          "cachedResultName": "Sessions E-learning 🕹️"
+        },
+        "id": "={{ $json.body.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        896,
+        -496
+      ],
+      "id": "83ceb3c3-615d-4cda-973f-01a0cb410719",
+      "name": "Get a record2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        624,
+        -512
+      ],
+      "id": "9a577095-c554-4b29-9607-eb82f92b8d7f",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "amount": 10,
+        "unit": "hours"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        336,
+        -512
+      ],
+      "id": "5c070942-2f46-4f0f-8dc2-8069fa377b54",
+      "name": "Wait1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000006",
+          "mode": "list",
+          "cachedResultName": "table des formateurs"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "Nom_formateur",
+              "keyValue": "={{ $json.formateurChoisi }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        -496
+      ],
+      "id": "877bc31c-4f29-4172-a7eb-4cb8f17ab924",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Get row(s)').item.json.email }}",
+        "subject": "=Rappel : Demain atelier le {{ (() => { const d = DateTime.now().setZone('Europe/Paris').plus({ days: 1 }); const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']; return `${d.day} ${months[d.month - 1]} ${d.year}`; })() }} à\n{{ (() => {\n  const record = $('Get a record2').item.json;\n\n  const demain = DateTime.now()\n    .setZone('Europe/Paris')\n    .plus({ days: 1 })\n    .toFormat('yyyy-MM-dd');\n\n  for (let i = 1; i <= 10; i++) {\n    const dateAtelier = record[`Date atelier ${i}`];\n\n    if (!dateAtelier) continue;\n\n    const dateJour = dateAtelier.slice(0, 10);\n\n    if (dateJour === demain) {\n      return dateAtelier.slice(11, 16);\n    }\n  }\n\n  return '';\n})() }}",
+        "message": "=<!DOCTYPE html>\n<html lang=\"fr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"x-apple-disable-message-reformatting\">\n  <title>Rappel : votre visioconférence avec vos apprenants le {{ (() => { const d = DateTime.now().setZone('Europe/Paris').plus({ days: 1 }); const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']; return `${d.day} ${months[d.month - 1]} ${d.year}`; })() }} à {{ (() => {\n  const record = $('Get a record2').item.json;\n\n  const demain = DateTime.now()\n    .setZone('Europe/Paris')\n    .plus({ days: 1 })\n    .toFormat('yyyy-MM-dd');\n\n  for (let i = 1; i <= 10; i++) {\n    const dateAtelier = record[`Date atelier ${i}`];\n\n    if (!dateAtelier) continue;\n\n    const dateJour = dateAtelier.slice(0, 10);\n\n    if (dateJour === demain) {\n      return dateAtelier.slice(11, 16);\n    }\n  }\n\n  return '';\n})() }}</title>\n\n  <!--[if mso]>\n  <style>\n    body, table, td, a, span {\n      font-family: Arial, sans-serif !important;\n    }\n  </style>\n  <![endif]-->\n\n  <style>\n    @media only screen and (max-width: 820px) {\n      .main-container {\n        width: 100% !important;\n        border-radius: 0 !important;\n      }\n\n      .mobile-padding {\n        padding-left: 24px !important;\n        padding-right: 24px !important;\n      }\n\n      .hero-padding {\n        padding: 34px 24px 28px !important;\n      }\n\n      .title {\n        font-size: 24px !important;\n        line-height: 1.25 !important;\n      }\n\n      .button a {\n        display: block !important;\n        padding: 16px 24px !important;\n      }\n    }\n  </style>\n</head>\n\n<body style=\"margin:0;padding:0;background-color:#f3f4f8;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;word-spacing:normal;\">\n  <div style=\"display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;\">\n    N'oubliez pas : le {{ (() => { const d = DateTime.now().setZone('Europe/Paris').plus({ days: 1 }); const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']; return `${d.day} ${months[d.month - 1]} ${d.year}`; })() }} à {{ (() => {\n  const record = $('Get a record2').item.json;\n\n  const demain = DateTime.now()\n    .setZone('Europe/Paris')\n    .plus({ days: 1 })\n    .toFormat('yyyy-MM-dd');\n\n  for (let i = 1; i <= 10; i++) {\n    const dateAtelier = record[`Date atelier ${i}`];\n\n    if (!dateAtelier) continue;\n\n    const dateJour = dateAtelier.slice(0, 10);\n\n    if (dateJour === demain) {\n      return dateAtelier.slice(11, 16);\n    }\n  }\n\n  return '';\n})() }}, vous avez votre session en visioconférence avec vos apprenants.\n  </div>\n\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#f3f4f8;margin:0;padding:0;\">\n    <tr>\n      <td align=\"center\" style=\"padding:32px 16px 48px;\">\n\n        <table role=\"presentation\" width=\"760\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"main-container\" style=\"max-width:760px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,0.06);\">\n\n          <!-- HEADER -->\n          <tr>\n            <td class=\"hero-padding\" style=\"background:linear-gradient(135deg,#cf1f45 0%,#e7395d 50%,#f25a78 100%);padding:46px 56px 38px;text-align:center;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:16px;\">\n                    <span style=\"font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.65);\">\n                      LA NOUVELLE ÉCOLE\n                    </span>\n                  </td>\n                </tr>\n                <tr>\n                  <td class=\"title\" align=\"center\" style=\"font-size:31px;font-weight:800;color:#ffffff;line-height:1.2;letter-spacing:-0.4px;padding-bottom:14px;\">\n                    Rappel pour le {{ (() => { const d = DateTime.now().setZone('Europe/Paris').plus({ days: 1 }); const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']; return `${d.day} ${months[d.month - 1]} ${d.year}`; })() }} à {{ (() => {\n  const record = $('Get a record2').item.json;\n\n  const demain = DateTime.now()\n    .setZone('Europe/Paris')\n    .plus({ days: 1 })\n    .toFormat('yyyy-MM-dd');\n\n  for (let i = 1; i <= 10; i++) {\n    const dateAtelier = record[`Date atelier ${i}`];\n\n    if (!dateAtelier) continue;\n\n    const dateJour = dateAtelier.slice(0, 10);\n\n    if (dateJour === demain) {\n      return dateAtelier.slice(11, 16);\n    }\n  }\n\n  return '';\n})() }}\n                  </td>\n                </tr>\n                <tr>\n                  <td align=\"center\" style=\"font-size:15px;line-height:1.6;color:rgba(255,255,255,0.92);\">\n                    Ton atelier avec les apprenants approche\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- BODY -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:40px 56px 20px;\">\n\n              <!-- INTRO -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"font-size:16px;color:#1b1f32;line-height:1.75;padding-bottom:24px;\">\n                    Salut {{ $('Get row(s)').item.json.Nom_formateur }},<br><br>\n                    Petit rappel : le <strong>{{ (() => { const d = DateTime.now().setZone('Europe/Paris').plus({ days: 1 }); const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']; return `${d.day} ${months[d.month - 1]} ${d.year}`; })() }}</strong> à <strong>{{ (() => {\n  const record = $('Get a record2').item.json;\n\n  const demain = DateTime.now()\n    .setZone('Europe/Paris')\n    .plus({ days: 1 })\n    .toFormat('yyyy-MM-dd');\n\n  for (let i = 1; i <= 10; i++) {\n    const dateAtelier = record[`Date atelier ${i}`];\n\n    if (!dateAtelier) continue;\n\n    const dateJour = dateAtelier.slice(0, 10);\n\n    if (dateJour === demain) {\n      return dateAtelier.slice(11, 16);\n    }\n  }\n\n  return '';\n})() }}</strong>, tu as un <strong>atelier en visioconférence avec tes apprenants</strong>.<br><br>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- MAIN CARD -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:24px;\">\n                <tr>\n                  <td style=\"background-color:#f8f9fc;border:1px solid #e8ebf2;border-radius:18px;padding:26px 26px 24px;\">\n\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:13px;font-weight:800;color:#8a8fa6;letter-spacing:1.2px;text-transform:uppercase;padding-bottom:14px;\">\n                          Informations utiles\n                        </td>\n                      </tr>\n                    </table>\n\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:15px;color:#1b1f32;line-height:1.7;padding-bottom:8px;\">\n                          <strong>Horaire :</strong> le {{ (() => { const d = DateTime.now().setZone('Europe/Paris').plus({ days: 1 }); const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']; return `${d.day} ${months[d.month - 1]} ${d.year}`; })() }} à {{ (() => {\n  const record = $('Get a record2').item.json;\n\n  const demain = DateTime.now()\n    .setZone('Europe/Paris')\n    .plus({ days: 1 })\n    .toFormat('yyyy-MM-dd');\n\n  for (let i = 1; i <= 10; i++) {\n    const dateAtelier = record[`Date atelier ${i}`];\n\n    if (!dateAtelier) continue;\n\n    const dateJour = dateAtelier.slice(0, 10);\n\n    if (dateJour === demain) {\n      return dateAtelier.slice(11, 16);\n    }\n  }\n\n  return '';\n})() }}\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:15px;color:#1b1f32;line-height:1.7;padding-bottom:8px;\">\n                          <strong>Format :</strong>\n                          <a href=\"{{ $json.lienAtelier }}\" target=\"_blank\" style=\"color:#cf1f45;text-decoration:underline;font-weight:600;\">\n                            Visioconférence avec tes apprenants\n                          </a>\n                        </td>\n                      </tr>\n                    </table>\n\n                  </td>\n                </tr>\n              </table>\n\n              <!-- BUTTON -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:26px;\">\n                    <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n            </td>\n          </tr>\n\n          <!-- DIVIDER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:0 56px;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"height:1px;background-color:#eef0f5;font-size:0;line-height:0;\">&nbsp;</td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- FOOTER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:24px 56px 34px;text-align:center;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"font-size:13px;color:#8a8fa6;line-height:1.7;padding-bottom:6px;\">\n                    L'équipe de La Nouvelle École reste à votre disposition si besoin.\n                  </td>\n                </tr>\n                <tr>\n                  <td align=\"center\" style=\"font-size:12px;color:#a2a7bc;line-height:1.7;\">\n                    À très vite pour votre session du {{ (() => { const d = DateTime.now().setZone('Europe/Paris').plus({ days: 1 }); const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']; return `${d.day} ${months[d.month - 1]} ${d.year}`; })() }}\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n        </table>\n\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "La Nouvelle Ecole"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1712,
+        -496
+      ],
+      "id": "336dbaf8-256c-4122-91ef-4a4de979092a",
+      "name": "Send a message"
+    },
+    {
+      "parameters": {
+        "jsCode": "const record = $('Get a record2').first().json;\n\nconst timeZone = 'Europe/Paris';\n\nfunction getParisDateParts(date) {\n  const parts = new Intl.DateTimeFormat('en-CA', {\n    timeZone,\n    year: 'numeric',\n    month: '2-digit',\n    day: '2-digit'\n  }).formatToParts(date);\n\n  const map = {};\n  for (const part of parts) {\n    if (part.type !== 'literal') {\n      map[part.type] = part.value;\n    }\n  }\n\n  return {\n    year: Number(map.year),\n    month: Number(map.month),\n    day: Number(map.day),\n  };\n}\n\nfunction toParisYMD(date) {\n  const p = getParisDateParts(date);\n  return `${p.year}-${String(p.month).padStart(2, '0')}-${String(p.day).padStart(2, '0')}`;\n}\n\nconst now = new Date();\nconst tomorrow = new Date(now);\ntomorrow.setDate(tomorrow.getDate() + 1);\n\nconst tomorrowYMD = toParisYMD(tomorrow);\n\nlet lienAtelier = '';\n\nfor (let i = 1; i <= 10; i++) {\n  const dateAtelier = record[`Date atelier ${i}`];\n  const lien = record[`Lien Atelier ${i}`];\n\n  if (!dateAtelier) continue;\n\n  const atelierDate = toParisYMD(new Date(dateAtelier));\n\n  if (atelierDate === tomorrowYMD) {\n    lienAtelier = lien || '';\n    break;\n  }\n}\n\nreturn [\n  {\n    json: {\n      lienAtelier\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1504,
+        -496
+      ],
+      "id": "693927b6-9ff6-426a-a00b-7039547f23a6",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.mail }}",
+        "subject": "=Rappel : Atelier du {{ (() => { const d = DateTime.now().setZone('Europe/Paris').plus({ days: 1 }); const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']; return `${d.day} ${months[d.month - 1]} ${d.year}`; })() }} à {{ (() => {\n  const record = $('Get a record').item.json;\n\n  const demain = DateTime.now()\n    .setZone('Europe/Paris')\n    .plus({ days: 1 })\n    .toFormat('yyyy-MM-dd');\n\n  for (let i = 1; i <= 10; i++) {\n    const dateAtelier = record[`Date atelier ${i}`];\n\n    if (!dateAtelier) continue;\n\n    const dateJour = dateAtelier.slice(0, 10);\n\n    if (dateJour === demain) {\n      return dateAtelier.slice(11, 16);\n    }\n  }\n\n  return '';\n})() }}",
+        "message": "=<!DOCTYPE html>\n<html lang=\"fr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"x-apple-disable-message-reformatting\">\n  <title>Rappel : votre visioconférence le {{ (() => { const d = DateTime.now().setZone('Europe/Paris').plus({ days: 1 }); const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']; return `${d.day} ${months[d.month - 1]} ${d.year}`; })() }} à {{ (() => {\n  const record = $('Get a record').item.json;\n\n  const demain = DateTime.now()\n    .setZone('Europe/Paris')\n    .plus({ days: 1 })\n    .toFormat('yyyy-MM-dd');\n\n  for (let i = 1; i <= 10; i++) {\n    const dateAtelier = record[`Date atelier ${i}`];\n\n    if (!dateAtelier) continue;\n\n    const dateJour = dateAtelier.slice(0, 10);\n\n    if (dateJour === demain) {\n      return dateAtelier.slice(11, 16);\n    }\n  }\n\n  return '';\n})() }}</title>\n\n  <!--[if mso]>\n  <style>\n    body, table, td, a, span {\n      font-family: Arial, sans-serif !important;\n    }\n  </style>\n  <![endif]-->\n\n  <style>\n    @media only screen and (max-width: 820px) {\n      .main-container {\n        width: 100% !important;\n        border-radius: 0 !important;\n      }\n\n      .mobile-padding {\n        padding-left: 24px !important;\n        padding-right: 24px !important;\n      }\n\n      .hero-padding {\n        padding: 34px 24px 28px !important;\n      }\n\n      .title {\n        font-size: 24px !important;\n        line-height: 1.25 !important;\n      }\n\n      .button a {\n        display: block !important;\n        padding: 16px 24px !important;\n      }\n    }\n  </style>\n</head>\n\n<body style=\"margin:0;padding:0;background-color:#f3f4f8;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;word-spacing:normal;\">\n  <div style=\"display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;\">\n    N'oubliez pas : le {{ (() => { const d = DateTime.now().setZone('Europe/Paris').plus({ days: 1 }); const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']; return `${d.day} ${months[d.month - 1]} ${d.year}`; })() }} à {{ (() => {\n  const record = $('Get a record').item.json;\n\n  const demain = DateTime.now()\n    .setZone('Europe/Paris')\n    .plus({ days: 1 })\n    .toFormat('yyyy-MM-dd');\n\n  for (let i = 1; i <= 10; i++) {\n    const dateAtelier = record[`Date atelier ${i}`];\n\n    if (!dateAtelier) continue;\n\n    const dateJour = dateAtelier.slice(0, 10);\n\n    if (dateJour === demain) {\n      return dateAtelier.slice(11, 16);\n    }\n  }\n\n  return '';\n})() }}, vous avez votre session en visioconférence avec votre formateur.\n  </div>\n\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#f3f4f8;margin:0;padding:0;\">\n    <tr>\n      <td align=\"center\" style=\"padding:32px 16px 48px;\">\n\n        <table role=\"presentation\" width=\"760\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"main-container\" style=\"max-width:760px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,0.06);\">\n\n          <!-- HEADER -->\n          <tr>\n            <td class=\"hero-padding\" style=\"background:linear-gradient(135deg,#cf1f45 0%,#e7395d 50%,#f25a78 100%);padding:46px 56px 38px;text-align:center;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:16px;\">\n                    <span style=\"font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.65);\">\n                      LA NOUVELLE ÉCOLE\n                    </span>\n                  </td>\n                </tr>\n                <tr>\n                  <td class=\"title\" align=\"center\" style=\"font-size:31px;font-weight:800;color:#ffffff;line-height:1.2;letter-spacing:-0.4px;padding-bottom:14px;\">\n                    Rappel pour le {{ (() => { const d = DateTime.now().setZone('Europe/Paris').plus({ days: 1 }); const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']; return `${d.day} ${months[d.month - 1]} ${d.year}`; })() }} à {{ (() => {\n  const record = $('Get a record').item.json;\n\n  const demain = DateTime.now()\n    .setZone('Europe/Paris')\n    .plus({ days: 1 })\n    .toFormat('yyyy-MM-dd');\n\n  for (let i = 1; i <= 10; i++) {\n    const dateAtelier = record[`Date atelier ${i}`];\n\n    if (!dateAtelier) continue;\n\n    const dateJour = dateAtelier.slice(0, 10);\n\n    if (dateJour === demain) {\n      return dateAtelier.slice(11, 16);\n    }\n  }\n\n  return '';\n})() }}\n                  </td>\n                </tr>\n                <tr>\n                  <td align=\"center\" style=\"font-size:15px;line-height:1.6;color:rgba(255,255,255,0.92);\">\n                    Votre session en visioconférence avec votre formateur approche\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- BODY -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:40px 56px 20px;\">\n\n              <!-- INTRO -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"font-size:16px;color:#1b1f32;line-height:1.75;padding-bottom:24px;\">\n                    Bonjour {{ $json.prenom }},<br><br>\n                    Petit rappel : le <strong>{{ (() => { const d = DateTime.now().setZone('Europe/Paris').plus({ days: 1 }); const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']; return `${d.day} ${months[d.month - 1]} ${d.year}`; })() }}</strong> à <strong>{{ (() => {\n  const record = $('Get a record').item.json;\n\n  const demain = DateTime.now()\n    .setZone('Europe/Paris')\n    .plus({ days: 1 })\n    .toFormat('yyyy-MM-dd');\n\n  for (let i = 1; i <= 10; i++) {\n    const dateAtelier = record[`Date atelier ${i}`];\n\n    if (!dateAtelier) continue;\n\n    const dateJour = dateAtelier.slice(0, 10);\n\n    if (dateJour === demain) {\n      return dateAtelier.slice(11, 16);\n    }\n  }\n\n  return '';\n})() }}</strong>, vous avez une <strong>session en visioconférence avec votre formateur</strong>.<br><br>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- MAIN CARD -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:24px;\">\n                <tr>\n                  <td style=\"background-color:#f8f9fc;border:1px solid #e8ebf2;border-radius:18px;padding:26px 26px 24px;\">\n\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:13px;font-weight:800;color:#8a8fa6;letter-spacing:1.2px;text-transform:uppercase;padding-bottom:14px;\">\n                          Informations utiles\n                        </td>\n                      </tr>\n                    </table>\n\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:15px;color:#1b1f32;line-height:1.7;padding-bottom:8px;\">\n                          <strong>Horaire :</strong> le {{ (() => { const d = DateTime.now().setZone('Europe/Paris').plus({ days: 1 }); const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']; return `${d.day} ${months[d.month - 1]} ${d.year}`; })() }} à {{ (() => {\n  const record = $('Get a record').item.json;\n\n  const demain = DateTime.now()\n    .setZone('Europe/Paris')\n    .plus({ days: 1 })\n    .toFormat('yyyy-MM-dd');\n\n  for (let i = 1; i <= 10; i++) {\n    const dateAtelier = record[`Date atelier ${i}`];\n\n    if (!dateAtelier) continue;\n\n    const dateJour = dateAtelier.slice(0, 10);\n\n    if (dateJour === demain) {\n      return dateAtelier.slice(11, 16);\n    }\n  }\n\n  return '';\n})() }}\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:15px;color:#1b1f32;line-height:1.7;padding-bottom:8px;\">\n                          <strong>Format :</strong>\n                          <a href=\"https://nouvelleecole.club/index.php/app/\" target=\"_blank\" style=\"color:#cf1f45;text-decoration:underline;font-weight:600;\">\n                           Visioconférence sur la plateforme E-learning\n                          </a>\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:15px;color:#1b1f32;line-height:1.7;\">\n                          <strong>Conseil :</strong> préparez vos questions, vos éventuels points de blocage et les sujets que vous souhaitez aborder pendant l'échange.\n                        </td>\n                      </tr>\n                    </table>\n\n                  </td>\n                </tr>\n              </table>\n\n              <!-- BUTTON -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:26px;\">\n                    <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- INFO BOX -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:rgba(231,57,93,0.05);border:1px solid rgba(231,57,93,0.12);border-radius:14px;padding:20px 22px;\">\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:14px;font-weight:700;color:#e7395d;padding-bottom:8px;\">\n                          À prévoir avant la session\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:14px;color:#5d647d;line-height:1.75;\">\n                          Vérifiez votre connexion internet, assurez-vous d'avoir accès au lien de visioconférence et installez-vous dans un environnement calme pour profiter pleinement de l'échange.\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n            </td>\n          </tr>\n\n          <!-- DIVIDER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:0 56px;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"height:1px;background-color:#eef0f5;font-size:0;line-height:0;\">&nbsp;</td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- FOOTER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:24px 56px 34px;text-align:center;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"font-size:13px;color:#8a8fa6;line-height:1.7;padding-bottom:6px;\">\n                    L'équipe de La Nouvelle École reste à votre disposition si besoin.\n                  </td>\n                </tr>\n                <tr>\n                  <td align=\"center\" style=\"font-size:12px;color:#a2a7bc;line-height:1.7;\">\n                    À très vite pour votre session du {{ (() => { const d = DateTime.now().setZone('Europe/Paris').plus({ days: 1 }); const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']; return `${d.day} ${months[d.month - 1]} ${d.year}`; })() }}\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n        </table>\n\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "La Nouvelle Ecole"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2560,
+        16
+      ],
+      "id": "da318434-cbbd-44e4-ac84-23e4c1e22d58",
+      "name": "Send a message1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nfunction getNodeFirst(nodeName) {\n  try {\n    return $(nodeName).first();\n  } catch (e) {\n    return null;\n  }\n}\n\nfunction findFields(currentJson, loopJson) {\n  return (\n    currentJson?.body?.fields ||\n    currentJson?.fields ||\n    loopJson?.body?.fields ||\n    loopJson?.fields ||\n    {}\n  );\n}\n\nfunction parisDateYYYYMMDD(date) {\n  return new Intl.DateTimeFormat('fr-CA', {\n    timeZone: 'Europe/Paris',\n    year: 'numeric',\n    month: '2-digit',\n    day: '2-digit',\n  }).format(date);\n}\n\nfunction normalizeDate(value) {\n  if (!value) return null;\n\n  const date = new Date(value);\n\n  if (!isNaN(date.getTime())) {\n    return parisDateYYYYMMDD(date);\n  }\n\n  return String(value).slice(0, 10);\n}\n\nconst loopItem = getNodeFirst('Loop Over Items2');\nconst loopJson = loopItem?.json || {};\n\nconst tomorrow = new Date();\ntomorrow.setDate(tomorrow.getDate() + 1);\n\nconst demain = parisDateYYYYMMDD(tomorrow);\n\nreturn items.map((item) => {\n  const json = item.json || {};\n\n  const formateurs = json.Formateur || [];\n\n  const formateur1 = Array.isArray(formateurs) ? formateurs[0] : formateurs;\n  const formateur2 = Array.isArray(formateurs) ? formateurs[1] : null;\n\n  const fields = findFields(json, loopJson);\n\n  const atelierEstDemain = (numero) => {\n    const value = fields[`Date atelier ${numero}`];\n    return normalizeDate(value) === demain;\n  };\n\n  let formateurChoisi = formateur1;\n\n  // Si le formateur 2 est Solo / solo, on prend toujours le formateur 1\n  if (String(formateur2 || '').trim().toLowerCase() === 'solo') {\n    formateurChoisi = formateur1;\n  }\n\n  // Ateliers 1 à 8 = formateur 1\n  else if ([1, 2, 3, 4, 5, 6, 7, 8].some(atelierEstDemain)) {\n    formateurChoisi = formateur1;\n  }\n\n  // Ateliers 9 et 10 = formateur 2\n  else if ([9, 10].some(atelierEstDemain)) {\n    formateurChoisi = formateur2 || formateur1;\n  }\n\n  // Ateliers 11 et 12 = formateur 1\n  else if ([11, 12].some(atelierEstDemain)) {\n    formateurChoisi = formateur1;\n  }\n\n  return {\n    json: {\n      ...json,\n      formateurChoisi,\n      atelierDemainDetecte: true,\n    },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        -496
+      ],
+      "id": "79d12259-06bc-4b9c-a382-ba8b1137b2b1",
+      "name": "Code in JavaScript3"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a record": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a record1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get a record1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get a record2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a record2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

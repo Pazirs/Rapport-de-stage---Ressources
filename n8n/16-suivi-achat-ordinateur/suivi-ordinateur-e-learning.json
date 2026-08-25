@@ -1,0 +1,1026 @@
+{
+  "name": "[APERCU] Suivi ordinateur + e learning",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "apercu-retire-20-0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        -48
+      ],
+      "id": "d706348e-d06b-4741-a262-5a2760409d32",
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion des apprenants"
+        },
+        "id": "={{ $json.body.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        224,
+        -48
+      ],
+      "id": "59fcc8e4-c397-45c4-9f68-51051e34b6b5",
+      "name": "Get a record"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Get a record').item.json['Niveau informatique'] }}",
+                    "rightValue": "(E-learning requis)",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "bc1aa6a2-b8a3-4a50-a226-83839b398fb3"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Bas (E-learning requis)"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "83ae93d5-e090-4edb-a250-5f8f3d8ad428",
+                    "leftValue": "={{ $('Get a record').item.json['Puissance de l’ordinateur'] }}",
+                    "rightValue": "Va acheter (l’envoi de la machine sera mis en pause)",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Va acheter (l’envoi de la machine sera mis en pause)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        1120,
+        -48
+      ],
+      "id": "4d7b23b9-100a-414f-8b0c-7984c8c5cf8a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "jsCode": "// On récupère tous les items (tu n'en as qu'un ici)\nconst items = $input.all();\n\nif (items.length === 0) {\n\treturn [];\n}\n\n// On prend le premier item\nconst src = items[0].json;\n\n// Date de départ = \"Premiere partie\" (ISO)\nconst startStr = src[\"Premiere partie\"]; // ex: \"2025-12-16T16:49:00.000Z\"\n\nif (!startStr) {\n\tthrow new Error('Champ \"Premiere partie\" manquant');\n}\n\nconst start = new Date(startStr);\nif (isNaN(start.getTime())) {\n\tthrow new Error('Date invalide dans \"Premiere partie\": ' + startStr);\n}\n\nconst day = 24 * 60 * 60 * 1000;\n\n// Calculs\nconst d7 = new Date(start.getTime() - 49 * day).toISOString(); // 7 semaines\nconst d5 = new Date(start.getTime() - 35 * day).toISOString(); // 5 semaines\nconst d4 = new Date(start.getTime() - 28 * day).toISOString(); // 4 semaines\nconst d3 = new Date(start.getTime() - 21 * day).toISOString(); // 3 semaines\nconst d1 = new Date(start.getTime() - 7  * day).toISOString(); // 1 semaine\n\n// On renvoie UN SEUL item avec 5 champs\nreturn [\n\t{\n\t\tjson: {\n\t\t\tid: src.id || src[\"id\"],\n\t\t\t\"7_semaines_avant_debut\": d7,\n\t\t\t\"5_semaines_avant_debut\": d5,\n\t\t\t\"4_semaines_avant_debut\": d4,\n\t\t\t\"3_semaines_avant_debut\": d3,\n\t\t\t\"1_semaine_avant_debut\": d1\n\t\t}\n\t}\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        -48
+      ],
+      "id": "3e585fee-f0e6-4c11-a4b3-29d7084fc316",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "resume": "specificTime",
+        "dateTime": "={{ $json['5_semaines_avant_debut'] }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1552,
+        -336
+      ],
+      "id": "9b5e5b24-47da-436c-84f5-ce07fdb6fe2c",
+      "name": "Wait"
+    },
+    {
+      "parameters": {
+        "resume": "specificTime",
+        "dateTime": "={{ $('Code in JavaScript').item.json['7_semaines_avant_debut'] }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1552,
+        48
+      ],
+      "id": "f6c7853e-bcf1-444d-9189-9de064288de5",
+      "name": "Wait1"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "={{ $('Commercial').item.json.Email }}",
+        "subject": "=Achat ordinateur  {{ $('Get a record').item.json['ID-stagiaire'] }}",
+        "message": "=Salut !\nLa session de formation pour  {{ $('Get a record').item.json['ID-stagiaire'] }} débute dans 7 semaine !!\nà il acheté un ordinateur ? si oui clique sur ne pas envoyer de SMS\nSinon Envoi lui un sms de rappel en cliquant sur le bouton",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "Envoi SMS",
+            "buttonApprovalStyle": "secondary",
+            "disapproveLabel": "Ne pas envoyer de SMS",
+            "buttonDisapprovalStyle": "primary"
+          }
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1776,
+        48
+      ],
+      "id": "7cc56e9c-e6aa-49b3-8e41-18ae98664552",
+      "name": "Send message and wait for response"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f690ba15-63b4-4120-a1fe-ce9737543325",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2000,
+        48
+      ],
+      "id": "0f392053-4157-43a9-9219-4144d6773737",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Récupération des données des autres nodes\nconst commercial = $items('Commercial')[0].json;\nconst apprenant = $items('Get a record')[0].json;\n\n// On sécurise le prénom\nconst prenom = apprenant['Quel est votre prénom ?'] || '';\n\n// Contenu du SMS basé sur le champ SMS1_ordinateur du node Commercial\nconst smsText = $('Commercial').first().json.SMS1_ordinateur || \"\";\n\n// Construction du SMS final\nconst content = `${smsText}`;\n\n// Objet JSON final pour Ringover\nconst body = {\n  archived_auto: false,\n  from_number: commercial.numero,\n  to_number: apprenant['Numéro sans espace'],\n  content: content\n};\n\n// Output final\nreturn [\n  {\n    json: body\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2224,
+        -48
+      ],
+      "id": "718562fd-c532-4f1b-8340-a33663ac49ff",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "33292fe0-35b3-4b11-9f8f-19868bdebc87",
+              "name": "id",
+              "value": "={{ $('Get a record').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "5fa5b6c7-6794-41ec-8ad7-f11015d8bc7e",
+              "name": "Premiere partie",
+              "value": "={{ $('Get a record').item.json['Premiere partie'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        -48
+      ],
+      "id": "f51b8e03-4de9-4fa5-9d39-d1856d6240f5",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "={{ $('Get a record').item.json['E-mail du commercial en charge'] }}",
+        "subject": "=E-learning {{ $('Get a record').item.json['ID-stagiaire'] }}",
+        "message": "=Salut !\nLa session de formation pour  {{ $('Get a record').item.json['ID-stagiaire'] }} débute dans 5 semaine !!\nà il compléter son e-learning ? si oui clique sur ne pas envoyer de SMS\nSinon Envoi lui un sms de rappel en cliquant sur le bouton",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "Envoi SMS",
+            "buttonApprovalStyle": "secondary",
+            "disapproveLabel": "Ne pas envoyer de SMS",
+            "buttonDisapprovalStyle": "primary"
+          }
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1776,
+        -336
+      ],
+      "id": "63f51d31-f1b0-4f61-9988-e126090b6e06",
+      "name": "Envoi message"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f690ba15-63b4-4120-a1fe-ce9737543325",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2000,
+        -336
+      ],
+      "id": "e311f79b-0663-41dd-ab85-e271d49050d0",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "dtMASQUE0000000007",
+          "mode": "list",
+          "cachedResultName": "commercial"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "nomcrmbleu",
+              "keyValue": "={{ $json['Signé par ?'][0] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        448,
+        -48
+      ],
+      "id": "720004fc-ccbf-4533-aa09-fbd140828063",
+      "name": "Commercial"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Récupération des données des autres nodes\nconst commercial = $items('Commercial')[0].json;\nconst apprenant = $items('Get a record')[0].json;\n\n// On sécurise le prénom\nconst prenom = apprenant['Quel est votre prénom ?'] || '';\n\n// Contenu du SMS basé sur le champ SMS1_elearning du node Commercial\nconst smsText = $('Commercial').first().json.SMS1_elearning || \"\";\n\n// Construction du SMS final\nconst content = `${smsText}`;\n\n// Objet JSON final pour Ringover\nconst body = {\n  archived_auto: false,\n  from_number: commercial.numero,\n  to_number: apprenant['Numéro sans espace'],\n  content: content\n};\n\n// Output final\nreturn [\n  {\n    json: body\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2224,
+        -336
+      ],
+      "id": "e839c7ba-273b-4f71-8e48-72d7807d1de2",
+      "name": "Output SMS"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://public-api.ringover.com/v2/push/sms",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "***RETIRE-POUR-APERCU***"
+            },
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=archived_auto",
+              "value": "={{ $json.archived_auto }}"
+            },
+            {
+              "name": "from_number",
+              "value": "={{ $json.from_number }}"
+            },
+            {
+              "name": "to_number",
+              "value": "={{ $json.to_number }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.content }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2448,
+        -48
+      ],
+      "id": "b4f69757-92c4-42dd-bc1c-40f5a9d62338",
+      "name": "Rappel SMS1 ordi"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://public-api.ringover.com/v2/push/sms",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $('Commercial').item.json.SMS_authorization }}"
+            },
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=archived_auto",
+              "value": "={{ $json.archived_auto }}"
+            },
+            {
+              "name": "from_number",
+              "value": "={{ $json.from_number }}"
+            },
+            {
+              "name": "to_number",
+              "value": "={{ $json.to_number }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.content }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2448,
+        -336
+      ],
+      "id": "aaa5115a-5770-4888-bba5-b155a1c84364",
+      "name": "Rappel SMS1 elearning"
+    },
+    {
+      "parameters": {
+        "resume": "specificTime",
+        "dateTime": "={{ $('Code in JavaScript').item.json['4_semaines_avant_debut'] }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2672,
+        -336
+      ],
+      "id": "aa69ec85-8045-468b-8c6a-305ec17b1673",
+      "name": "Wait2"
+    },
+    {
+      "parameters": {
+        "resume": "specificTime",
+        "dateTime": "={{ $('Code in JavaScript').item.json['5_semaines_avant_debut'] }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2672,
+        -48
+      ],
+      "id": "07f674b4-6b29-4e48-8a5a-210c2670e8c7",
+      "name": "Wait3"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Get a record').item.json['E-mail du commercial en charge'] }}",
+        "subject": "=vérification  {{ $('Get a record').item.json['ID-stagiaire'] }}",
+        "emailType": "text",
+        "message": "=Salut !\nLa session de formation pour  {{ $('Get a record').item.json['ID-stagiaire'] }} débute dans 4 semaine !!\nà il compléter son e-learning ? faites le point sinon il faut le désinscrire. ",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "=salarie6@nouvelleecole.fr"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2896,
+        -336
+      ],
+      "id": "4c08ed0d-e472-4a57-8ad7-2b0108aaa928",
+      "name": "Envoi message2"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "={{ $('Get a record').item.json['E-mail du commercial en charge'] }}",
+        "subject": "=Achat ordinateur rappel final {{ $('Get a record').item.json['ID-stagiaire'] }}",
+        "message": "=Salut !\nLa session de formation pour  {{ $('Get a record').item.json['ID-stagiaire'] }} débute dans 5 semaine !!\nà il compléter son e-learning ? si oui clique sur ne pas envoyer de SMS\nSinon Envoi lui un sms de rappel en cliquant sur le bouton",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "Envoi SMS",
+            "buttonApprovalStyle": "secondary",
+            "disapproveLabel": "Ne pas envoyer de SMS",
+            "buttonDisapprovalStyle": "primary"
+          }
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2896,
+        -48
+      ],
+      "id": "4500a85a-f49c-4863-aed3-66892ed02a73",
+      "name": "Envoi message3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f690ba15-63b4-4120-a1fe-ce9737543325",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3120,
+        -48
+      ],
+      "id": "77f0ea66-776a-4f45-8613-bd6c79f877d3",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Récupération des données des autres nodes\nconst commercial = $items('Commercial')[0].json;\nconst apprenant = $items('Get a record')[0].json;\n\n// On sécurise le prénom\nconst prenom = apprenant['Quel est votre prénom ?'] || '';\n\n// Contenu du SMS basé sur le champ SMS2_ordinateur du node Commercial\nconst smsText = $('Commercial').first().json.SMS2_ordinateur || \"\";\n\n// Construction du SMS final\nconst content = `${smsText}`;\n\n// Objet JSON final pour Ringover\nconst body = {\n  archived_auto: false,\n  from_number: commercial.numero,\n  to_number: apprenant['Numéro sans espace'],\n  content: content\n};\n\n// Output final\nreturn [\n  {\n    json: body\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3344,
+        -144
+      ],
+      "id": "8912ae25-5b73-4a0a-bffd-eb91dbc3662d",
+      "name": "Output SMS2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://public-api.ringover.com/v2/push/sms",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $('Commercial').item.json.SMS_authorization }}"
+            },
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=archived_auto",
+              "value": "={{ $json.archived_auto }}"
+            },
+            {
+              "name": "from_number",
+              "value": "={{ $json.from_number }}"
+            },
+            {
+              "name": "to_number",
+              "value": "={{ $json.to_number }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.content }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3568,
+        -144
+      ],
+      "id": "82bc17ad-90eb-4229-8026-c371f5e8af80",
+      "name": "Rappel SMS1 elearning3"
+    },
+    {
+      "parameters": {
+        "resume": "specificTime",
+        "dateTime": "={{ $('Code in JavaScript').item.json['4_semaines_avant_debut'] }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3792,
+        -144
+      ],
+      "id": "44623532-ab69-4d3f-ba63-ebb7905c30fe",
+      "name": "Wait5"
+    },
+    {
+      "parameters": {
+        "sendTo": "=contact@nouvelleecole.fr",
+        "subject": "=vérification  {{ $('Get a record').item.json['ID-stagiaire'] }}",
+        "emailType": "text",
+        "message": "=Salut !\nLa session de formation pour  {{ $('Get a record').item.json['ID-stagiaire'] }} débute dans 4 semaine !!\nà il acheté son ordinateur ? faites le point sinon il faut le désinscrire.\nsi il à acheté son ordinateur il faut alors lui envoyer sa machine.",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "={{ $('Get a record').item.json['E-mail du commercial en charge'] }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        4016,
+        -144
+      ],
+      "id": "c715ae81-7df9-459b-9994-d2562dd6fc6e",
+      "name": "Envoi message4"
+    },
+    {
+      "parameters": {
+        "sendTo": "=contact@nouvelleecole.fr",
+        "subject": "=Envoi machine  {{ $('Get a record').item.json['ID-stagiaire'] }}",
+        "emailType": "text",
+        "message": "=Salut !\nLa session de formation pour  {{ $('Get a record').item.json['ID-stagiaire'] }} débute dans 7 semaines !!\nd'aprés le commercial il à bien acheté un ordinateur pour suivre la formation, vous pouvez donc lui envoyer le matériel dés que possible.",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "={{ $('Get a record').item.json['E-mail du commercial en charge'] }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2224,
+        144
+      ],
+      "id": "6aa24155-aa25-4e82-9bf4-f7acc4e5d76d",
+      "name": "Envoi message5"
+    },
+    {
+      "parameters": {
+        "sendTo": "=contact@nouvelleecole.fr",
+        "subject": "=Envoi machine  {{ $('Get a record').item.json['ID-stagiaire'] }}",
+        "emailType": "text",
+        "message": "=Salut !\nLa session de formation pour  {{ $('Get a record').item.json['ID-stagiaire'] }} débute dans 5 semaines !!\nd'aprés le commercial il à bien acheté un ordinateur pour suivre la formation, vous pouvez donc lui envoyer le matériel dés que possible.",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "={{ $('Get a record').item.json['E-mail du commercial en charge'] }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        3344,
+        48
+      ],
+      "id": "94faa284-8b31-4e02-8e01-805b95b067d3",
+      "name": "Envoi message6"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Get a record').item.json.Mail }}",
+        "subject": "Lien E-learning",
+        "emailType": "text",
+        "message": "=Bonjour {{ $('Get a record').item.json.Prenom }},\n\nPour bien préparer votre formation, vous pouvez dès maintenant commencer l’e-learning dédié.\nVoici l’accès direct :\nhttps://nouvelleecole.club/index.php/courses/les-bases-de-fusion-360/\n\nIdentifiant : {{ $('Get a record').item.json['Identifiant LE CLUB'] }}\nMot de passe : {{ $('Get a record').item.json['MDP LE CLUB'] }}\n\nL’objectif est de visionner les cinq vidéos et d'essayer de reproduire les exercices. Cela vous permettra d’arriver en session déjà à l’aise et de progresser plus vite.\n\nBien à vous,",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1328,
+        -144
+      ],
+      "id": "ca6d80ee-814f-42b2-b85c-19a2aa7ec02a",
+      "name": "Send a message"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a record": {
+      "main": [
+        [
+          {
+            "node": "Commercial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envoi message5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Rappel SMS1 ordi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Envoi message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envoi message": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Output SMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Commercial": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output SMS": {
+      "main": [
+        [
+          {
+            "node": "Rappel SMS1 elearning",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rappel SMS1 elearning": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rappel SMS1 ordi": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Envoi message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Envoi message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envoi message3": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Output SMS2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envoi message6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output SMS2": {
+      "main": [
+        [
+          {
+            "node": "Rappel SMS1 elearning3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rappel SMS1 elearning3": {
+      "main": [
+        [
+          {
+            "node": "Wait5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait5": {
+      "main": [
+        [
+          {
+            "node": "Envoi message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

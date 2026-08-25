@@ -1,0 +1,259 @@
+{
+  "name": "[APERCU] mail automatiques aux propriétaires",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion des apprenants"
+        },
+        "filterByFormula": "AND(   OR(     REGEX_MATCH({Lieu - Centre drone} & \"\", \"(?i)Nantes\"),     REGEX_MATCH({Lieu} & \"\", \"(?i)chavenay\")   ),   OR(     AND(       REGEX_MATCH({Formation} & \"\", \"Télépilote professionnel de drone\"),       IS_SAME({Troisieme partie}, DATEADD(TODAY(), 7, \"days\"), \"day\")     ),     AND(       REGEX_MATCH({Formation} & \"\", \"Télépilote de drone\"),       IS_SAME({Premiere partie}, DATEADD(TODAY(), 7, \"days\"), \"day\")     )   ) )",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "d9a287c2-9ef2-4bb7-b4d8-8af5f8c1947f",
+      "name": "Search records"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 21
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "177144d6-83a9-45a5-806e-04a93270a451",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "contact4@exemple.com",
+        "subject": "La Nouvelle École - Formation prévue dans 1 semaine - hébergement sur place",
+        "message": "=Bonjour,\n\nJe me permets de vous écrire pour vous prévenir qu’une session de formation se tiendra dans votre propritété dans une semaine, le {{ $now.plus({ days: 7 }).setLocale('fr-FR').toFormat('dd/LL/yyyy') }}, comme convenu.\n\nPour l’organisation, nous aurons {{ $json.dortSurPlaceOui }} personnes qui seront logées sur place pendant la formation.\n\nSi vous souhaitez que nous confirmions un point logistique, dites moi simplement ce qui vous convient.\n\nMerci encore et à très bientôt,\nLa Nouvelle École\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1088,
+        -288
+      ],
+      "id": "e8f80547-1cf1-4037-837d-92c144761e0e",
+      "name": "Send a message"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Node \"Code\" (après Airtable Search)\n// Compte le nombre d'items dont \"Dort sur place ?\" = \"oui\" (insensible à la casse)\n\nconst items = $input.all();\n\nlet countOui = 0;\n\nfor (const item of items) {\n  const v = item.json?.[\"Dort sur place ?\"];\n  const s = (v ?? \"\").toString().trim().toLowerCase();\n  if (s === \"oui\") countOui++;\n}\n\nreturn [\n  {\n    json: {\n      totalItems: items.length,\n      dortSurPlaceOui: countOui,\n    },\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        -288
+      ],
+      "id": "087f8c6a-8136-4d2c-b7bc-0cbdc02f9789",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e296702b-c462-4757-846f-1f7346964ed0",
+              "leftValue": "={{ $json['Lieu - Centre drone'] }}",
+              "rightValue": "Nantes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        496,
+        -96
+      ],
+      "id": "8a3b2685-d251-4002-88ba-3c9f1f2d75c2",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Node \"Code\" (après Airtable Search)\n// Compte le nombre d'items dont \"Dort sur place ?\" = \"oui\" (insensible à la casse)\n\nconst items = $input.all();\n\nlet countOui = 0;\n\nfor (const item of items) {\n  const v = item.json?.[\"Dort sur place ?\"];\n  const s = (v ?? \"\").toString().trim().toLowerCase();\n  if (s === \"oui\") countOui++;\n}\n\nreturn [\n  {\n    json: {\n      totalItems: items.length,\n      dortSurPlaceOui: countOui,\n    },\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        864,
+        176
+      ],
+      "id": "d93116d9-b638-4978-8976-5de906fc8fe5",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e296702b-c462-4757-846f-1f7346964ed0",
+              "leftValue": "={{ $json['Lieu de vol drones'] }}",
+              "rightValue": "Chavenay",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        544,
+        192
+      ],
+      "id": "8ad62ddc-7cc3-4531-9a18-69344205c5bf",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "sendTo": "contact5@exemple.com",
+        "subject": "La Nouvelle École - Formation prévue dans 1 semaine - hébergement sur place",
+        "message": "=<p>Bonjour,</p>\n\n<p>\nJe me permets de vous écrire pour vous prévenir qu’une session de formation se tiendra dans votre propriété dans une semaine, le\n<strong>{{ $now.plus({ days: 7 }).setLocale('fr-FR').toFormat('dd/LL/yyyy') }}</strong>, comme convenu.\n</p>\n\n<p>\nPour l’organisation, nous aurons <strong>{{ $json.dortSurPlaceOui }} personnes</strong> qui seront logées sur place pendant la formation.\n</p>\n\n<p>\nSi vous souhaitez que nous confirmions un point logistique (arrivée, horaires, consignes particulières), dites moi simplement ce qui vous convient.\n</p>\n\n<p>\nMerci encore et à très bientôt,<br>\n<strong>La Nouvelle École</strong>\n</p>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        176
+      ],
+      "id": "ae2e672e-e48f-47d7-8153-4e1b98c76f6e",
+      "name": "Send a message1"
+    }
+  ],
+  "connections": {
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

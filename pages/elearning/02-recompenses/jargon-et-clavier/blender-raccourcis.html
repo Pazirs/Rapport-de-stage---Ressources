@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Raccourcis Blender</title>
+
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0b0f;--sf:#12141d;--sf2:#1c1e2c;--sf3:#21243a;
+  --ac:#e8363a;--ad:rgba(232,54,58,.14);--ab:rgba(232,54,58,.4);
+  --tx:#e8e6f0;--mu:#7b7a8e;--br:#252636;--b2:#32344a;
+  --kf:#252840;--kb:#3d4060;--kt:#50536e;--ks:#07080f;--kh:#2d3055;--kp:#1e2038;
+  --ksc:#291218;--kscb:rgba(232,54,58,.55);--ksct:rgba(232,54,58,.28);
+  --u:40px;--g:4px;--kh2:41px;--rg:5px
+}
+*{cursor:none!important}
+#cd{position:fixed;top:0;left:0;width:8px;height:8px;background:var(--ac);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+#cr{position:fixed;top:0;left:0;width:34px;height:34px;border:1.5px solid rgba(232,54,58,.45);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .2s cubic-bezier(.22,1,.36,1),height .2s cubic-bezier(.22,1,.36,1),border-color .2s}
+body.ch #cr{width:50px;height:50px;border-color:rgba(232,54,58,.9)}
+body.ch #cd{opacity:.4}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:"Space Grotesk",sans-serif;font-size:15px;line-height:1.7;overflow-x:hidden;min-height:100vh}
+/* HEADER */
+header{background:var(--sf);border-bottom:1px solid var(--br);padding:18px 48px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;flex-shrink:0}
+header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(to right,transparent,var(--ac),transparent)}
+.bt{display:flex;align-items:center;gap:9px}
+.bb{width:3px;height:16px;background:var(--ac);border-radius:2px}
+.btx{font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:600;color:var(--mu);letter-spacing:.14em;text-transform:uppercase}
+.btx strong{color:var(--tx)}
+.ht{font-size:20px;font-weight:700;letter-spacing:-.02em;color:#fff}
+.ht span{color:var(--ac)}
+.hh{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--mu);letter-spacing:.06em;display:flex;align-items:center;gap:7px}
+.hd{width:5px;height:5px;border-radius:50%;background:var(--ac);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+/* MAIN */
+main{padding:20px 24px 36px;display:flex;flex-direction:column;align-items:center;gap:16px;flex:1}
+/* PANEL */
+.panel{width:100%;max-width:1400px;background:var(--sf);border:1px solid var(--br);border-left:4px solid var(--br);border-radius:9px;padding:14px 20px;display:flex;align-items:flex-start;gap:14px;transition:border-color .25s,box-shadow .25s;height:116px;overflow:hidden}
+.panel.active{border-left-color:var(--ac);box-shadow:0 0 0 1px rgba(232,54,58,.08),0 4px 20px rgba(0,0,0,.4);height:116px}
+.pbg{flex-shrink:0;width:52px;height:52px;align-self:flex-start;background:var(--sf2);border:1px solid var(--b2);border-bottom:3px solid var(--b2);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:"JetBrains Mono",monospace;font-size:17px;font-weight:600;color:var(--mu);transition:border-color .2s,color .2s,background .2s}
+.pbg svg{width:20px;height:20px;color:var(--mu);transition:color .2s}
+.panel.active .pbg{border-bottom-color:var(--ac);color:var(--ac);background:#1e0e14}
+.panel.active .pbg svg{color:var(--ac)}
+.pi{display:flex;flex-direction:column;gap:2px}
+.pit{font-size:13px;font-weight:600;color:var(--mu)}
+.pis{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--b2);letter-spacing:.07em}
+.pr{display:none;flex-direction:column;gap:3px;flex:1;overflow:hidden}
+.panel.active .pi{display:none}
+.panel.active .pr{display:flex}
+.pmt{font-size:15px;font-weight:700;color:#fff;letter-spacing:-.01em}
+.combos{display:flex;flex-wrap:nowrap;gap:6px;margin-top:2px;overflow-x:auto;scrollbar-width:none}
+.combo{background:rgba(232,54,58,.08);border:1px solid rgba(232,54,58,.2);border-radius:6px;padding:8px 12px;flex:0 0 auto;max-width:360px}
+.combo.cc{background:rgba(60,130,255,.1);border-color:rgba(60,130,255,.28)}
+.combo.ca{background:rgba(255,160,40,.1);border-color:rgba(255,160,40,.28)}
+.combo.cs{background:rgba(80,200,100,.1);border-color:rgba(80,200,100,.28)}
+.combo.cc .ck{color:#5090ff}
+.combo.ca .ck{color:#ffa028}
+.combo.cs .ck{color:#50d060}
+.combo.cc .ctitle{color:#7aadff}
+.combo.ca .ctitle{color:#ffc060}
+.combo.cs .ctitle{color:#80e090}
+.ck{font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ac);margin-bottom:3px}
+.ctitle{font-size:12.5px;font-weight:700;color:#fff;margin-bottom:2px;letter-spacing:-.01em}
+.cd2{font-size:11px;color:#a0a0b8;line-height:1.4}
+.pn{display:none;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--mu);letter-spacing:.06em;align-self:center}
+.panel.active.nosc .pr{display:none}
+.panel.active.nosc .pn{display:block}
+/* KEYBOARD ZONE SCALER */
+#kbWrap{width:100%;max-width:1400px;overflow:hidden}
+#kbZone{display:flex;gap:16px;align-items:flex-start;width:max-content;transform-origin:top left}
+/* KEYBOARD */
+.keyboard-shell{background:#0c0d18;border:1px solid #181a28;border-radius:14px;padding:14px 14px 18px;display:inline-flex;gap:12px;align-items:flex-start;box-shadow:0 2px 0 #060710,0 5px 0 #060810,0 12px 30px rgba(0,0,0,.82),inset 0 1px 0 rgba(255,255,255,.04);flex-shrink:0;isolation:isolate}
+.keyboard{background:transparent;border:none;border-radius:0;padding:0;display:inline-flex;flex-direction:column;gap:var(--rg);box-shadow:none;flex-shrink:0}
+/* KEY */
+.key{height:var(--kh2);width:calc(1*var(--u) - var(--g));flex-shrink:0;background:var(--kf);border:1px solid var(--kb);border-top:1px solid var(--kt);border-bottom:3px solid var(--ks);border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:1px 3px;position:relative;overflow:hidden;user-select:none;transition:transform .08s cubic-bezier(.22,1,.36,1),border-bottom-width .08s,background .1s,border-color .1s,box-shadow .1s;box-shadow:0 1px 3px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.045)}
+.key::before{content:'';position:absolute;top:0;left:0;right:0;height:40%;background:linear-gradient(to bottom,rgba(255,255,255,.048),transparent);border-radius:5px 5px 0 0;pointer-events:none}
+.key>*{pointer-events:none}
+.key:hover{background:var(--kh);border-color:#505470;border-top-color:#606680;box-shadow:0 2px 8px rgba(232,54,58,.1),inset 0 1px 0 rgba(255,255,255,.07)}
+.key.pressed{transform:translateY(2px);border-bottom-color:rgba(232,54,58,.4);background:var(--kp);border-color:var(--ac);box-shadow:0 0 11px rgba(232,54,58,.28),inset 0 1px 0 rgba(255,255,255,.02)}
+.key.has-sc{background:var(--ksc);border-color:var(--kscb);border-top-color:var(--ksct);border-bottom-color:#3a0810}
+.key.has-sc:hover{background:#321420;border-color:rgba(232,54,58,.75)}
+.key.has-sc.pressed{border-color:var(--ac);box-shadow:0 0 15px rgba(232,54,58,.42)}
+.lm{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:600;color:#cccae0;line-height:1;text-align:center;pointer-events:none;position:relative;z-index:1}
+.la{font-family:"JetBrains Mono",monospace;font-size:7.5px;font-weight:400;color:#484862;line-height:1;text-align:center;pointer-events:none;position:relative;z-index:1}
+.key.has-sc .lm{color:var(--ac)}
+.ls{font-size:9.5px}.lx{font-size:8px}.lxx{font-size:7.5px}
+/* icon */
+.ki{width:12px;height:12px;flex-shrink:0;pointer-events:none;position:relative;z-index:1;color:#484860;transition:color .15s}
+.key.has-sc .ki{color:rgba(232,54,58,.65)}
+.key.pressed .ki{color:var(--ac)}
+/* widths */
+.w125{width:calc(1.25*var(--u) - var(--g))}
+.w15{width:calc(1.5*var(--u) - var(--g))}
+.w175{width:calc(1.75*var(--u) - var(--g))}
+.w2{width:calc(2*var(--u) - var(--g))}
+.w225{width:calc(2.25*var(--u) - var(--g))}
+.w275{width:calc(2.75*var(--u) - var(--g))}
+.wsp{flex:1;min-width:60px}
+.wfn{height:32px}
+/* ROWS */
+.kb-row{display:flex;gap:var(--g);align-items:flex-end}
+.kb-fn{display:flex;align-items:center;gap:var(--g)}
+.kb-fn .key{height:32px}
+.fng{flex-shrink:0;width:12px}
+/* ISO ENTER — needs explicit parent width */
+.kb23{position:relative;display:flex;flex-direction:column;gap:var(--rg);width:calc(15*var(--u) - var(--g))}
+.kb23 .kb-row{width:calc(13.5*var(--u) - var(--g))}
+.enter-iso{position:absolute;right:0;top:0;width:calc(1.5*var(--u) - var(--g));height:calc(2*var(--kh2) + var(--rg));border-radius:5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+/* NAV + ARROWS sub-block */
+.kb-nav-block{display:flex;flex-direction:column;gap:var(--rg);flex-shrink:0;width:calc(3*var(--u) - var(--g));min-width:calc(3*var(--u) - var(--g));justify-content:flex-start}
+.kb-nav-block .kb-row{width:calc(3*var(--u) - var(--g))}
+.kb-arrows{display:flex;flex-direction:column;gap:var(--rg);margin-top:auto}
+.arr-row{display:flex;gap:var(--g);justify-content:center}
+.arr-sp{width:calc(1*var(--u) - var(--g));flex-shrink:0}
+/* NUMPAD */
+.kb-numpad{display:flex;flex-direction:column;gap:var(--rg);flex-shrink:0}
+.np-plus-wrap{position:relative;display:flex;flex-direction:column;gap:var(--rg);width:calc(4*var(--u) - var(--g))}
+.np-plus-wrap .kb-row{width:calc(3*var(--u) - var(--g))}
+.np-plus{position:absolute;right:0;top:0;width:calc(1*var(--u) - var(--g));height:calc(2*var(--kh2) + var(--rg));border-radius:5px;display:flex;align-items:center;justify-content:center}
+.np-ent-wrap{position:relative;display:flex;flex-direction:column;gap:var(--rg);width:calc(4*var(--u) - var(--g))}
+.np-ent-wrap .kb-row{width:calc(3*var(--u) - var(--g))}
+.np-ent{position:absolute;right:0;top:0;width:calc(1*var(--u) - var(--g));height:calc(2*var(--kh2) + var(--rg));border-radius:5px;display:flex;align-items:center;justify-content:center}
+/* MOUSE PANEL */
+.mouse-panel{background:var(--sf);border:1px solid var(--br);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:0;flex-shrink:0;width:220px}
+.mpt{font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:600;color:var(--mu);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.mouse-wrap{display:flex;justify-content:center;margin-bottom:8px;position:relative}
+.mouse-callout{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--br);transition:background .12s;border-radius:4px;padding:5px 4px}
+.mouse-callout:last-child{border-bottom:none}
+.mouse-callout:hover{background:var(--sf2)}
+.mouse-callout.active{background:rgba(232,54,58,.08)}
+.mcico{width:26px;height:26px;flex-shrink:0;background:var(--sf2);border:1px solid var(--b2);border-radius:5px;display:flex;align-items:center;justify-content:center}
+.mcico svg{width:16px;height:16px;color:var(--mu);transition:color .15s}
+.mouse-callout.active .mcico svg{color:var(--ac)}
+.mouse-callout.active .mcico{border-color:rgba(232,54,58,.35);background:#1e0e14}
+.mck{font-family:"JetBrains Mono",monospace;font-size:9.5px;color:var(--ac);letter-spacing:.05em;font-weight:600;line-height:1.2}
+.mcd{font-size:10.5px;color:#a8a6b8;line-height:1.3}
+/* LEGEND */
+.legend{display:flex;gap:20px;align-items:center;font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--mu);letter-spacing:.07em}
+.li{display:flex;align-items:center;gap:6px}
+.lr{width:8px;height:8px;border-radius:2px;background:var(--ac)}
+.lg{width:8px;height:8px;border-radius:2px;background:var(--kf);border:1px solid var(--kb)}
+/* FOOTER */
+footer{border-top:1px solid var(--br);padding:14px 48px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.fl{display:flex;align-items:center;gap:9px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--mu)}
+.flb{width:3px;height:13px;background:var(--ac);border-radius:2px}
+.fl strong{color:var(--tx)}
+.fr{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--b2);letter-spacing:.08em}
+
+/* ── INTRO POPUP ── */
+#intro-overlay{position:fixed;inset:0;background:rgba(8,9,14,.95);z-index:8000;display:flex;align-items:center;justify-content:center;animation:ovFade .3s ease;backdrop-filter:blur(4px)}
+@keyframes ovFade{from{opacity:0}to{opacity:1}}
+#intro-box{background:var(--sf);border:1px solid var(--b2);border-radius:18px;max-width:440px;width:90%;overflow:hidden;box-shadow:0 0 0 1px rgba(232,54,58,.1),0 32px 80px rgba(0,0,0,.8);animation:boxUp .4s cubic-bezier(.22,1,.36,1)}
+@keyframes boxUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.intro-topbar{background:linear-gradient(150deg,#160c10 0%,#10101a 100%);padding:28px 36px 20px;text-align:center;border-bottom:1px solid var(--b2)}
+.intro-brand{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--mu);letter-spacing:.15em;text-transform:uppercase;margin-bottom:5px}
+.intro-main-title{font-size:24px;font-weight:700;color:#fff;letter-spacing:-.02em}
+.intro-sep{display:none}
+.intro-steps{display:flex;transition:transform .45s cubic-bezier(.22,1,.36,1);width:400%}
+.intro-step{width:25%;flex-shrink:0;padding:32px 36px 28px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.intro-dots{display:flex;gap:5px;margin-bottom:24px}
+.idot{width:6px;height:6px;border-radius:50%;background:var(--b2);transition:background .3s,width .3s}
+.idot.on{background:var(--ac);width:18px;border-radius:3px}
+.sico{width:60px;height:60px;border-radius:14px;background:var(--ad);display:flex;align-items:center;justify-content:center;margin-bottom:16px;border:1px solid var(--ab)}
+.sico svg{width:30px;height:30px;color:var(--ac)}
+.stitle{font-size:19px;font-weight:700;color:#fff;letter-spacing:-.02em;margin-bottom:7px}
+.ssub{font-size:13px;color:var(--mu);line-height:1.6;margin-bottom:24px}
+.intro-btns{display:flex;gap:8px;width:100%}
+.ibtn{flex:1;padding:10px;border-radius:8px;font-family:"Space Grotesk",sans-serif;font-size:13.5px;font-weight:600;border:none;transition:background .15s,transform .1s}
+.ibtn:hover{transform:scale(1.02)}
+.ibtn.primary{background:var(--ac);color:#fff}
+.ibtn.primary:hover{background:#c82e32}
+.ibtn.secondary{background:var(--sf2);color:var(--mu);border:1px solid var(--br)}
+.ibtn.secondary:hover{color:var(--tx)}
+.ibtn.platform{display:flex;align-items:center;justify-content:center;gap:10px}
+.ibtn.platform svg{width:18px;height:18px}
+.ibtn.selected{background:var(--ac);color:#fff;border-color:var(--ac)}
+.ibtn.selected:hover{background:#c82e32;color:#fff}
+.intro-step:last-child .ibtn.platform{background:var(--ac);color:#fff;border-color:var(--ac)}
+.intro-step:last-child .ibtn.platform:hover{background:#c82e32;color:#fff}
+</style>
+</head>
+<body>
+<div id="intro-overlay">
+  <div id="intro-box">
+    <div class="intro-topbar">
+      <div class="intro-brand">La Nouvelle École · Logiciels 3D</div>
+      <div class="intro-main-title">Raccourcis <span style="color:var(--ac)">Blender</span></div>
+      <div class="intro-sep"></div>
+    </div>
+    <div class="intro-steps" id="introSteps">
+      <div class="intro-step">
+        <div class="intro-dots"><div class="idot on" id="d0"></div><div class="idot" id="d1"></div><div class="idot" id="d2"></div><div class="idot" id="d3"></div></div>
+        <div class="sico">
+          <svg viewBox="0 0 32 32" fill="none"><rect x="3" y="8" width="26" height="18" rx="3" stroke="currentColor" stroke-width="2"/><path d="M3 13h26" stroke="currentColor" stroke-width="1.5" opacity=".4"/><rect x="6" y="17" width="4" height="3" rx="1" fill="currentColor" opacity=".9"/><rect x="12" y="17" width="4" height="3" rx="1" fill="currentColor" opacity=".4"/><rect x="18" y="17" width="4" height="3" rx="1" fill="currentColor" opacity=".4"/><rect x="24" y="17" width="2" height="3" rx="1" fill="currentColor" opacity=".4"/></svg>
+        </div>
+        <div class="stitle">Clavier interactif</div>
+        <div class="ssub">Clique sur n'importe quelle touche pour voir le raccourci Blender correspondant.</div>
+        <div class="intro-btns"><button class="ibtn primary" onclick="introNext()">Suivant →</button></div>
+      </div>
+      <div class="intro-step">
+        <div class="intro-dots"><div class="idot" id="d0b"></div><div class="idot on" id="d1b"></div><div class="idot" id="d2b"></div><div class="idot" id="d3b"></div></div>
+        <div class="sico">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14S23.7 2 16 2z" stroke="currentColor" stroke-width="1.5" opacity=".25"/><path d="M16 2v28M2 16h28" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".5"/><circle cx="16" cy="16" r="5" stroke="currentColor" stroke-width="2.5"/></svg>
+        </div>
+        <div class="stitle">Ton vrai clavier</div>
+        <div class="ssub">Appuie sur n'importe quelle touche physique — elle s'allume sur l'écran en temps réel.</div>
+        <div class="intro-btns"><button class="ibtn secondary" onclick="introBack()">← Retour</button><button class="ibtn primary" onclick="introNext()">Suivant →</button></div>
+      </div>
+      <div class="intro-step">
+        <div class="intro-dots"><div class="idot" id="d0c"></div><div class="idot" id="d1c"></div><div class="idot on" id="d2c"></div><div class="idot" id="d3c"></div></div>
+        <div class="sico">
+          <svg viewBox="0 0 32 32" fill="none"><rect x="9" y="3" width="14" height="20" rx="7" stroke="currentColor" stroke-width="2.2"/><path d="M9 13h14" stroke="currentColor" stroke-width="1.5" opacity=".5"/><rect x="14" y="6" width="4" height="6" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M16 23v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 28h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="stitle">Souris incluse</div>
+        <div class="ssub">Les raccourcis souris (clic, molette, orbite…) sont disponibles dans le panneau à droite.</div>
+        <div class="intro-btns"><button class="ibtn secondary" onclick="introBack()">← Retour</button><button class="ibtn primary" onclick="introNext()">Suivant →</button></div>
+      </div>
+      <div class="intro-step">
+        <div class="intro-dots"><div class="idot" id="d0d"></div><div class="idot" id="d1d"></div><div class="idot" id="d2d"></div><div class="idot on" id="d3d"></div></div>
+        <div class="sico">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M6 9.5h20M16 9.5v13M8.5 5h15a3.5 3.5 0 0 1 3.5 3.5v9A3.5 3.5 0 0 1 23.5 21h-15A3.5 3.5 0 0 1 5 17.5v-9A3.5 3.5 0 0 1 8.5 5z" stroke="currentColor" stroke-width="2"/><path d="M12 25h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="stitle">Choisis ton clavier</div>
+        <div class="ssub">Windows garde le clavier actuel. Apple inverse les touches Command et Option et adapte l'affichage des raccourcis.</div>
+        <div class="intro-btns"><button class="ibtn secondary" onclick="introBack()">← Retour</button></div>
+        <div class="intro-btns">
+          <button class="ibtn secondary platform" id="platformWindowsBtn" onclick="selectPlatform('windows')"><svg viewBox="0 0 20 20" fill="none"><path d="M2.5 3.5l6-1v7h-6v-6zM9.5 2.3l8-1.3v8.5h-8V2.3zM2.5 10.5h6v7l-6-1v-6zM9.5 10.5h8v8.5l-8-1.3v-7.2z" fill="currentColor"/></svg><span>Windows</span></button>
+          <button class="ibtn primary platform" id="platformAppleBtn" onclick="selectPlatform('apple')"><svg viewBox="0 0 20 20" fill="none"><path d="M13.1 3.2c.8-.9 1.3-2 1.2-3.2-1.1.1-2.3.8-3 1.6-.7.8-1.3 2-1.2 3.1 1.2.1 2.2-.5 3-1.5zM16.6 10.9c0-2.4 2-3.6 2.1-3.6-1.2-1.7-3-1.9-3.6-1.9-1.5-.2-2.9.9-3.7.9-.8 0-2-.9-3.3-.8-1.7 0-3.3 1-4.1 2.4-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.3 2.5 1.3-.1 1.8-.8 3.4-.8s2 .8 3.4.8c1.4 0 2.3-1.2 3.2-2.4 1-1.4 1.5-2.8 1.5-2.9-.1 0-2.9-1.1-2.9-4.4z" fill="currentColor"/></svg><span>Apple</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="cd"></div><div id="cr"></div>
+<header>
+  <div class="bt"><div class="bb"></div><span class="btx">La <strong>Nouvelle École</strong> &nbsp;·&nbsp; Logiciels 3D</span></div>
+  <h1 class="ht">Raccourcis <span>Blender</span></h1>
+  <div class="hh"><div class="hd"></div><span>Clique ou appuie sur une touche</span></div>
+</header>
+<main>
+<div class="panel" id="panel">
+  <div class="pbg" id="pbg">—</div>
+  <div style="flex:1">
+    <div class="pi"><div class="pit">Appuie sur une touche ou clique avec la souris</div><div class="pis">// Les touches <span style="color:var(--ac)">rouges</span> ont un raccourci Blender assigné</div></div>
+    <div class="pr"><div class="pmt" id="pmt"></div><div class="combos" id="pcb"></div></div>
+    <div class="pn">Aucun raccourci Blender assigné à cette touche</div>
+  </div>
+</div>
+<div id="kbWrap"><div id="kbZone">
+  <div class="keyboard-shell">
+  <div class="keyboard" id="keyboard">
+    <div class="kb-fn">
+      <div class="key wfn" data-key="Escape"><span class="lm lx">Esc</span></div>
+      <div class="fng"></div>
+      <div class="key wfn" data-key="F1"><span class="lm ls">F1</span></div>
+      <div class="key wfn has-sc" data-key="F2"><svg class="ki" viewBox="0 0 14 14" fill="none"><path d="M2 10.5l7-7 2 2-7 7H2v-2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M9 3.5l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg><span class="lm ls">F2</span></div>
+      <div class="key wfn" data-key="F3"><span class="lm ls">F3</span></div>
+      <div class="key wfn" data-key="F4"><span class="lm ls">F4</span></div>
+      <div class="fng"></div>
+      <div class="key wfn" data-key="F5"><span class="lm ls">F5</span></div>
+      <div class="key wfn" data-key="F6"><span class="lm ls">F6</span></div>
+      <div class="key wfn" data-key="F7"><span class="lm ls">F7</span></div>
+      <div class="key wfn" data-key="F8"><span class="lm ls">F8</span></div>
+      <div class="fng"></div>
+      <div class="key wfn" data-key="F9"><span class="lm ls">F9</span></div>
+      <div class="key wfn" data-key="F10"><span class="lm ls">F10</span></div>
+      <div class="key wfn" data-key="F11"><span class="lm ls">F11</span></div>
+      <div class="key wfn" data-key="F12"><span class="lm ls">F12</span></div>
+      <div class="fng"></div>
+      <div class="key wfn" data-key="PrintScreen"><span class="lm" style="font-size:7px;line-height:1.25">Impr<br>écran</span></div>
+      <div class="key wfn" data-key="ScrollLock"><span class="lm" style="font-size:7px;line-height:1.25">Arrêt<br>défil</span></div>
+      <div class="key wfn" data-key="Pause"><span class="lm lxx">Pause</span></div>
+    </div>
+    <div class="kb-row">
+      <div class="key" data-key="²"><span class="la"> </span><span class="lm">²</span></div>
+      <div class="key" data-key="&"><span class="la">1</span><span class="lm">&amp;</span></div>
+      <div class="key" data-key="é"><span class="la">2</span><span class="lm">é</span></div>
+      <div class="key" data-key='"'><span class="la">3</span><span class="lm">"</span></div>
+      <div class="key" data-key="'"><span class="la">4</span><span class="lm">'</span></div>
+      <div class="key" data-key="("><span class="la">5</span><span class="lm">(</span></div>
+      <div class="key" data-key="-"><span class="la">6</span><span class="lm">-</span></div>
+      <div class="key" data-key="è"><span class="la">7</span><span class="lm">è</span></div>
+      <div class="key" data-key="_"><span class="la">8</span><span class="lm">_</span></div>
+      <div class="key" data-key="ç"><span class="la">9</span><span class="lm">ç</span></div>
+      <div class="key" data-key="à"><span class="la">0</span><span class="lm">à</span></div>
+      <div class="key" data-key=")"><span class="la">°</span><span class="lm">)</span></div>
+      <div class="key" data-key="="><span class="la">+</span><span class="lm">=</span></div>
+      <div class="key w2" data-key="Backspace"><span class="lm lx">Retour ←</span></div>
+    </div>
+    <div class="kb23">
+      <div class="kb-row"><div class="key w15 has-sc" data-key="Tab"><svg class="ki" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="3" width="5" height="8" rx="0.5" stroke="currentColor" stroke-width="1.2"/><rect x="7.5" y="3" width="5" height="8" rx="0.5" stroke="currentColor" stroke-width="1.2" opacity="0.45"/><path d="M6.5 7h1.5M8 6.2l.8.8-.8.8" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lm lxx">Tab ⇥</span></div><div class="key has-sc" data-key="a"><svg class="ki" viewBox="0 0 14 14" fill="none"><rect x="0.7" y="0.7" width="12.6" height="12.6" rx="1" stroke="currentColor" stroke-width="1"/><circle cx="3.5" cy="4" r="1.1" fill="currentColor"/><circle cx="7" cy="4" r="1.1" fill="currentColor"/><circle cx="10.5" cy="4" r="1.1" fill="currentColor"/><circle cx="3.5" cy="7" r="1.1" fill="currentColor"/><circle cx="7" cy="7" r="1.7" fill="currentColor"/><circle cx="10.5" cy="7" r="1.1" fill="currentColor"/><circle cx="3.5" cy="10" r="1.1" fill="currentColor"/><circle cx="7" cy="10" r="1.1" fill="currentColor"/><circle cx="10.5" cy="10" r="1.1" fill="currentColor"/></svg><span class="lm">A</span></div><div class="key has-sc" data-key="z"><span class="lm">Z</span></div><div class="key has-sc" data-key="e"><svg class="ki" viewBox="0 0 14 14" fill="none"><rect x="2" y="8.5" width="10" height="4" rx="0.5" stroke="currentColor" stroke-width="1.2"/><path d="M7 7.5V2.5M7 2.5L4.5 5M7 2.5L9.5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lm">E</span></div><div class="key has-sc" data-key="r"><svg class="ki" viewBox="0 0 14 14" fill="none"><path d="M11 3.5A5 5 0 1 0 12.2 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M12 3.2V7H8.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lm">R</span></div><div class="key has-sc" data-key="t"><svg class="ki" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M5 1v12" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 4.5h.01M2.5 7h.01M2.5 9.5h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="lm">T</span></div><div class="key" data-key="y"><span class="lm">Y</span></div><div class="key has-sc" data-key="u"><svg class="ki" viewBox="0 0 14 14" fill="none"><path d="M2.5 2l3 4.5 3-4.5 3 9.5H1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M5.5 6.5l-2 4M8.5 6.5l2 4M4 9.5h6" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg><span class="lm">U</span></div><div class="key has-sc" data-key="i"><svg class="ki" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="1.5" width="11" height="11" rx="0.5" stroke="currentColor" stroke-width="1.2"/><rect x="4" y="4" width="6" height="6" rx="0.5" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 1.5L4 4M12.5 1.5L10 4M1.5 12.5L4 10M12.5 12.5L10 10" stroke="currentColor" stroke-width="0.9" stroke-linecap="round"/></svg><span class="lm">I</span></div><div class="key has-sc" data-key="o"><svg class="ki" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1" opacity="0.35"/><circle cx="7" cy="7" r="3.5" stroke="currentColor" stroke-width="1.1" opacity="0.6"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></svg><span class="lm">O</span></div><div class="key has-sc" data-key="p"><svg class="ki" viewBox="0 0 14 14" fill="none"><path d="M7 1v12" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1.5"/><path d="M1.5 3C1.5 3 4 5 4 7s-2.5 4-2.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M12.5 3C12.5 3 10 5 10 7s2.5 4 2.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg><span class="lm">P</span></div><div class="key" data-key="^"><span class="la">¨</span><span class="lm">^</span></div><div class="key" data-key="$"><span class="la">£</span><span class="lm">$</span></div></div>
+      <div class="kb-row"><div class="key w15" data-key="CapsLock"><span class="lm lxx">Verr Maj</span><div id="cled" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);width:4px;height:4px;border-radius:50%;background:#252638;transition:background .2s"></div></div><div class="key" data-key="q"><span class="lm">Q</span></div><div class="key has-sc" data-key="s"><svg class="ki" viewBox="0 0 14 14" fill="none"><path d="M2 2l3.5 3.5M2 2h2.5M2 2v2.5M12 2l-3.5 3.5M12 2H9.5M12 2v2.5M2 12l3.5-3.5M2 12h2.5M2 12v-2.5M12 12l-3.5-3.5M12 12H9.5M12 12v-2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lm">S</span></div><div class="key has-sc" data-key="d"><svg class="ki" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="0.5" stroke="currentColor" stroke-width="1.2" opacity="0.5"/><rect x="7" y="7" width="5.5" height="5.5" rx="0.5" stroke="currentColor" stroke-width="1.2"/><path d="M7 5L5 7M9 2.5L11.5 2.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg><span class="lm">D</span></div><div class="key" data-key="f"><span class="lm">F</span></div><div class="key has-sc" data-key="g"><svg class="ki" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12M7 1L4.5 4M7 1l2.5 3M7 13l-2.5-3M7 13l2.5-3M1 7l3-2.5M1 7l3 2.5M13 7l-3-2.5M13 7l-3 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg><span class="lm">G</span></div><div class="key has-sc" data-key="h"><svg class="ki" viewBox="0 0 14 14" fill="none"><path d="M1 7s2.3-4 6-4 6 4 6 4-2.3 4-6 4-6-4-6-4z" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="7" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M2 2l10 10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg><span class="lm">H</span></div><div class="key has-sc" data-key="j"><svg class="ki" viewBox="0 0 14 14" fill="none"><rect x="1" y="2.5" width="5" height="9" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="2.5" width="5" height="9" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M6 7h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 5.2l1.5 1.8L5 8.8M9 5.2L7.5 7 9 8.8" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lm">J</span></div><div class="key has-sc" data-key="k"><svg class="ki" viewBox="0 0 14 14" fill="none"><path d="M9.5 1.5L3 8l-1 3.5L5.5 10.5l6.5-6.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M7.5 3.5l2.5 2.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg><span class="lm">K</span></div><div class="key has-sc" data-key="l"><svg class="ki" viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1.7" fill="currentColor"/><circle cx="11" cy="7" r="1.7" fill="currentColor"/><circle cx="7" cy="3" r="1.7" fill="currentColor"/><circle cx="7" cy="11" r="1.7" fill="currentColor"/><path d="M3 7L7 3M11 7L7 3M3 7L7 11M11 7L7 11" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg><span class="lm">L</span></div><div class="key has-sc" data-key="m"><svg class="ki" viewBox="0 0 14 14" fill="none"><circle cx="2.5" cy="3" r="1.4" fill="currentColor" opacity="0.7"/><circle cx="11.5" cy="3" r="1.4" fill="currentColor" opacity="0.7"/><circle cx="2.5" cy="11" r="1.4" fill="currentColor" opacity="0.7"/><circle cx="11.5" cy="11" r="1.4" fill="currentColor" opacity="0.7"/><path d="M2.5 3L7 7M11.5 3L7 7M2.5 11L7 7M11.5 11L7 7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><circle cx="7" cy="7" r="2" fill="currentColor"/></svg><span class="lm">M</span></div><div class="key" data-key="ù"><span class="la">%</span><span class="lm">ù</span></div><div class="key" data-key="*"><span class="la">µ</span><span class="lm">*</span></div></div>
+      <div class="key enter-iso" data-key="Enter"><span class="lm" style="font-size:13px">↵</span><span class="lm lxx">Entrée</span></div>
+    </div>
+    <div class="kb-row"><div class="key w125" data-key="ShiftLeft"><span class="lm lx">⇧ Maj</span></div><div class="key" data-key="<"><span class="la">&gt;</span><span class="lm">&lt;</span></div><div class="key has-sc" data-key="w"><svg class="ki" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2.5" width="11" height="9" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4 5.5h6M4 7.5h4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg><span class="lm">W</span></div><div class="key has-sc" data-key="x"><svg class="ki" viewBox="0 0 14 14" fill="none"><path d="M2 4h10l-1 8H3z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M1 4h12M5 4V2.5h4V4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 6.5l3 4M8.5 6.5l-3 4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg><span class="lm">X</span></div><div class="key has-sc" data-key="c"><svg class="ki" viewBox="0 0 14 14" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1.5"/><path d="M9.5 9.5L13 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="lm">C</span></div><div class="key has-sc" data-key="v"><svg class="ki" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="1.5" width="4.5" height="4.5" rx="0.5" stroke="currentColor" stroke-width="1.1"/><rect x="8" y="1.5" width="4.5" height="4.5" rx="0.5" stroke="currentColor" stroke-width="1.1" opacity="0.5"/><rect x="1.5" y="8" width="4.5" height="4.5" rx="0.5" stroke="currentColor" stroke-width="1.1" opacity="0.5"/><rect x="8" y="8" width="4.5" height="4.5" rx="0.5" stroke="currentColor" stroke-width="1.1"/></svg><span class="lm">V</span></div><div class="key has-sc" data-key="b"><svg class="ki" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="8.5" height="8.5" rx="0.5" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 1.5"/><circle cx="10.5" cy="10.5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M10.5 9v3M9 10.5h3" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg><span class="lm">B</span></div><div class="key has-sc" data-key="n"><svg class="ki" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M9 1v12" stroke="currentColor" stroke-width="1.2"/><path d="M11 4.5h.01M11 7h.01M11 9.5h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="lm">N</span></div><div class="key" data-key=","><span class="la">?</span><span class="lm">,</span></div><div class="key" data-key=";"><span class="la">.</span><span class="lm">;</span></div><div class="key" data-key=":"><span class="la">/</span><span class="lm">:</span></div><div class="key" data-key="!"><span class="la">§</span><span class="lm">!</span></div><div class="key w275" data-key="ShiftRight"><span class="lm lx">⇧ Maj</span></div></div>
+    <div class="kb-row">
+      <div class="key w125" data-key="ControlLeft"><span class="lm lx">Ctrl</span></div>
+      <div class="key w125" id="leftOuterMod" data-key="MetaLeft"><span class="lm" style="font-size:14px">⊞</span></div>
+      <div class="key w125" id="leftInnerMod" data-key="AltLeft"><span class="lm lx">Alt</span></div>
+      <div class="key wsp" data-key=" "></div>
+      <div class="key w125" id="rightInnerMod" data-key="AltRight"><span class="lm" style="font-size:8.5px">AltGr</span></div>
+      <div class="key w125" id="rightOuterMod" data-key="MetaRight"><span class="lm" style="font-size:14px">⊞</span></div>
+      <div class="key w125" data-key="ContextMenu"><span class="lm" style="font-size:15px">☰</span></div>
+      <div class="key w125" data-key="ControlRight"><span class="lm lx">Ctrl</span></div>
+    </div>
+  </div><!-- /keyboard -->
+  <div class="kb-nav-block">
+    <div class="kb-row">
+      <div class="key" data-key="Insert"><span class="lm lxx">Inser</span></div>
+      <div class="key" data-key="Home"><span class="lm lxx">Orig</span></div>
+      <div class="key" data-key="PageUp"><span class="lm lxx">PgUp</span></div>
+    </div>
+    <div class="kb-row">
+      <div class="key" data-key="Delete"><span class="lm lxx">Suppr</span></div>
+      <div class="key" data-key="End"><span class="lm lxx">Fin</span></div>
+      <div class="key" data-key="PageDown"><span class="lm lxx">PgDn</span></div>
+    </div>
+    <div style="height:calc(var(--kh2) + var(--rg))"></div>
+    <div class="kb-arrows">
+      <div class="arr-row">
+        <div class="arr-sp"></div>
+        <div class="key" data-key="ArrowUp"><span class="lm">↑</span></div>
+        <div class="arr-sp"></div>
+      </div>
+      <div class="arr-row">
+        <div class="key" data-key="ArrowLeft"><span class="lm">←</span></div>
+        <div class="key" data-key="ArrowDown"><span class="lm">↓</span></div>
+        <div class="key" data-key="ArrowRight"><span class="lm">→</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="kb-numpad">
+    <div class="kb-row">
+      <div class="key" data-key="NumLock"><span class="lm" style="font-size:7px;line-height:1.3">Verr<br>Num</span></div>
+      <div class="key has-sc" data-key="numslash"><svg class="ki" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2" width="4" height="10" rx="0.5" stroke="currentColor" stroke-width="1.1"/><rect x="8.5" y="2" width="4" height="10" rx="0.5" stroke="currentColor" stroke-width="1.1"/></svg><span class="lm">/</span></div>
+      <div class="key" data-key="NumpadMultiply"><span class="lm">*</span></div>
+      <div class="key" data-key="NumpadSubtract"><span class="lm">−</span></div>
+    </div>
+    <div class="np-plus-wrap">
+      <div class="kb-row">
+        <div class="key has-sc" data-key="num7"><span class="lm">7</span></div>
+        <div class="key has-sc" data-key="num8"><span class="lm lxx">Orb↑</span><span class="lm">8</span></div>
+        <div class="key has-sc" data-key="num9"><span class="lm lxx">Ret.</span><span class="lm">9</span></div>
+      </div>
+      <div class="kb-row">
+        <div class="key has-sc" data-key="num4"><span class="lm lxx">Orb←</span><span class="lm">4</span></div>
+        <div class="key has-sc" data-key="num5"><span class="lm">5</span></div>
+        <div class="key has-sc" data-key="num6"><span class="lm lxx">Orb→</span><span class="lm">6</span></div>
+      </div>
+      <div class="key np-plus" data-key="NumpadAdd"><span class="lm">+</span></div>
+    </div>
+    <div class="np-ent-wrap">
+      <div class="kb-row">
+        <div class="key has-sc" data-key="num1"><span class="lm">1</span></div>
+        <div class="key has-sc" data-key="num2"><span class="lm lxx">Orb↓</span><span class="lm">2</span></div>
+        <div class="key has-sc" data-key="num3"><span class="lm">3</span></div>
+      </div>
+      <div class="kb-row">
+        <div class="key w2 has-sc" data-key="num0"><svg class="ki" viewBox="0 0 14 14" fill="none"><path d="M3 5.5A3.5 3.5 0 0 1 10 5.5v3A3.5 3.5 0 0 1 3 8.5V5.5z" stroke="currentColor" stroke-width="1.3"/></svg><span class="lm">0</span></div>
+        <div class="key has-sc" data-key="numdot"><svg class="ki" viewBox="0 0 14 14" fill="none"><circle cx="4" cy="7" r="1.5" fill="currentColor"/><path d="M8 4.5l4 2.5-4 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lm">.</span></div>
+      </div>
+      <div class="key np-ent" data-key="NumpadEnter"><span class="lm" style="font-size:12px">↵</span></div>
+    </div>
+  </div>  </div><!-- /keyboard-shell -->
+  <div class="mouse-panel">
+    <div class="mpt">// Souris</div>
+    <div class="mouse-callout" data-key="mouse-left">
+      <div class="mcico"><svg viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="7" height="9" rx="2" fill="currentColor" opacity="0.9"/><rect x="10" y="1" width="7" height="9" rx="2" stroke="currentColor" stroke-width="1.3" opacity="0.4"/></svg></div>
+      <div><div class="mck">Clic gauche</div><div class="mcd">Sélectionner un objet ou élément</div></div>
+    </div>
+    <div class="mouse-callout" data-key="mouse-right">
+      <div class="mcico"><svg viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="7" height="9" rx="2" stroke="currentColor" stroke-width="1.3" opacity="0.4"/><rect x="10" y="1" width="7" height="9" rx="2" fill="currentColor" opacity="0.9"/></svg></div>
+      <div><div class="mck">Clic droit</div><div class="mcd">Menu contextuel / Annuler</div></div>
+    </div>
+    <div class="mouse-callout" data-key="mouse-scroll">
+      <div class="mcico"><svg viewBox="0 0 18 18" fill="none"><rect x="6" y="1" width="6" height="10" rx="3" fill="currentColor" opacity="0.9"/><path d="M9 12v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7 14l2 2 2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/></svg></div>
+      <div><div class="mck">Molette</div><div class="mcd">Zoom avant / Zoom arrière</div></div>
+    </div>
+    <div class="mouse-callout" data-key="mouse-middle">
+      <div class="mcico"><svg viewBox="0 0 18 18" fill="none"><rect x="6" y="1" width="6" height="10" rx="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 9l4-4M2 9l4 4M16 9l-4-4M16 9l-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.8"/></svg></div>
+      <div><div class="mck">Clic mol. + glisser</div><div class="mcd">Rotation de la vue 3D</div></div>
+    </div>
+    <div class="mouse-callout" data-key="mouse-pan">
+      <div class="mcico"><svg viewBox="0 0 18 18" fill="none"><rect x="6" y="1" width="6" height="10" rx="3" stroke="currentColor" stroke-width="1.3"/><path d="M1 9h16M1 9l3-2.5M1 9l3 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.75"/></svg></div>
+      <div><div class="mck">Maj + clic mol.</div><div class="mcd">Panoramique (déplacer la vue)</div></div>
+    </div>
+    <div class="mouse-callout" data-key="mouse-shiftcl">
+      <div class="mcico"><svg viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="7" height="9" rx="2" stroke="currentColor" stroke-width="1.3" stroke-dasharray="2 1.2"/><rect x="10" y="1" width="7" height="9" rx="2" stroke="currentColor" stroke-width="1.3" opacity="0.4"/><path d="M5 14v4M3 16h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity="0.7"/></svg></div>
+      <div><div class="mck">Maj + clic gauche</div><div class="mcd">Ajouter à la sélection</div></div>
+    </div>
+    <div class="mouse-callout" data-key="mouse-loop">
+      <div class="mcico"><svg viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="7" height="9" rx="2" stroke="currentColor" stroke-width="1.3" opacity="0.5"/><rect x="10" y="1" width="7" height="9" rx="2" stroke="currentColor" stroke-width="1.3" opacity="0.5"/><path d="M1 6h16M1 10h16" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/></svg></div>
+      <div><div class="mck">Alt + clic gauche</div><div class="mcd">Sélectionner une boucle</div></div>
+    </div>
+  </div>
+</div></div><!-- /kbZone /kbWrap -->
+<div class="legend">
+  <div class="li"><div class="lr"></div><span>Raccourci assigné</span></div>
+  <div class="li"><div class="lg"></div><span>Pas de raccourci</span></div>
+  </main>
+<footer>
+  <div class="fl"><div class="flb"></div><span>La <strong>Nouvelle École</strong> — support de cours</span></div>
+  <div class="fr">Blender Raccourcis &nbsp;·&nbsp; v3.0</div>
+</footer>
+<script>
+const cd=document.getElementById("cd"),cr=document.getElementById("cr");
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener("mousemove",e=>{mx=e.clientX;my=e.clientY;cd.style.left=mx+"px";cd.style.top=my+"px"});
+(function loop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cr.style.left=rx+"px";cr.style.top=ry+"px";requestAnimationFrame(loop)})();
+document.querySelectorAll(".key,.mouse-callout,a").forEach(el=>{
+  el.addEventListener("mouseenter",()=>document.body.classList.add("ch"));
+  el.addEventListener("mouseleave",()=>document.body.classList.remove("ch"));
+});
+
+const SC={"g": {"title": "Déplacer", "combos": [{"mod": "", "keys": "G", "desc": "Mode déplacement libre. Contraindre à un axe : X, Y ou Z. Valeur numérique acceptée.", "title": "Déplacer (G)"}, {"mod": "alt", "keys": "Alt + G", "desc": "Réinitialise la position à l'origine (0,0,0).", "title": "Reset position"}]}, "r": {"title": "Rotation", "combos": [{"mod": "", "keys": "R", "desc": "Mode rotation. Contraindre à un axe : X, Y ou Z. Valeur numérique acceptée.", "title": "Rotation (R)"}, {"mod": "ctrl", "keys": "Ctrl + R", "desc": "Loop Cut — insère une boucle de coupe sur le mesh. Molette = nb segments.", "title": "Loop Cut"}, {"mod": "alt", "keys": "Alt + R", "desc": "Réinitialise la rotation à (0°, 0°, 0°).", "title": "Reset rotation"}]}, "s": {"title": "Redimensionner", "combos": [{"mod": "", "keys": "S", "desc": "Mode scale. Contraindre à un axe : X, Y ou Z. Valeur numérique acceptée.", "title": "Scale (S)"}, {"mod": "ctrl", "keys": "Ctrl + S", "desc": "Sauvegarde le fichier .blend en cours.", "title": "Sauvegarder"}, {"mod": "alt", "keys": "Alt + S", "desc": "Réinitialise l'échelle à (1, 1, 1).", "title": "Reset échelle"}]}, "e": {"title": "Extruder / UV", "combos": [{"mod": "", "keys": "E", "desc": "En mode Édition : extrude la sélection (faces, arêtes ou sommets).", "title": "Extruder"}, {"mod": "ctrl", "keys": "Ctrl + E", "desc": "Menu arêtes — accès à Mark Seam / Clear Seam pour l'UV mapping.", "title": "Menu arêtes (UV)"}]}, "i": {"title": "Inset / Inverser", "combos": [{"mod": "", "keys": "I", "desc": "En mode Édition : insère une face à l'intérieur de la face sélectionnée.", "title": "Inset"}, {"mod": "ctrl", "keys": "Ctrl + I", "desc": "Inverse la sélection — sélectionne ce qui ne l'était pas.", "title": "Inverser sélection"}]}, "b": {"title": "Sélection / Bevel", "combos": [{"mod": "", "keys": "B", "desc": "Sélection par boîte. Clic gauche = sélectionner, clic droit = annuler.", "title": "Sélection boîte"}, {"mod": "ctrl", "keys": "Ctrl + B", "desc": "Bevel — adoucit les arêtes. Molette = nombre de segments.", "title": "Bevel (biseau)"}]}, "a": {"title": "Tout sélectionner", "combos": [{"mod": "", "keys": "A", "desc": "Sélectionne tout (1er appui) ou désélectionne tout (2e appui).", "title": "Tout sélectionner"}, {"mod": "shift", "keys": "Maj + A", "desc": "Ouvre le menu Ajouter : objet, lumière, caméra, courbe…", "title": "Menu Ajouter"}]}, "k": {"title": "Couteau", "combos": [{"mod": "", "keys": "K", "desc": "Outil de découpe manuelle du mesh. Cliquer = ajouter points, Entrée = valider, Échap = annuler.", "title": "Couteau"}]}, "m": {"title": "Fusionner (Merge)", "combos": [{"mod": "", "keys": "M", "desc": "En mode Édition : fusionne les sommets sélectionnés. Menu de choix : au centre, au curseur, au premier, etc.", "title": "Fusionner (Merge)"}]}, "h": {"title": "Masquer / Afficher", "combos": [{"mod": "", "keys": "H", "desc": "Cache les objets ou éléments sélectionnés.", "title": "Masquer"}, {"mod": "shift", "keys": "Maj + H", "desc": "Cache tout SAUF la sélection courante.", "title": "Masquer tout sauf"}, {"mod": "alt", "keys": "Alt + H", "desc": "Réaffiche tous les éléments précédemment cachés.", "title": "Réafficher tout"}]}, "n": {"title": "Panneau latéral (N-Panel)", "combos": [{"mod": "", "keys": "N", "desc": "Ouvre/ferme le N-Panel à droite du viewport (Item, Tool, View…).", "title": "N-Panel"}, {"mod": "alt", "keys": "Alt + N", "desc": "Recalculer les normales — puis choisir Outside ou Inside.", "title": "Recalculer normales"}]}, "t": {"title": "Barre d'outils", "combos": [{"mod": "", "keys": "T", "desc": "Ouvre/ferme la barre d'outils gauche (transformations, annotations…).", "title": "Barre d'outils (T)"}]}, "z": {"title": "Mode d'affichage", "combos": [{"mod": "", "keys": "Z", "desc": "Pie menu de shading : Solid, Wireframe, Material Preview, Rendered.", "title": "Mode d'affichage"}, {"mod": "alt", "keys": "Alt + Z", "desc": "Active/désactive le mode X-Ray (voir à travers le mesh).", "title": "X-Ray"}]}, "o": {"title": "Édition proportionnelle", "combos": [{"mod": "", "keys": "O", "desc": "Active/désactive l'édition proportionnelle. Molette pendant G/R/S = rayon d'influence.", "title": "Édition proportionnelle"}]}, "p": {"title": "Séparer", "combos": [{"mod": "", "keys": "P", "desc": "En mode Édition : sépare les éléments sélectionnés dans un nouvel objet indépendant.", "title": "Séparer"}]}, "x": {"title": "Supprimer", "combos": [{"mod": "", "keys": "X ou Suppr", "desc": "Ouvre le menu de suppression. En mode Édition : Sommets, Arêtes, Faces…", "title": "Supprimer"}]}, "tab": {"title": "Mode Édition / Magnétisme", "combos": [{"mod": "", "keys": "Tab", "desc": "Bascule entre mode Objet et mode Édition.", "title": "Mode Édition"}, {"mod": "shift", "keys": "Maj + Tab", "desc": "Active/désactive le magnétisme (snapping).", "title": "Magnétisme"}]}, "f2": {"title": "Renommer", "combos": [{"mod": "", "keys": "F2", "desc": "Ouvre le champ de renommage de l'élément actif (objet, collection, matériau…).", "title": "Renommer"}]}, "c": {"title": "Sélection circulaire", "combos": [{"mod": "", "keys": "C", "desc": "Sélection par pinceau circulaire. Molette = taille. Clic G = sélectionner, Clic D = terminer.", "title": "Sélection circulaire"}]}, "w": {"title": "Menu contextuel", "combos": [{"mod": "", "keys": "W", "desc": "En mode Édition : menu des opérations rapides sur la sélection.", "title": "Menu contextuel"}]}, "d": {"title": "Dupliquer", "combos": [{"mod": "shift", "keys": "Maj + D", "desc": "Duplique la sélection et passe directement en mode déplacement.", "title": "Dupliquer"}]}, "v": {"title": "Vertex Slide", "combos": [{"mod": "", "keys": "V", "desc": "En mode Édition : fait glisser un sommet le long d'une arête existante.", "title": "Vertex Slide"}]}, "u": {"title": "Dérouler UV", "combos": [{"mod": "", "keys": "U", "desc": "En mode Édition : ouvre le menu UV Unwrap (Unwrap, Smart UV Project, Project from View…).", "title": "Dérouler UV"}]}, "l": {"title": "Sélectionner les liés", "combos": [{"mod": "ctrl", "keys": "Ctrl + L", "desc": "Sélectionne tous les éléments géométriquement connectés à la sélection.", "title": "Sélectionner liés"}]}, "j": {"title": "Joindre", "combos": [{"mod": "ctrl", "keys": "Ctrl + J", "desc": "Fusionne plusieurs objets sélectionnés en un seul objet.", "title": "Joindre objets"}]}, "num1": {"title": "Vue de face", "combos": [{"mod": "", "keys": "Pavé num. 1", "desc": "Vue de face (Front). Ctrl+1 = vue de derrière.", "title": "Vue de face"}]}, "num2": {"title": "Orbite bas", "combos": [{"mod": "", "keys": "Pavé num. 2", "desc": "Fait pivoter la vue vers le bas.", "title": "Orbite bas"}]}, "num3": {"title": "Vue de côté", "combos": [{"mod": "", "keys": "Pavé num. 3", "desc": "Vue de droite (Right). Ctrl+3 = vue de gauche.", "title": "Vue de côté"}]}, "num4": {"title": "Orbite gauche", "combos": [{"mod": "", "keys": "Pavé num. 4", "desc": "Fait pivoter la vue vers la gauche.", "title": "Orbite gauche"}]}, "num5": {"title": "Perspective / Ortho", "combos": [{"mod": "", "keys": "Pavé num. 5", "desc": "Bascule entre vue perspective et vue orthographique.", "title": "Perspective / Ortho"}]}, "num6": {"title": "Orbite droite", "combos": [{"mod": "", "keys": "Pavé num. 6", "desc": "Fait pivoter la vue vers la droite.", "title": "Orbite droite"}]}, "num7": {"title": "Vue du dessus", "combos": [{"mod": "", "keys": "Pavé num. 7", "desc": "Vue du dessus (Top). Ctrl+7 = vue du dessous.", "title": "Vue du dessus"}]}, "num8": {"title": "Orbite haut", "combos": [{"mod": "", "keys": "Pavé num. 8", "desc": "Fait pivoter la vue vers le haut.", "title": "Orbite haut"}]}, "num9": {"title": "Vue arrière", "combos": [{"mod": "", "keys": "Pavé num. 9", "desc": "Pivote la vue de 180° (vue opposée).", "title": "Vue arrière"}]}, "num0": {"title": "Vue caméra", "combos": [{"mod": "", "keys": "Pavé num. 0", "desc": "Affiche la vue depuis la caméra active. Utile pour cadrer un rendu.", "title": "Vue caméra"}]}, "numdot": {"title": "Focus sélection", "combos": [{"mod": "", "keys": "Pavé num. .", "desc": "Centre et zoome la vue sur l'objet ou les éléments sélectionnés.", "title": "Focus sélection"}]}, "numslash": {"title": "Vue locale (isoler)", "combos": [{"mod": "", "keys": "Pavé num. /", "desc": "Isole l'objet sélectionné (vue locale). Ré-appuyer pour revenir.", "title": "Vue locale"}]}, "mouse-left": {"title": "Clic gauche", "combos": [{"mod": "", "keys": "Clic gauche", "desc": "Sélectionner un objet ou un élément (sommet, arête, face).", "title": "Sélectionner"}, {"mod": "shift", "keys": "Maj + Clic gauche", "desc": "Ajouter ou retirer un élément de la sélection.", "title": "Ajouter à la sélection"}, {"mod": "alt", "keys": "Alt + Clic gauche", "desc": "Sélectionner une boucle d'arêtes ou de faces (Loop Select).", "title": "Loop Select"}, {"mod": "ctrl", "keys": "Ctrl + Clic gauche", "desc": "Shortest Path — sélectionne le chemin le plus court entre deux points.", "title": "Shortest Path"}]}, "mouse-right": {"title": "Clic droit", "combos": [{"mod": "", "keys": "Clic droit", "desc": "Ouvre le menu contextuel ou annule une opération en cours (déplacement, rotation…).", "title": "Menu contextuel"}]}, "mouse-scroll": {"title": "Molette", "combos": [{"mod": "", "keys": "Molette", "desc": "Zoom avant (rouler vers l'avant) ou zoom arrière (rouler vers l'arrière) dans la vue 3D.", "title": "Zoom"}, {"mod": "ctrl", "keys": "Ctrl + Molette", "desc": "En mode Édition : change le nombre de segments lors d'un Bevel (Ctrl+B).", "title": "Segments Bevel"}]}, "mouse-middle": {"title": "Clic molette", "combos": [{"mod": "", "keys": "Clic molette + glisser", "desc": "Rotation de la vue 3D autour de la sélection (orbite).", "title": "Orbite"}, {"mod": "shift", "keys": "Maj + Clic molette", "desc": "Panoramique — déplace la vue sans changer l'angle.", "title": "Panoramique"}]}, "mouse-pan": {"title": "Panoramique", "combos": [{"mod": "shift", "keys": "Maj + Clic molette", "title": "Panoramique", "desc": "Déplace la vue latéralement sans modifier l'angle."}]}, "mouse-shiftcl": {"title": "Ajouter à la sélection", "combos": [{"mod": "shift", "keys": "Maj + Clic gauche", "title": "Ajouter à la sélection", "desc": "Ajoute ou retire un élément de la sélection existante."}]}, "mouse-loop": {"title": "Loop Select", "combos": [{"mod": "alt", "keys": "Alt + Clic gauche", "title": "Loop Select", "desc": "Sélectionne une boucle d'arêtes ou de faces connectées."}]}};
+const ICONS={"g": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><path d=\"M7 1v12M1 7h12M7 1L4.5 4M7 1l2.5 3M7 13l-2.5-3M7 13l2.5-3M1 7l3-2.5M1 7l3 2.5M13 7l-3-2.5M13 7l-3 2.5\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\"/></svg>", "r": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><path d=\"M11 3.5A5 5 0 1 0 12.2 7\" stroke=\"currentColor\" stroke-width=\"1.3\" stroke-linecap=\"round\"/><path d=\"M12 3.2V7H8.2\" stroke=\"currentColor\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>", "s": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><path d=\"M2 2l3.5 3.5M2 2h2.5M2 2v2.5M12 2l-3.5 3.5M12 2H9.5M12 2v2.5M2 12l3.5-3.5M2 12h2.5M2 12v-2.5M12 12l-3.5-3.5M12 12H9.5M12 12v-2.5\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>", "e": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><rect x=\"2\" y=\"8.5\" width=\"10\" height=\"4\" rx=\"0.5\" stroke=\"currentColor\" stroke-width=\"1.2\"/><path d=\"M7 7.5V2.5M7 2.5L4.5 5M7 2.5L9.5 5\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>", "i": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><rect x=\"1.5\" y=\"1.5\" width=\"11\" height=\"11\" rx=\"0.5\" stroke=\"currentColor\" stroke-width=\"1.2\"/><rect x=\"4\" y=\"4\" width=\"6\" height=\"6\" rx=\"0.5\" stroke=\"currentColor\" stroke-width=\"1.2\"/><path d=\"M1.5 1.5L4 4M12.5 1.5L10 4M1.5 12.5L4 10M12.5 12.5L10 10\" stroke=\"currentColor\" stroke-width=\"0.9\" stroke-linecap=\"round\"/></svg>", "b": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><rect x=\"1\" y=\"1\" width=\"8.5\" height=\"8.5\" rx=\"0.5\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-dasharray=\"2 1.5\"/><circle cx=\"10.5\" cy=\"10.5\" r=\"2.5\" stroke=\"currentColor\" stroke-width=\"1.2\"/><path d=\"M10.5 9v3M9 10.5h3\" stroke=\"currentColor\" stroke-width=\"1\" stroke-linecap=\"round\"/></svg>", "a": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><rect x=\"0.7\" y=\"0.7\" width=\"12.6\" height=\"12.6\" rx=\"1\" stroke=\"currentColor\" stroke-width=\"1\"/><circle cx=\"3.5\" cy=\"4\" r=\"1.1\" fill=\"currentColor\"/><circle cx=\"7\" cy=\"4\" r=\"1.1\" fill=\"currentColor\"/><circle cx=\"10.5\" cy=\"4\" r=\"1.1\" fill=\"currentColor\"/><circle cx=\"3.5\" cy=\"7\" r=\"1.1\" fill=\"currentColor\"/><circle cx=\"7\" cy=\"7\" r=\"1.7\" fill=\"currentColor\"/><circle cx=\"10.5\" cy=\"7\" r=\"1.1\" fill=\"currentColor\"/><circle cx=\"3.5\" cy=\"10\" r=\"1.1\" fill=\"currentColor\"/><circle cx=\"7\" cy=\"10\" r=\"1.1\" fill=\"currentColor\"/><circle cx=\"10.5\" cy=\"10\" r=\"1.1\" fill=\"currentColor\"/></svg>", "k": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><path d=\"M9.5 1.5L3 8l-1 3.5L5.5 10.5l6.5-6.5z\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linejoin=\"round\"/><path d=\"M7.5 3.5l2.5 2.5\" stroke=\"currentColor\" stroke-width=\"1\" stroke-linecap=\"round\"/></svg>", "m": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><circle cx=\"2.5\" cy=\"3\" r=\"1.4\" fill=\"currentColor\" opacity=\"0.7\"/><circle cx=\"11.5\" cy=\"3\" r=\"1.4\" fill=\"currentColor\" opacity=\"0.7\"/><circle cx=\"2.5\" cy=\"11\" r=\"1.4\" fill=\"currentColor\" opacity=\"0.7\"/><circle cx=\"11.5\" cy=\"11\" r=\"1.4\" fill=\"currentColor\" opacity=\"0.7\"/><path d=\"M2.5 3L7 7M11.5 3L7 7M2.5 11L7 7M11.5 11L7 7\" stroke=\"currentColor\" stroke-width=\"1.1\" stroke-linecap=\"round\"/><circle cx=\"7\" cy=\"7\" r=\"2\" fill=\"currentColor\"/></svg>", "h": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><path d=\"M1 7s2.3-4 6-4 6 4 6 4-2.3 4-6 4-6-4-6-4z\" stroke=\"currentColor\" stroke-width=\"1.2\"/><circle cx=\"7\" cy=\"7\" r=\"2\" stroke=\"currentColor\" stroke-width=\"1.2\"/><path d=\"M2 2l10 10\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\"/></svg>", "n": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><rect x=\"1\" y=\"1\" width=\"12\" height=\"12\" rx=\"1\" stroke=\"currentColor\" stroke-width=\"1.2\"/><path d=\"M9 1v12\" stroke=\"currentColor\" stroke-width=\"1.2\"/><path d=\"M11 4.5h.01M11 7h.01M11 9.5h.01\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg>", "t": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><rect x=\"1\" y=\"1\" width=\"12\" height=\"12\" rx=\"1\" stroke=\"currentColor\" stroke-width=\"1.2\"/><path d=\"M5 1v12\" stroke=\"currentColor\" stroke-width=\"1.2\"/><path d=\"M2.5 4.5h.01M2.5 7h.01M2.5 9.5h.01\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg>", "z": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><circle cx=\"7\" cy=\"7\" r=\"5.5\" stroke=\"currentColor\" stroke-width=\"1.2\"/><path d=\"M7 1.5C4.1 1.5 1.5 4 1.5 7s2.6 5.5 5.5 5.5\" fill=\"currentColor\" opacity=\"0.45\"/><path d=\"M7 1.5v11\" stroke=\"currentColor\" stroke-width=\"1.1\"/></svg>", "tab": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><rect x=\"1.5\" y=\"3\" width=\"5\" height=\"8\" rx=\"0.5\" stroke=\"currentColor\" stroke-width=\"1.2\"/><rect x=\"7.5\" y=\"3\" width=\"5\" height=\"8\" rx=\"0.5\" stroke=\"currentColor\" stroke-width=\"1.2\" opacity=\"0.45\"/><path d=\"M6.5 7h1.5M8 6.2l.8.8-.8.8\" stroke=\"currentColor\" stroke-width=\"1.1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>", "o": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><circle cx=\"7\" cy=\"7\" r=\"5.5\" stroke=\"currentColor\" stroke-width=\"1\" opacity=\"0.35\"/><circle cx=\"7\" cy=\"7\" r=\"3.5\" stroke=\"currentColor\" stroke-width=\"1.1\" opacity=\"0.6\"/><circle cx=\"7\" cy=\"7\" r=\"1.5\" fill=\"currentColor\"/></svg>", "p": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><path d=\"M7 1v12\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-dasharray=\"2 1.5\"/><path d=\"M1.5 3C1.5 3 4 5 4 7s-2.5 4-2.5 4\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\"/><path d=\"M12.5 3C12.5 3 10 5 10 7s2.5 4 2.5 4\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\"/></svg>", "x": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><path d=\"M2 4h10l-1 8H3z\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linejoin=\"round\"/><path d=\"M1 4h12M5 4V2.5h4V4\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M5.5 6.5l3 4M8.5 6.5l-3 4\" stroke=\"currentColor\" stroke-width=\"1.1\" stroke-linecap=\"round\"/></svg>", "c": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><circle cx=\"5.5\" cy=\"5.5\" r=\"4.5\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-dasharray=\"2 1.5\"/><path d=\"M9.5 9.5L13 13\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\"/></svg>", "w": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><rect x=\"1.5\" y=\"2.5\" width=\"11\" height=\"9\" rx=\"1\" stroke=\"currentColor\" stroke-width=\"1.2\"/><path d=\"M4 5.5h6M4 7.5h4\" stroke=\"currentColor\" stroke-width=\"1.1\" stroke-linecap=\"round\"/></svg>", "d": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><rect x=\"1.5\" y=\"1.5\" width=\"5.5\" height=\"5.5\" rx=\"0.5\" stroke=\"currentColor\" stroke-width=\"1.2\" opacity=\"0.5\"/><rect x=\"7\" y=\"7\" width=\"5.5\" height=\"5.5\" rx=\"0.5\" stroke=\"currentColor\" stroke-width=\"1.2\"/><path d=\"M7 5L5 7M9 2.5L11.5 2.5\" stroke=\"currentColor\" stroke-width=\"1.1\" stroke-linecap=\"round\"/></svg>", "u": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><path d=\"M2.5 2l3 4.5 3-4.5 3 9.5H1z\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linejoin=\"round\"/><path d=\"M5.5 6.5l-2 4M8.5 6.5l2 4M4 9.5h6\" stroke=\"currentColor\" stroke-width=\"1\" stroke-linecap=\"round\"/></svg>", "l": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><circle cx=\"3\" cy=\"7\" r=\"1.7\" fill=\"currentColor\"/><circle cx=\"11\" cy=\"7\" r=\"1.7\" fill=\"currentColor\"/><circle cx=\"7\" cy=\"3\" r=\"1.7\" fill=\"currentColor\"/><circle cx=\"7\" cy=\"11\" r=\"1.7\" fill=\"currentColor\"/><path d=\"M3 7L7 3M11 7L7 3M3 7L7 11M11 7L7 11\" stroke=\"currentColor\" stroke-width=\"1\" stroke-linecap=\"round\"/></svg>", "j": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><rect x=\"1\" y=\"2.5\" width=\"5\" height=\"9\" rx=\"1\" stroke=\"currentColor\" stroke-width=\"1.2\"/><rect x=\"8\" y=\"2.5\" width=\"5\" height=\"9\" rx=\"1\" stroke=\"currentColor\" stroke-width=\"1.2\"/><path d=\"M6 7h2\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\"/><path d=\"M5 5.2l1.5 1.8L5 8.8M9 5.2L7.5 7 9 8.8\" stroke=\"currentColor\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>", "f2": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><path d=\"M2 10.5l7-7 2 2-7 7H2v-2z\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linejoin=\"round\"/><path d=\"M9 3.5l2 2\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\"/></svg>", "v": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><rect x=\"1.5\" y=\"1.5\" width=\"4.5\" height=\"4.5\" rx=\"0.5\" stroke=\"currentColor\" stroke-width=\"1.1\"/><rect x=\"8\" y=\"1.5\" width=\"4.5\" height=\"4.5\" rx=\"0.5\" stroke=\"currentColor\" stroke-width=\"1.1\" opacity=\"0.5\"/><rect x=\"1.5\" y=\"8\" width=\"4.5\" height=\"4.5\" rx=\"0.5\" stroke=\"currentColor\" stroke-width=\"1.1\" opacity=\"0.5\"/><rect x=\"8\" y=\"8\" width=\"4.5\" height=\"4.5\" rx=\"0.5\" stroke=\"currentColor\" stroke-width=\"1.1\"/></svg>", "num1": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><path d=\"M4.5 3C5 2.5 6 1.5 7 1.5V12M4 12h6\" stroke=\"currentColor\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>", "num3": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><path d=\"M3.5 2h6L7 6.5c3 0 4.5 1.8 4.5 3A3.5 3.5 0 0 1 3 11\" stroke=\"currentColor\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>", "num7": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><path d=\"M2.5 2h8.5L7.5 12M3 5.5h5.5\" stroke=\"currentColor\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>", "num0": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><path d=\"M3 5.5A3.5 3.5 0 0 1 10 5.5v3A3.5 3.5 0 0 1 3 8.5V5.5z\" stroke=\"currentColor\" stroke-width=\"1.3\"/></svg>", "num5": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><circle cx=\"7\" cy=\"7\" r=\"5.5\" stroke=\"currentColor\" stroke-width=\"1.2\"/><circle cx=\"7\" cy=\"7\" r=\"1\" fill=\"currentColor\"/><path d=\"M7 1.5v2.5M7 10v2.5M1.5 7h2.5M10 7h2.5\" stroke=\"currentColor\" stroke-width=\"1.1\" stroke-linecap=\"round\"/></svg>", "numdot": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><circle cx=\"4\" cy=\"7\" r=\"1.5\" fill=\"currentColor\"/><path d=\"M8 4.5l4 2.5-4 2.5\" stroke=\"currentColor\" stroke-width=\"1.3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg>", "numslash": "<svg viewBox=\"0 0 14 14\" fill=\"none\"><rect x=\"1.5\" y=\"2\" width=\"4\" height=\"10\" rx=\"0.5\" stroke=\"currentColor\" stroke-width=\"1.1\"/><rect x=\"8.5\" y=\"2\" width=\"4\" height=\"10\" rx=\"0.5\" stroke=\"currentColor\" stroke-width=\"1.1\"/></svg>"};
+
+// ── PANEL UPDATE ─────────────────────────────────────────────────────
+const panel=document.getElementById("panel");
+const pbg=document.getElementById("pbg");
+const pmt=document.getElementById("pmt");
+const pcb=document.getElementById("pcb");
+let platformMode="windows";
+
+function escHtml(v){
+  return String(v??"?").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+
+function panelLabel(label){
+  const txt=String(label??"?").trim()||"?";
+  const fs=txt.length<=4?17:txt.length<=8?11.5:9.5;
+  const lh=txt.length<=4?1:1.15;
+  return `<span style="font-family:'JetBrains Mono',monospace;font-size:${fs}px;font-weight:600;color:var(--tx);line-height:${lh};text-align:center">${escHtml(txt)}</span>`;
+}
+
+function platformText(v){
+  const txt=String(v??"");
+  if(platformMode!=="apple")return txt;
+  return txt.replaceAll("AltGr","Option").replaceAll("Alt","Option").replaceAll("Win","Command");
+}
+
+function setKeyDisplay(el,dataKey,label,cls="lm",style=""){
+  if(!el)return;
+  el.dataset.key=dataKey;
+  el.innerHTML=`<span class="${cls}"${style?` style="${style}"`:""}>${escHtml(label)}</span>`;
+}
+
+function applyPlatformMode(){
+  const isApple=platformMode==="apple";
+  const winBtn=document.getElementById("platformWindowsBtn");
+  const appleBtn=document.getElementById("platformAppleBtn");
+  if(winBtn)winBtn.className="ibtn secondary platform";
+  if(appleBtn)appleBtn.className="ibtn primary platform";
+  setKeyDisplay(document.getElementById("leftOuterMod"),isApple?"AltLeft":"MetaLeft",isApple?"Option":"⊞",isApple?"lm lx":"lm",isApple?"":'font-size:14px');
+  setKeyDisplay(document.getElementById("leftInnerMod"),isApple?"MetaLeft":"AltLeft",isApple?"Command":"Alt",isApple?"lm lx":"lm lx");
+  setKeyDisplay(document.getElementById("rightInnerMod"),isApple?"MetaRight":"AltRight",isApple?"Command":"AltGr",isApple?"lm lx":"lm",isApple?"":'font-size:8.5px');
+  setKeyDisplay(document.getElementById("rightOuterMod"),isApple?"AltRight":"MetaRight",isApple?"Option":"⊞",isApple?"lm lx":"lm",isApple?"":'font-size:14px');
+  document.querySelectorAll(".mck").forEach(el=>el.textContent=platformText(el.dataset.baseLabel||el.textContent));
+}
+
+function keyLabel(kid,rawLabel,el){
+  const labels={
+    Escape:"Esc",Backspace:"Retour",Tab:"Tab",CapsLock:"Verr Maj",Enter:"Entrée",
+    ShiftLeft:"Maj",ShiftRight:"Maj",ControlLeft:"Ctrl",ControlRight:"Ctrl",
+    AltLeft:platformMode==="apple"?"Option":"Alt",AltRight:platformMode==="apple"?"Option":"AltGr",MetaLeft:platformMode==="apple"?"Command":"Win",MetaRight:platformMode==="apple"?"Command":"Win",
+    ContextMenu:"Menu",Space:"Espace",PrintScreen:"Impr écran",ScrollLock:"Arrêt défil",
+    Pause:"Pause",Insert:"Inser",Delete:"Suppr",Home:"Orig",End:"Fin",
+    PageUp:"PgUp",PageDown:"PgDn",ArrowUp:"↑",ArrowDown:"↓",ArrowLeft:"←",ArrowRight:"→",
+    NumLock:"Verr Num",NumpadMultiply:"*",NumpadSubtract:"-",NumpadAdd:"+",NumpadEnter:"Entrée",
+    numslash:"/",numdot:".",num0:"0",num1:"1",num2:"2",num3:"3",num4:"4",num5:"5",num6:"6",num7:"7",num8:"8",num9:"9"
+  };
+  if(labels[kid])return labels[kid];
+  const lms=el?.querySelectorAll(".lm");
+  if(lms&&lms.length){
+    const txt=lms[lms.length-1].textContent.trim();
+    if(txt)return txt;
+  }
+  return String(rawLabel??kid).trim()||kid;
+}
+
+
+function showSC(kid,label){
+  panel.classList.add("active");
+  panel.classList.remove("nosc");
+  const sc=SC[kid]||SC[kid.toLowerCase()];
+  const numericPanelLabels={num1:"1",num3:"3",num5:"5",num7:"7"};
+  const ico=ICONS[kid]||ICONS[kid.toLowerCase()];
+  if(ico)pbg.innerHTML=ico;
+  else if(kid.startsWith("mouse-"))pbg.innerHTML='<svg style="width:22px;height:22px;color:var(--ac)" viewBox="0 0 22 28" fill="none"><rect x="3" y="3" width="16" height="22" rx="8" stroke="currentColor" stroke-width="1.8"/><path d="M3 12h16" stroke="currentColor" stroke-width="1.5" opacity=".5"/><rect x="9" y="5" width="4" height="6" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="11" cy="8" r="1.2" fill="currentColor" opacity=".6"/></svg>';
+  else if(numericPanelLabels[kid])pbg.innerHTML=panelLabel(numericPanelLabels[kid]);
+  else pbg.innerHTML=panelLabel(label);
+  if(sc){
+    if(sc.combos.length===1){
+      // Titre unique dans le header, pas besoin de le répéter dans la card
+      pmt.textContent=sc.combos[0].title||sc.title;
+      const c0=sc.combos[0];
+      const cl0=c0.mod==="ctrl"?"cc":c0.mod==="alt"?"ca":c0.mod==="shift"?"cs":"";
+      pcb.innerHTML=`<div class="combo ${cl0}"><div class="ck">${escHtml(platformText(c0.keys))}</div><div class="cd2">${escHtml(c0.desc)}</div></div>`;
+    } else {
+      // Multi-combos : pas de titre général, chaque card a son propre titre
+      pmt.textContent="";
+      pcb.innerHTML=sc.combos.map(c=>{
+        const cl=c.mod==="ctrl"?"cc":c.mod==="alt"?"ca":c.mod==="shift"?"cs":"";
+        return `<div class="combo ${cl}"><div class="ck">${escHtml(platformText(c.keys))}</div><div class="ctitle">${escHtml(c.title||"")}</div><div class="cd2">${escHtml(c.desc)}</div></div>`;
+      }).join("");
+    }
+  } else {
+    panel.classList.add("nosc");
+  }
+}
+
+// ── KEYS ─────────────────────────────────────────────────────────────
+function pressEl(el){
+  if(!el)return;
+  el.classList.add("pressed");
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>el.classList.remove("pressed"),180);
+}
+document.querySelectorAll(".key").forEach(k=>{
+  k.addEventListener("mousedown",e=>{
+    e.stopPropagation();
+    document.querySelectorAll(".mouse-callout").forEach(x=>x.classList.remove("active"));
+    const id=k.dataset.key;
+    const lbl=keyLabel(id,id,k);
+    pressEl(k);
+    showSC(id,lbl);
+  });
+});
+
+// ── MOUSE CALLOUTS ───────────────────────────────────────────────────
+document.querySelectorAll(".mouse-callout").forEach(mc=>{
+  const labelEl=mc.querySelector(".mck");
+  if(labelEl)labelEl.dataset.baseLabel=labelEl.textContent.trim();
+  mc.addEventListener("click",()=>{
+    document.querySelectorAll(".mouse-callout").forEach(x=>x.classList.remove("active"));
+    // Effacer les pressed sur le clavier
+    document.querySelectorAll(".key.pressed").forEach(k=>k.classList.remove("pressed"));
+    mc.classList.add("active");
+    const id=mc.dataset.key;
+    const lbl=mc.querySelector(".mck")?.textContent.trim()||id;
+    showSC(id,lbl);
+  });
+});
+
+// ── PHYSICAL KEYBOARD ────────────────────────────────────────────────
+const held=new Set();
+document.addEventListener("keydown",e=>{
+  // Close intro on any key or Escape
+  const overlay=document.getElementById("intro-overlay");
+  if(overlay&&overlay.style.display!=="none"){
+    overlay.style.display="none";
+    if(e.key==="Escape")return;
+  }
+  e.preventDefault();
+  if(held.has(e.code))return;
+  held.add(e.code);
+  document.querySelectorAll(".mouse-callout").forEach(x=>x.classList.remove("active"));
+  if(e.code==="CapsLock"){
+    const l=document.getElementById("cled");
+    l.style.background=l.style.background==="var(--ac)"||l.style.background==="#e8363a"?"#252638":"var(--ac)";
+  }
+  const kid=c2k(e.code,e.key);
+  const el=document.querySelector(`.key[data-key="${kid}"]`);
+  pressEl(el);
+  const lbl=keyLabel(kid,e.key,el);
+  showSC(kid,lbl);
+});
+document.addEventListener("keyup",e=>{
+  held.delete(e.code);
+  const kid=c2k(e.code,e.key);
+  const el=document.querySelector(`.key[data-key="${kid}"]`);
+  if(el)el.classList.remove("pressed");
+});
+
+function c2k(code,key){
+  const m={Escape:"Escape",Backspace:"Backspace",Tab:"Tab",CapsLock:"CapsLock",Enter:"Enter",
+    ShiftLeft:"ShiftLeft",ShiftRight:"ShiftRight",ControlLeft:"ControlLeft",ControlRight:"ControlRight",
+    AltLeft:"AltLeft",AltRight:"AltRight",MetaLeft:"MetaLeft",MetaRight:"MetaRight",
+    ContextMenu:"ContextMenu",Space:" ",Insert:"Insert",Delete:"Delete",
+    Home:"Home",End:"End",PageUp:"PageUp",PageDown:"PageDown",
+    ArrowUp:"ArrowUp",ArrowDown:"ArrowDown",ArrowLeft:"ArrowLeft",ArrowRight:"ArrowRight",
+    F1:"F1",F2:"F2",F3:"F3",F4:"F4",F5:"F5",F6:"F6",F7:"F7",F8:"F8",
+    F9:"F9",F10:"F10",F11:"F11",F12:"F12",PrintScreen:"PrintScreen",ScrollLock:"ScrollLock",Pause:"Pause",
+    NumLock:"NumLock",NumpadDivide:"numslash",NumpadMultiply:"NumpadMultiply",
+    NumpadSubtract:"NumpadSubtract",NumpadAdd:"NumpadAdd",NumpadEnter:"NumpadEnter",
+    NumpadDecimal:"numdot",Numpad0:"num0",Numpad1:"num1",Numpad2:"num2",
+    Numpad3:"num3",Numpad4:"num4",Numpad5:"num5",Numpad6:"num6",
+    Numpad7:"num7",Numpad8:"num8",Numpad9:"num9"};
+  if(m[code])return m[code];
+  if(code.startsWith("Key"))return key.toLowerCase();
+  return key;
+}
+
+// ── VIEWPORT SCALING ──────────────────────────────────────────────────
+function fitKbZone(){
+  const zone=document.getElementById("kbZone");
+  const wrap=document.getElementById("kbWrap");
+  zone.style.transform="";
+  zone.style.marginBottom="";
+  requestAnimationFrame(()=>{
+    const avail=wrap.clientWidth;
+    const nat=zone.scrollWidth;
+    if(nat>avail){
+      const sc=avail/nat;
+      zone.style.transform=`scale(${sc})`;
+      zone.style.transformOrigin="top left";
+      const lostH=zone.offsetHeight*(1-sc);
+      zone.style.marginBottom=`-${lostH.toFixed(1)}px`;
+      wrap.style.height=(zone.offsetHeight*sc)+"px";
+    } else {
+      wrap.style.height="";
+    }
+  });
+}
+window.addEventListener("resize",fitKbZone);
+window.addEventListener("load",fitKbZone);
+setTimeout(fitKbZone,100);
+
+// ── INTRO STEPS ──────────────────────────────────────────────────────
+let introStep=0;
+const introStepCount=4;
+function introDots(){
+  for(let i=0;i<introStepCount;i++){
+    ["","b","c","d"].forEach(s=>{
+      const el=document.getElementById("d"+i+s);
+      if(el)el.className="idot"+(i===introStep?" on":"");
+    });
+  }
+}
+function updateIntroStep(){document.getElementById("introSteps").style.transform=`translateX(-${introStep*25}%)`;introDots();}
+function introNext(){if(introStep<introStepCount-1){introStep++;updateIntroStep();}}
+function introBack(){if(introStep>0){introStep--;updateIntroStep();}}
+function selectPlatform(mode){
+  platformMode=mode==="apple"?"apple":"windows";
+  applyPlatformMode();
+  introClose();
+}
+function introClose(){
+  const ov=document.getElementById("intro-overlay");
+  ov.style.transition="opacity .3s ease";
+  ov.style.opacity="0";
+  setTimeout(()=>ov.style.display="none",320);
+}
+applyPlatformMode();
+</script>
+</body>
+</html>
+
+

@@ -1,0 +1,532 @@
+{
+  "name": "[APERCU] Discord - tirage au sort parmi les réactions + rédaction d'annonce",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 1 · Tirage au sort parmi les personnes ayant réagi\n\n**Comment s'en servir**\n1. Sur Discord : clic droit sur le message de concours → *Copier le lien du message*.\n2. Le coller dans le nœud **Paramètres du tirage** (les autres champs, laissés vides, sont déduits du message).\n3. *Execute workflow* → le nœud **Fichier HTML** produit la page à télécharger, à ouvrir dans un navigateur et à montrer en partage d'écran.\n\n**Ce que ça fait**\n- lit toutes les réactions du message (émojis normaux + super-réactions),\n- récupère les utilisateurs émoji par émoji (100 par appel, pagination automatique),\n- dédoublonne par ID Discord : 1 personne = 1 chance, même avec 5 émojis,\n- écarte les bots,\n- **personnalise la page** avec le lot, la valeur et la date limite lus dans le texte du message,\n- tire le gagnant (crypto.getRandomValues, sans biais) et l'injecte dans la roue.\n\nLe gagnant est décidé au moment de la génération : l'animation ne fait que le révéler. La sortie JSON contient aussi `annonceGagnant`, le message tout prêt à coller sur Discord.\n\n**Pré-requis bot** (credential « Discord Bot account ») : être sur le serveur avec *Voir le salon* + *Voir l'historique des messages*.",
+        "height": 700,
+        "width": 480,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        -220
+      ],
+      "id": "11111111-1111-4111-8111-111111111101",
+      "name": "Mode d'emploi tirage"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "11111111-1111-4111-8111-111111111102",
+      "name": "Déclencheur manuel"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aaaa1111-0000-4000-8000-000000000001",
+              "name": "lienMessage",
+              "value": "https://discord.com/channels/000000000000000003/000000000000000003/000000000000000003",
+              "type": "string"
+            },
+            {
+              "id": "aaaa1111-0000-4000-8000-000000000002",
+              "name": "lot",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "aaaa1111-0000-4000-8000-000000000003",
+              "name": "valeur",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "aaaa1111-0000-4000-8000-000000000004",
+              "name": "dateLimite",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "aaaa1111-0000-4000-8000-000000000005",
+              "name": "accroche",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "11111111-1111-4111-8111-111111111103",
+      "name": "Paramètres du tirage",
+      "notes": "Lien du message obligatoire. Lot / valeur / date limite / accroche : vides = déduits du texte du message, remplis = prioritaires.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extrait guildId / channelId / messageId depuis un lien de message Discord\n// Format attendu : https://discord.com/channels/<serveur>/<salon>/<message>\nconst url = String($input.first().json.lienMessage || '').trim();\nconst m = url.match(/channels\\/(\\d+|@me)\\/(\\d+)\\/(\\d+)/);\nif (!m) {\n  throw new Error(\"Lien Discord invalide : \" + url + \"\\nAttendu : https://discord.com/channels/<serveur>/<salon>/<message> (clic droit sur le message -> Copier le lien du message)\");\n}\nreturn [{ json: { lienMessage: url, guildId: m[1], channelId: m[2], messageId: m[3] } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "11111111-1111-4111-8111-111111111104",
+      "name": "Extraire les IDs"
+    },
+    {
+      "parameters": {
+        "url": "=https://discord.com/api/v10/channels/{{ $json.channelId }}/messages/{{ $json.messageId }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "discordBotApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "11111111-1111-4111-8111-111111111105",
+      "name": "Récupérer le message",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lit le texte du message de concours et en déduit lot / valeur / date limite / accroche.\n// Tout champ rempli à la main dans \"Paramètres du tirage\" a la priorité sur ce qui est déduit.\nconst params = $('Paramètres du tirage').first().json;\nconst msg = $input.first().json;\n\nconst brut = String(msg.content || '').replace(/\\*\\*/g, '').replace(/__/g, '');\nconst lignes = brut.split('\\n').map((l) => l.trim()).filter(Boolean);\n// enlève les emojis / puces en tête de ligne\nconst sansPuce = (s) => s.replace(/^[^\\p{L}\\p{N}«\"(]+/u, '').trim();\n\n// --- Lot : la ligne \"🔥 iKier 70W à gagner !\"\nlet lot = '';\nconst idxLot = lignes.findIndex((l) => /à gagner/i.test(l));\nif (idxLot >= 0) {\n  lot = sansPuce(lignes[idxLot]).replace(/\\s*(à|a)\\s+gagner\\s*!*\\s*$/i, '').trim();\n}\n\n// --- Valeur : \"💰 Valeur indicative\" puis \"Environ 1 599 €\"\nlet valeur = '';\nconst idxVal = lignes.findIndex((l) => /valeur/i.test(l));\nif (idxVal >= 0) {\n  const zone = [lignes[idxVal], lignes[idxVal + 1] || ''].join(' ');\n  const m = zone.match(/(\\d[\\d\\s\\u00a0\\u202f.,]*)\\s*(€|EUR\\b|euros?)/i);\n  if (m) {\n    const nombre = m[1].replace(/[\\s\\u00a0\\u202f]+/g, ' ').trim();\n    valeur = (/environ|indicative|~/i.test(zone) ? '≈ ' : '') + nombre + ' €';\n  }\n}\n\n// --- Date limite : \"jusqu'au dimanche 5 juillet inclus\"\nlet dateLimite = '';\nconst mDate = brut.match(/(?:jusqu['\\u2019]?\\s*(?:au|\\u00e0)|avant\\s+le)\\s+(?:le\\s+)?([^\\n,.;!?]{3,45}?)\\s*(?:inclus|compris|minuit|\\u00e0\\s+\\d|pour\\s|$)/i);\nif (mDate) dateLimite = mDate[1].trim();\n\n// --- Accroche : 1re phrase descriptive après la ligne du lot\nconst ignore = /(réagir|participer|participation|tirage au sort|valeur indicative|bonne chance|serveur|comment)/i;\nconst depart = idxLot >= 0 ? idxLot + 1 : 0;\nlet accroche =\n  lignes.slice(depart).find((l) => l.length >= 60 && !ignore.test(l)) ||\n  lignes.find((l) => l.length >= 60 && !ignore.test(l)) ||\n  '';\nif (accroche.length > 210) {\n  const coupe = accroche.slice(0, 210);\n  accroche = coupe.slice(0, Math.max(coupe.lastIndexOf('. '), coupe.lastIndexOf(' '))).trim() + '…';\n}\nif (!accroche) {\n  accroche = \"Toutes les personnes ayant réagi au message sont dans la roue. Un seul nom s'arrête dans la fenêtre.\";\n}\n\nconst choisi = (manuel, auto) => (String(manuel || '').trim() ? String(manuel).trim() : auto);\n\nconst concours = {\n  lot: choisi(params.lot, lot),\n  valeur: choisi(params.valeur, valeur),\n  dateLimite: choisi(params.dateLimite, dateLimite),\n  accroche: choisi(params.accroche, accroche),\n};\n\nconsole.log('Détails du concours : ' + JSON.stringify(concours));\n\n// on laisse passer le message tel quel (les réactions servent au nœud suivant)\nreturn [{ json: { ...msg, concours } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        0
+      ],
+      "id": "11111111-1111-4111-8111-111111111113",
+      "name": "Lire les détails du concours",
+      "notes": "Lot, valeur, date limite et accroche extraits du texte du message",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Une ligne par (émoji x type de réaction) présent sur le message.\n// type 0 = réaction normale, type 1 = super-réaction (burst) : l'API les renvoie séparément.\nconst ids = $('Extraire les IDs').first().json;\nconst msg = $input.first().json;\nconst reactions = msg.reactions || [];\n\nif (!reactions.length) {\n  throw new Error(\"Aucune réaction sur ce message (ou le bot ne voit pas le salon : il lui faut Voir le salon + Voir l'historique des messages).\");\n}\n\nconst out = [];\nfor (const r of reactions) {\n  const e = r.emoji || {};\n  // émoji custom -> \"nom:id\" ; émoji unicode -> le caractère lui-même\n  const key = e.id ? `${e.name}:${e.id}` : e.name;\n  const label = e.id ? `:${e.name}:` : e.name;\n  const normal = (r.count_details && r.count_details.normal != null) ? r.count_details.normal : (r.count || 0);\n  const burst = (r.count_details && r.count_details.burst) || 0;\n  const base = {\n    guildId: ids.guildId,\n    channelId: ids.channelId,\n    messageId: ids.messageId,\n    emojiKey: key,\n    emojiParam: encodeURIComponent(key),\n    emojiLabel: label,\n    emojiId: e.id || null,\n  };\n  if (normal > 0) out.push({ json: { ...base, type: 0, typeLabel: 'normale', attendus: normal } });\n  if (burst > 0) out.push({ json: { ...base, type: 1, typeLabel: 'super', attendus: burst } });\n}\nreturn out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        0
+      ],
+      "id": "11111111-1111-4111-8111-111111111106",
+      "name": "Lister les émojis"
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1320,
+        0
+      ],
+      "id": "11111111-1111-4111-8111-111111111107",
+      "name": "Boucle émoji"
+    },
+    {
+      "parameters": {
+        "url": "=https://discord.com/api/v10/channels/{{ $json.channelId }}/messages/{{ $json.messageId }}/reactions/{{ $json.emojiParam }}?limit=100&type={{ $json.type }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "discordBotApi",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 500
+            }
+          },
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "nextURL": "={{ 'https://discord.com/api/v10/channels/' + $json.channelId + '/messages/' + $json.messageId + '/reactions/' + $json.emojiParam + '?limit=100&type=' + $json.type + '&after=' + $response.body[$response.body.length - 1].id }}",
+              "paginationCompleteWhen": "other",
+              "completeExpression": "={{ !Array.isArray($response.body) || $response.body.length < 100 }}",
+              "limitPagesFetched": true,
+              "maxRequests": 50
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        200
+      ],
+      "id": "11111111-1111-4111-8111-111111111108",
+      "name": "Récupérer les utilisateurs",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "100 utilisateurs par appel, pagination via ?after= (max 50 pages = 5000 par émoji)"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Rattache chaque utilisateur reçu à l'émoji de l'itération en cours.\n// $runIndex = numéro de passage dans la boucle (batchSize = 1 -> 1 émoji par passage).\nconst liste = $('Lister les émojis').all();\nconst ctx = (liste[$runIndex] || $('Boucle émoji').first()).json;\n\nconst users = [];\nfor (const item of $input.all()) {\n  const j = item.json;\n  if (!j) continue;\n  if (Array.isArray(j)) users.push(...j);\n  else if (Array.isArray(j.data)) users.push(...j.data);\n  else if (j.id) users.push(j);\n}\n\n// Ne jamais renvoyer 0 item : sinon la boucle s'arrête avant la fin.\nif (!users.length) {\n  return [{ json: { _vide: true, emojiLabel: ctx.emojiLabel, typeLabel: ctx.typeLabel } }];\n}\n\nreturn users.map((u) => ({\n  json: {\n    userId: u.id,\n    username: u.username,\n    globalName: u.global_name || '',\n    bot: !!u.bot,\n    emojiLabel: ctx.emojiLabel,\n    emojiKey: ctx.emojiKey,\n    typeLabel: ctx.typeLabel,\n  },\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        200
+      ],
+      "id": "11111111-1111-4111-8111-111111111109",
+      "name": "Marquer l'émoji"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Fusionne toutes les itérations de la boucle et dédoublonne par ID Discord.\n// -> 1 item = 1 personne, quel que soit le nombre d'émojis avec lesquels elle a réagi.\nconst parUser = new Map();\n\nfor (const item of $input.all()) {\n  const j = item.json;\n  if (!j || j._vide || !j.userId) continue;\n  if (!parUser.has(j.userId)) {\n    parUser.set(j.userId, {\n      userId: j.userId,\n      pseudo: j.username,\n      nomAffiche: j.globalName || j.username,\n      bot: j.bot,\n      emojis: new Set(),\n    });\n  }\n  const label = j.typeLabel === 'super' ? `${j.emojiLabel} (super)` : j.emojiLabel;\n  parUser.get(j.userId).emojis.add(label);\n}\n\nconst lignes = [...parUser.values()]\n  .map((u) => ({\n    userId: u.userId,\n    pseudo: u.pseudo,\n    nomAffiche: u.nomAffiche,\n    bot: u.bot,\n    nbReactions: u.emojis.size,\n    reactions: [...u.emojis].join(' '),\n  }))\n  .sort((a, b) => String(a.nomAffiche).localeCompare(String(b.nomAffiche), 'fr'));\n\nif (!lignes.length) {\n  throw new Error(\"Aucun utilisateur récupéré : vérifie que le bot a bien accès au salon et que le message porte des réactions.\");\n}\n\nconsole.log(`${lignes.length} personne(s) unique(s) ayant réagi`);\nreturn lignes.map((json) => ({ json }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        -200
+      ],
+      "id": "11111111-1111-4111-8111-111111111110",
+      "name": "Fusionner et dédoublonner"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Tire un gagnant au hasard parmi les participants et génère la page du tirage,\n// personnalisée avec les détails lus dans le message de concours.\nconst TEMPLATE = `<!DOCTYPE html>\n<html lang=\"fr\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>__TITRE__</title>\n<style>\n@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap');\n\n:root{\n  --accent:#F2435C;\n  --accent-2:#ff7286;\n  --ink:#121317;\n  --paper:#f7f5f1;\n  --paper-2:#efece6;\n  --muted:#6e6c68;\n  --gold:#e9c87a;\n}\n*{margin:0;padding:0;box-sizing:border-box}\n\nbody{\n  font-family:'Hanken Grotesk',sans-serif;color:var(--ink);\n  background:var(--ink);min-height:100vh;overflow-x:hidden;\n}\n\n.stage{\n  position:relative;min-height:100vh;display:flex;flex-direction:column;\n  align-items:center;padding:54px 22px 90px;\n  background:\n    radial-gradient(900px 520px at 50% -8%, rgba(242,67,92,.22), transparent 62%),\n    radial-gradient(720px 720px at 88% 112%, rgba(233,200,122,.10), transparent 60%),\n    linear-gradient(180deg,#15161b 0%,#101116 55%,#0c0d11 100%);\n  overflow:hidden;\n}\n.grain{\n  position:absolute;inset:0;pointer-events:none;opacity:.05;mix-blend-mode:overlay;\n  background-image:url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\");\n}\n\n/* ---- header ---- */\n.head{position:relative;z-index:3;text-align:center;max-width:680px}\n.eyebrow{\n  display:inline-flex;align-items:center;gap:9px;text-transform:uppercase;\n  letter-spacing:.26em;font-size:11px;font-weight:700;color:var(--accent-2);margin-bottom:18px;\n}\n.eyebrow::before,.eyebrow::after{content:\"\";height:1px;width:26px;background:linear-gradient(90deg,transparent,var(--accent-2))}\n.eyebrow::after{background:linear-gradient(90deg,var(--accent-2),transparent)}\nh1{\n  font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-.025em;\n  line-height:1;font-size:clamp(34px,6.6vw,66px);color:#fdfcfa;\n}\nh1 .hl{color:var(--accent-2)}\n.sub{margin-top:18px;font-size:16px;line-height:1.55;color:#b9b7b2;max-width:46ch;margin-inline:auto}\n.meta{margin-top:24px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}\n.chip{\n  display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#ece9e4;\n  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);\n  padding:8px 15px;border-radius:999px;backdrop-filter:blur(6px);\n}\n.chip b{color:var(--accent-2)}\n.chip .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(242,67,92,.18)}\n\n/* ---- slot reel ---- */\n.reel-shell{\n  position:relative;z-index:3;margin-top:50px;width:min(620px,94vw);\n}\n.reel-frame{\n  position:relative;border-radius:26px;overflow:hidden;\n  background:linear-gradient(180deg,#1c1d24,#131419);\n  border:1px solid rgba(255,255,255,.08);\n  box-shadow:0 40px 80px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06);\n}\n.reel-frame::before{ /* gold inner hairline */\n  content:\"\";position:absolute;inset:10px;border-radius:18px;\n  border:1px solid rgba(233,200,122,.30);pointer-events:none;z-index:4;\n}\n.reel-viewport{\n  position:relative;height:300px;overflow:hidden;\n  -webkit-mask-image:linear-gradient(180deg,transparent,#000 22%,#000 78%,transparent);\n  mask-image:linear-gradient(180deg,transparent,#000 22%,#000 78%,transparent);\n}\n.reel-track{position:absolute;top:0;left:0;width:100%;will-change:transform}\n.reel-item{\n  height:100px;display:flex;align-items:center;justify-content:center;\n  font-family:'Bricolage Grotesque',sans-serif;font-weight:700;letter-spacing:-.02em;\n  font-size:clamp(28px,5.4vw,44px);color:#6a6c76;\n  transition:color .2s, transform .2s;padding:0 24px;text-align:center;\n}\n.reel-item.center{color:#fdfcfa}\n\n/* center selection window */\n.reel-window{\n  position:absolute;left:14px;right:14px;top:50%;height:100px;transform:translateY(-50%);\n  border-top:1.5px solid rgba(242,67,92,.55);border-bottom:1.5px solid rgba(242,67,92,.55);\n  pointer-events:none;z-index:3;\n  background:linear-gradient(180deg,transparent,rgba(242,67,92,.07),transparent);\n}\n.reel-window::before,.reel-window::after{\n  content:\"\";position:absolute;top:50%;transform:translateY(-50%);\n  border-style:solid;border-color:transparent;\n}\n.reel-window::before{left:-2px;border-width:11px 0 11px 14px;border-left-color:var(--accent)}\n.reel-window::after{right:-2px;border-width:11px 14px 11px 0;border-right-color:var(--accent)}\n\n.reel-glow{\n  position:absolute;inset:0;border-radius:26px;pointer-events:none;z-index:2;\n  box-shadow:inset 0 0 60px rgba(242,67,92,0);transition:box-shadow .5s;\n}\n.reel-glow.on{box-shadow:inset 0 0 70px rgba(242,67,92,.30)}\n\n/* ---- controls ---- */\n.controls{position:relative;z-index:3;margin-top:42px;display:flex;flex-direction:column;align-items:center;gap:22px;width:100%}\n.spin-btn{\n  position:relative;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;\n  font-size:17px;letter-spacing:-.01em;color:#fff;\n  background:linear-gradient(180deg,var(--accent-2),var(--accent));\n  border:none;padding:17px 48px;border-radius:999px;cursor:pointer;overflow:hidden;\n  box-shadow:0 12px 30px rgba(242,67,92,.42), inset 0 1px 0 rgba(255,255,255,.4);\n  transition:transform .18s cubic-bezier(.3,1.4,.5,1), box-shadow .18s, opacity .25s;\n}\n.spin-btn span{position:relative;z-index:2;display:inline-flex;align-items:center;gap:10px}\n.spin-btn::before{content:\"\";position:absolute;top:0;left:-120%;width:60%;height:100%;\n  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg)}\n.spin-btn:hover{transform:translateY(-3px);box-shadow:0 18px 38px rgba(242,67,92,.5)}\n.spin-btn:hover::before{animation:sheen .8s ease}\n.spin-btn:active{transform:translateY(-1px)}\n.spin-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}\n.spin-btn:focus-visible{outline:3px solid var(--gold);outline-offset:4px}\n@keyframes sheen{to{left:130%}}\n\n/* ---- winner ---- */\n.winner{\n  position:relative;z-index:3;text-align:center;opacity:0;transform:translateY(18px) scale(.96);\n  transition:opacity .6s ease,transform .6s cubic-bezier(.2,1.3,.4,1);pointer-events:none;\n}\n.winner.show{opacity:1;transform:none}\n.winner .card{\n  display:inline-block;padding:26px 48px;border-radius:22px;\n  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));\n  border:1px solid rgba(233,200,122,.4);\n  box-shadow:0 24px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.12);backdrop-filter:blur(10px);\n}\n.winner .lbl{\n  text-transform:uppercase;letter-spacing:.3em;font-size:11px;font-weight:700;color:var(--gold);\n  display:flex;align-items:center;justify-content:center;gap:10px;\n}\n.winner .lbl::before,.winner .lbl::after{content:\"\";height:1px;width:22px;background:var(--gold);opacity:.6}\n.winner .name{\n  font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-.02em;\n  font-size:clamp(34px,7vw,54px);line-height:1.05;margin-top:10px;\n  background:linear-gradient(180deg,#fff,var(--accent-2));\n  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;\n}\n.winner .note{margin-top:10px;font-size:14px;color:#b9b7b2}\n\n/* ---- liste des participants ---- */\n.roster{position:relative;z-index:3;margin-top:56px;width:min(860px,94vw);text-align:center}\n.roster summary{\n  cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:9px;\n  text-transform:uppercase;letter-spacing:.22em;font-size:11px;font-weight:700;color:#8d8b86;\n  padding:9px 18px;border:1px solid rgba(255,255,255,.10);border-radius:999px;\n  background:rgba(255,255,255,.04);transition:color .2s,border-color .2s;\n}\n.roster summary::-webkit-details-marker{display:none}\n.roster summary:hover{color:#ece9e4;border-color:rgba(233,200,122,.4)}\n.roster[open] summary{color:var(--gold);border-color:rgba(233,200,122,.4)}\n.roster ul{\n  list-style:none;margin-top:22px;display:grid;gap:8px;\n  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));text-align:left;\n}\n.roster li{\n  font-size:13.5px;color:#b9b7b2;padding:8px 13px;border-radius:10px;\n  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);\n  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;\n}\n.roster li .num{color:#6a6c76;font-variant-numeric:tabular-nums;margin-right:8px}\n\n.foot{position:relative;z-index:3;margin-top:56px;font-size:12.5px;color:#7d7b77;text-align:center;letter-spacing:.02em}\n.foot b{color:#b9b7b2}\n\ncanvas#fx{position:fixed;inset:0;pointer-events:none;z-index:20}\n\n@media (prefers-reduced-motion:reduce){.spin-btn:hover::before{animation:none}}\n</style>\n</head>\n<body>\n<div class=\"stage\">\n  <div class=\"grain\"></div>\n\n  <header class=\"head\">\n    <div class=\"eyebrow\">Tirage au sort · La Nouvelle École</div>\n    <h1>Et le gagnant est<span class=\"hl\">…</span></h1>\n    <p class=\"sub\">__ACCROCHE__</p>\n    <div class=\"meta\">\n__CHIPS_HTML__\n    </div>\n  </header>\n\n  <div class=\"reel-shell\">\n    <div class=\"reel-frame\">\n      <div class=\"reel-glow\" id=\"reelGlow\"></div>\n      <div class=\"reel-viewport\">\n        <div class=\"reel-track\" id=\"track\"></div>\n      </div>\n      <div class=\"reel-window\"></div>\n    </div>\n  </div>\n\n  <div class=\"controls\">\n    <button class=\"spin-btn\" id=\"spin\"><span>Lancer le tirage ✦</span></button>\n    <div class=\"winner\" id=\"winner\" role=\"status\" aria-live=\"polite\">\n      <div class=\"card\">\n        <div class=\"lbl\">Gagnant</div>\n        <div class=\"name\" id=\"winnerName\"></div>\n        <div class=\"note\">Félicitations ! Contacte-nous en message privé pour la remise du lot 🎉</div>\n      </div>\n    </div>\n  </div>\n\n  <details class=\"roster\">\n    <summary>Voir les __COUNT__ participants</summary>\n    <ul>\n__LISTE_HTML__\n    </ul>\n  </details>\n\n  <p class=\"foot\">__COUNT__ participants · tirage effectué le <b>__DATE__</b> · merci de faire vivre la communauté</p>\n</div>\n\n<canvas id=\"fx\"></canvas>\n\n<script>\n/* Données injectées par n8n depuis les réactions Discord ------------------- */\nconst participants = __PARTICIPANTS_JSON__;\nconst WINNER_IDX = __WINNER_IDX__;   // index tiré au sort côté n8n (crypto.getRandomValues)\nconst WINNER = participants[WINNER_IDX];\n/* ------------------------------------------------------------------------- */\n\nconst N = participants.length;\nconst ITEM_H = 100;        // px, matches .reel-item height\nconst LOOPS = 6;           // full passes before settling\n\nconst track = document.getElementById(\"track\");\nconst btn = document.getElementById(\"spin\");\nconst reelGlow = document.getElementById(\"reelGlow\");\nconst winnerBox = document.getElementById(\"winner\");\nconst winnerName = document.getElementById(\"winnerName\");\n\n// Build a long strip: several full loops + final landing on the winner,\n// centered in the window (with one item above + below visible).\nconst totalItems = LOOPS * N + WINNER_IDX + 1; // +1 so winner lands at center\nconst strip = [];\nfor(let i=0;i<totalItems+2;i++){              // +2 padding for top/bottom visible rows\n  strip.push(participants[i % N]);\n}\nstrip.forEach(name=>{\n  const d=document.createElement(\"div\");\n  d.className=\"reel-item\";\n  d.textContent=name;\n  track.appendChild(d);\n});\n\n// viewport shows 3 rows (300px). Center row is the selection window.\n// To center item at index \\`k\\`, translateY so that item k sits in the middle row.\n// middle row top offset = ITEM_H (the 2nd visible row).\nfunction offsetForIndex(k){ return -(k*ITEM_H - ITEM_H); }\n\n// start position: show first items\nlet startIndex = 1;                    // so row 0 is the top padding\ntrack.style.transform = \"translateY(\" + offsetForIndex(startIndex) + \"px)\";\n\nlet spun=false;\nfunction easeOutQuint(t){return 1-Math.pow(1-t,5);}\n\nlet currentY = offsetForIndex(startIndex);\nfunction highlightCenter(){\n  const items=track.children;\n  const centerIdx=Math.round((-currentY+ITEM_H)/ITEM_H);\n  for(let i=0;i<items.length;i++){\n    items[i].classList.toggle(\"center\", i===centerIdx);\n  }\n}\n\nbtn.addEventListener(\"click\",()=>{\n  if(spun) return;\n  spun=true; btn.disabled=true;\n  reelGlow.classList.add(\"on\");\n\n  const targetIndex = totalItems - 1;          // winner's position in the strip\n  const fromY = offsetForIndex(startIndex);\n  const toY = offsetForIndex(targetIndex);\n  const dur = 6200;\n  const startT = performance.now();\n\n  function frame(now){\n    const t = Math.min(1,(now-startT)/dur);\n    const e = easeOutQuint(t);\n    currentY = fromY + (toY-fromY)*e;\n    track.style.transform = \"translateY(\" + currentY + \"px)\";\n    highlightCenter();\n    if(t<1){requestAnimationFrame(frame);}\n    else{\n      currentY = toY;\n      track.style.transform = \"translateY(\" + toY + \"px)\";\n      highlightCenter();\n      winnerName.textContent = WINNER;\n      winnerBox.classList.add(\"show\");\n      reelGlow.classList.add(\"on\");\n      burst();\n    }\n  }\n  requestAnimationFrame(frame);\n});\n\nhighlightCenter();\n\n/* ---- confetti ---- */\nconst cv=document.getElementById(\"fx\"), ctx=cv.getContext(\"2d\");\nfunction size(){cv.width=innerWidth;cv.height=innerHeight;}\nsize();addEventListener(\"resize\",size);\nlet parts=[],anim=null;\nconst colors=[\"#F2435C\",\"#ff7286\",\"#e9c87a\",\"#ffffff\",\"#f7f5f1\"];\nfunction burst(){\n  parts=[];\n  for(let i=0;i<170;i++){\n    parts.push({x:innerWidth/2,y:innerHeight*0.42,\n      vx:(Math.random()-.5)*14,vy:Math.random()*-15-4,\n      g:.32+Math.random()*.12,s:5+Math.random()*7,\n      rot:Math.random()*Math.PI,vr:(Math.random()-.5)*.3,\n      c:colors[Math.floor(Math.random()*colors.length)],life:1});\n  }\n  if(!anim) tick();\n}\nfunction tick(){\n  ctx.clearRect(0,0,cv.width,cv.height);\n  let alive=false;\n  parts.forEach(p=>{\n    p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.rot+=p.vr;p.life-=.004;\n    if(p.y<innerHeight+40 && p.life>0) alive=true;\n    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);\n    ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.c;\n    ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6);ctx.restore();\n  });\n  if(alive){anim=requestAnimationFrame(tick);}else{anim=null;ctx.clearRect(0,0,cv.width,cv.height);}\n}\n</script>\n</body>\n</html>\n`;\n\nconst concours = $('Lire les détails du concours').first().json.concours || {};\n\nconst participants = $input.all()\n  .map((i) => i.json)\n  .filter((u) => u && u.userId && !u.bot); // les bots ne participent pas\n\nif (!participants.length) {\n  throw new Error(\"Aucun participant : personne n'a réagi (hors bots).\");\n}\n\n// Tirage : crypto.getRandomValues + rejet des valeurs hors plage => aucun biais modulo.\nfunction indexAleatoire(n) {\n  try {\n    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {\n      const limite = Math.floor(4294967296 / n) * n;\n      const buf = new Uint32Array(1);\n      let x;\n      do { crypto.getRandomValues(buf); x = buf[0]; } while (x >= limite);\n      return x % n;\n    }\n  } catch (e) { /* repli ci-dessous */ }\n  return Math.floor(Math.random() * n);\n}\n\nconst idx = indexAleatoire(participants.length);\nconst gagnant = participants[idx];\nconst noms = participants.map((u) => u.nomAffiche || u.pseudo);\n\nconst esc = (s) => String(s)\n  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;');\n\nconst dateFr = $now.setZone('Europe/Paris').toFormat('dd/LL/yyyy');\n\n// --- bandeau de chips : seules les infos réellement trouvées sont affichées\nconst chips = [`      <span class=\"chip\"><span class=\"dot\"></span> <b>${noms.length}</b> participants</span>`];\nif (concours.lot) chips.push(`      <span class=\"chip\">🎁 <b>${esc(concours.lot)}</b></span>`);\nif (concours.valeur) chips.push(`      <span class=\"chip\">Valeur <b>${esc(concours.valeur)}</b></span>`);\nchips.push(concours.dateLimite\n  ? `      <span class=\"chip\">Clôturé le ${esc(concours.dateLimite)}</span>`\n  : `      <span class=\"chip\">Tirage du ${esc(dateFr)}</span>`);\n\nconst listeHtml = noms\n  .map((n, i) => `      <li><span class=\"num\">${String(i + 1).padStart(2, '0')}</span>${esc(n)}</li>`)\n  .join('\\n');\n\nconst titre = concours.lot\n  ? `Tirage au sort · ${concours.lot} — La Nouvelle École`\n  : 'Tirage au sort · La Nouvelle École';\nconst nomFichier = `tirage-${(concours.lot || 'concours').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40)}-${$now.setZone('Europe/Paris').toFormat('yyyy-LL-dd')}.html`;\n\nconst html = TEMPLATE\n  .replaceAll('__PARTICIPANTS_JSON__', JSON.stringify(noms).replace(/</g, '\\\\u003c'))\n  .replaceAll('__WINNER_IDX__', String(idx))\n  .replaceAll('__COUNT__', String(noms.length))\n  .replaceAll('__DATE__', esc(dateFr))\n  .replaceAll('__TITRE__', esc(titre))\n  .replaceAll('__ACCROCHE__', esc(concours.accroche || ''))\n  .replaceAll('__CHIPS_HTML__', chips.join('\\n'))\n  .replaceAll('__LISTE_HTML__', listeHtml);\n\n// Message tout prêt pour annoncer le résultat sur Discord\nconst annonce = [\n  '🏆 Le tirage au sort est terminé !',\n  '',\n  concours.lot\n    ? `Merci à toutes et tous d'avoir participé au concours ${concours.lot} 🎁`\n    : \"Merci à toutes et tous d'avoir participé 🎁\",\n  `${noms.length} personnes étaient dans la roue, une seule pouvait gagner.`,\n  '',\n  `🎉 Félicitations à ${gagnant.nomAffiche} !`,\n  '',\n  'Contacte-nous en message privé pour organiser la remise du lot.',\n  'Et pas d\\'inquiétude pour les autres : d\\'autres concours arrivent très vite sur le serveur 💪',\n].join('\\n');\n\nconsole.log(`Gagnant tiré au sort : ${gagnant.nomAffiche} (${gagnant.userId}) parmi ${noms.length} participants`);\n\nreturn [{\n  json: {\n    gagnant: gagnant.nomAffiche,\n    gagnantPseudo: gagnant.pseudo,\n    gagnantId: gagnant.userId,\n    nbParticipants: noms.length,\n    participants: noms,\n    concours,\n    dateTirage: dateFr,\n    annonceGagnant: annonce,\n    fichier: nomFichier,\n    htmlBase64: Buffer.from(html, 'utf8').toString('base64'),\n    html,\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        -200
+      ],
+      "id": "11111111-1111-4111-8111-111111111111",
+      "name": "Tirer au sort et générer la roue"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "htmlBase64",
+        "options": {
+          "fileName": "={{ $json.fichier }}",
+          "mimeType": "text/html"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        -200
+      ],
+      "id": "11111111-1111-4111-8111-111111111112",
+      "name": "Fichier HTML"
+    },
+    {
+      "parameters": {
+        "content": "## 2 · Générateur d'annonce de concours\n\nFlux indépendant du tirage.\n\n1. Remplir **Détails du concours** : nom du lot, valeur, date limite, et toutes les infos en vrac (caractéristiques, usages…).\n2. *Execute workflow* → **Mettre en forme l'annonce** renvoie le champ `annonce`, à copier-coller tel quel sur Discord.\n\nLe modèle n'écrit que la partie descriptive (titre + accroche + 2 à 4 paragraphes) dans le style des annonces précédentes. Les blocs fixes — 💰 valeur, ⏳ comment participer, 🏆 tirage au sort, mot de fin — sont assemblés par le code, donc toujours présents et bien formés, et la limite Discord de 2000 caractères est vérifiée.",
+        "height": 400,
+        "width": 480,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        700
+      ],
+      "id": "22222222-2222-4222-8222-222222222201",
+      "name": "Mode d'emploi annonce"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        820
+      ],
+      "id": "22222222-2222-4222-8222-222222222202",
+      "name": "Rédiger une annonce"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bbbb2222-0000-4000-8000-000000000001",
+              "name": "nomLot",
+              "value": "iKier 70W",
+              "type": "string"
+            },
+            {
+              "id": "bbbb2222-0000-4000-8000-000000000002",
+              "name": "valeurLot",
+              "value": "1 599 €",
+              "type": "string"
+            },
+            {
+              "id": "bbbb2222-0000-4000-8000-000000000003",
+              "name": "dateLimite",
+              "value": "dimanche 5 juillet",
+              "type": "string"
+            },
+            {
+              "id": "bbbb2222-0000-4000-8000-000000000004",
+              "name": "infosLot",
+              "value": "Machine laser de gravure et de découpe, 70 W. Matériaux : bois, cuir, carton, acrylique compatible. Usages : personnalisation d'objets, pièces décoratives, découpe précise, projets créatifs.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        820
+      ],
+      "id": "22222222-2222-4222-8222-222222222203",
+      "name": "Détails du concours",
+      "notes": "Tout ce qu'on sait du lot : les infos peuvent être en vrac, le modèle les met en forme.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "GPT-5"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Tu écris les annonces de concours du serveur Discord de La Nouvelle École (école de formation à l'impression 3D, la modélisation, la gravure laser et le drone).\n\nVoici le lot à mettre en avant :\n- Lot : {{ $json.nomLot }}\n- Valeur indicative : {{ $json.valeurLot }}\n- Date limite de participation : {{ $json.dateLimite }}\n- Infos fournies par l'équipe (peuvent être en vrac, incomplètes ou en style télégraphique) : {{ $json.infosLot }}\n\nStyle attendu (calqué sur nos annonces précédentes) :\n- vouvoiement collectif (\"vous\"), ton chaleureux, communautaire, jamais commercial ni superlatif creux,\n- phrases fluides et concrètes, orientées usages et projets réalisables,\n- pas de promesse technique inventée : n'utilise QUE les caractéristiques fournies ci-dessus, sinon reste général,\n- français correct, apostrophes typographiques, pas de listes à puces, pas de markdown, pas de hashtags.\n\nExemple du rendu attendu pour un autre lot (une graveuse laser iKier 70W) :\ntitre : \"🔥 iKier 70W à gagner !\"\nintro : \"On vous propose un lot exceptionnel autour de la gravure et de la découpe laser :\"\nparagraphes :\n1. \"La iKier 70W est une machine laser puissante, pensée pour la gravure et la découpe sur différents matériaux.\"\n2. \"Avec sa puissance de 70W, elle permet de réaliser des projets plus ambitieux, que ce soit pour personnaliser des objets, créer des pièces décoratives, découper des éléments précis ou développer des projets créatifs autour du bois, du cuir, du carton, de l'acrylique compatible et d'autres supports adaptés.\"\n3. \"C'est une machine idéale pour celles et ceux qui veulent aller plus loin dans leurs créations, tester de nouvelles idées et obtenir des rendus propres, précis et professionnels.\"\n\nRéponds UNIQUEMENT par un objet JSON valide, sans texte autour et sans bloc de code, avec exactement ces clés :\n{\"titre\": \"...\", \"intro\": \"...\", \"paragraphes\": [\"...\", \"...\", \"...\"]}\n\nContraintes : \"titre\" commence par un emoji puis le nom du lot suivi de \"à gagner !\". \"intro\" fait une seule phrase et se termine par \" :\". \"paragraphes\" contient 2 à 4 phrases longues, 900 caractères maximum au total."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        460,
+        820
+      ],
+      "id": "22222222-2222-4222-8222-222222222204",
+      "name": "Rédiger les paragraphes",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "jsCode": "// Assemble l'annonce Discord : l'IA n'écrit que la partie descriptive,\n// la structure (participation, date, tirage) est garantie ici.\nconst details = $('Détails du concours').first().json;\n\n// --- récupération du texte du modèle, quelle que soit la forme de la réponse\nfunction texteModele(j) {\n  if (!j) return '';\n  if (typeof j === 'string') return j;\n  if (Array.isArray(j.output)) {\n    for (const bloc of j.output) {\n      const c = Array.isArray(bloc.content) ? bloc.content.find((x) => x && (x.text || x.type === 'output_text')) : null;\n      if (c && c.text) return c.text;\n    }\n  }\n  return j.output_text || j.text || (j.message && j.message.content) || j.content || '';\n}\n\nlet bloc = {};\nconst brut = String(texteModele($input.first().json) || '').trim()\n  .replace(/^```(?:json)?\\s*/i, '').replace(/```$/i, '').trim();\ntry {\n  bloc = JSON.parse(brut);\n} catch (e) {\n  // repli : on reconstruit une annonce correcte même si le modèle n'a pas renvoyé du JSON\n  bloc = {\n    titre: `🔥 ${details.nomLot} à gagner !`,\n    intro: 'On vous propose un nouveau lot à gagner sur le serveur :',\n    paragraphes: brut ? [brut] : [String(details.infosLot || '')],\n  };\n}\n\nconst titre = String(bloc.titre || `🔥 ${details.nomLot} à gagner !`).trim();\nconst intro = String(bloc.intro || 'On vous propose un nouveau lot à gagner sur le serveur :').trim();\nconst paragraphes = (Array.isArray(bloc.paragraphes) ? bloc.paragraphes : [String(bloc.paragraphes || '')])\n  .map((p) => String(p).trim())\n  .filter(Boolean);\n\nconst valeur = String(details.valeurLot || '').trim();\nconst dateLimite = String(details.dateLimite || '').trim();\n\nfunction assembler(paras) {\n  const blocs = [\n    '🎁 Un nouveau concours sur le serveur !',\n    intro,\n    titre,\n    paras.join('\\n\\n'),\n  ];\n  if (valeur) blocs.push(`💰 Valeur indicative\\n${/^(environ|≈|~)/i.test(valeur) ? valeur : 'Environ ' + valeur}`);\n  blocs.push(\"⏳ Comment participer ?\\nC'est très simple : il vous suffit de réagir à ce message pour valider votre participation.\");\n  if (dateLimite) blocs.push(`Vous avez jusqu'au ${dateLimite} inclus pour tenter votre chance.`);\n  blocs.push('🏆 Tirage au sort\\nLe gagnant sera tiré au sort à la fin du concours et annoncé directement ici, sur Discord.');\n  blocs.push('Bonne chance à tous, et merci de continuer à faire vivre la communauté 🎉');\n  return blocs.filter(Boolean).join('\\n\\n');\n}\n\n// Discord : 2000 caractères maximum. On retire des paragraphes descriptifs si besoin.\nlet paras = paragraphes.slice();\nlet annonce = assembler(paras);\nwhile (annonce.length > 2000 && paras.length > 1) {\n  paras = paras.slice(0, -1);\n  annonce = assembler(paras);\n}\nif (annonce.length > 2000) annonce = annonce.slice(0, 1997) + '…';\n\nreturn [{\n  json: {\n    lot: details.nomLot,\n    valeur,\n    dateLimite,\n    longueur: annonce.length,\n    limiteDiscordOk: annonce.length <= 2000,\n    paragraphesRetires: paragraphes.length - paras.length,\n    annonce,\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        820
+      ],
+      "id": "22222222-2222-4222-8222-222222222205",
+      "name": "Mettre en forme l'annonce"
+    }
+  ],
+  "connections": {
+    "Déclencheur manuel": {
+      "main": [
+        [
+          {
+            "node": "Paramètres du tirage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Paramètres du tirage": {
+      "main": [
+        [
+          {
+            "node": "Extraire les IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraire les IDs": {
+      "main": [
+        [
+          {
+            "node": "Récupérer le message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Récupérer le message": {
+      "main": [
+        [
+          {
+            "node": "Lire les détails du concours",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les détails du concours": {
+      "main": [
+        [
+          {
+            "node": "Lister les émojis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lister les émojis": {
+      "main": [
+        [
+          {
+            "node": "Boucle émoji",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Boucle émoji": {
+      "main": [
+        [
+          {
+            "node": "Fusionner et dédoublonner",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Récupérer les utilisateurs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Récupérer les utilisateurs": {
+      "main": [
+        [
+          {
+            "node": "Marquer l'émoji",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marquer l'émoji": {
+      "main": [
+        [
+          {
+            "node": "Boucle émoji",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fusionner et dédoublonner": {
+      "main": [
+        [
+          {
+            "node": "Tirer au sort et générer la roue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tirer au sort et générer la roue": {
+      "main": [
+        [
+          {
+            "node": "Fichier HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rédiger une annonce": {
+      "main": [
+        [
+          {
+            "node": "Détails du concours",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Détails du concours": {
+      "main": [
+        [
+          {
+            "node": "Rédiger les paragraphes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rédiger les paragraphes": {
+      "main": [
+        [
+          {
+            "node": "Mettre en forme l'annonce",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  }
+}

@@ -1,0 +1,470 @@
+{
+  "name": "[APERCU] Relances elearning non terminé",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "list",
+          "cachedResultName": "Gestion Stagiaires - La Nouvelle École"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000002",
+          "mode": "list",
+          "cachedResultName": "Gestion E-learning 🕹️"
+        },
+        "filterByFormula": "=RECORD_ID() = 'recMASQUE00000000001'",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        16,
+        -240
+      ],
+      "id": "c25e9c48-e000-4c98-aa18-b38406cf170e",
+      "name": "Search records"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['Rappel E learning'] }}",
+                    "rightValue": "Rappel 1 standard",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "85c1afe6-be4c-4f17-be53-6253f0bce79c"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d334e17f-f7b3-4ba5-8f65-d19ac8d2280c",
+                    "leftValue": "={{ $json['Rappel E learning'] }}",
+                    "rightValue": "Rappel 1 urgent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0fbad0d8-6dc0-4a7e-8b9f-e2ef742a1c17",
+                    "leftValue": "={{ $json['Rappel E learning'] }}",
+                    "rightValue": "Rappel 2 standard",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e897622e-784f-41a2-8e36-6d4e2408838b",
+                    "leftValue": "={{ $json['Rappel E learning'] }}",
+                    "rightValue": "Rappel 2 urgent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c53de2d1-1b67-403c-b7dd-7608c58b2478",
+                    "leftValue": "={{ $json['Rappel E learning'] }}",
+                    "rightValue": "Rappel critique",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        -288
+      ],
+      "id": "69357932-558f-4f72-a485-d7dda3804d66",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "fromEmail": "=formation@nouvelleecole.club",
+        "toEmail": "={{ $('Search records').item.json.Mail }}",
+        "subject": "⏳ Validation de votre semaine de formation en cours",
+        "html": "=<!DOCTYPE html>\n<html lang=\"fr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"x-apple-disable-message-reformatting\">\n  <title>⏳ Validation de votre semaine de formation en cours</title>\n  <!--[if mso]>\n  <style>\n    body, table, td, a, span {\n      font-family: Arial, sans-serif !important;\n    }\n  </style>\n  <![endif]-->\n  <style>\n    @media only screen and (max-width: 820px) {\n      .main-container {\n        width: 100% !important;\n        border-radius: 0 !important;\n      }\n      .mobile-padding {\n        padding-left: 24px !important;\n        padding-right: 24px !important;\n      }\n      .hero-padding {\n        padding: 34px 24px 28px !important;\n      }\n      .title {\n        font-size: 24px !important;\n        line-height: 1.25 !important;\n      }\n      .button a {\n        display: block !important;\n        padding: 16px 24px !important;\n      }\n    }\n  </style>\n</head>\n<body style=\"margin:0;padding:0;background-color:#f3f4f8;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;word-spacing:normal;\">\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#f3f4f8;margin:0;padding:0;\">\n    <tr>\n      <td align=\"center\" style=\"padding:32px 16px 48px;\">\n        <table role=\"presentation\" width=\"760\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"main-container\" style=\"max-width:760px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,0.06);\">\n          <tr>\n            <td class=\"hero-padding\" style=\"background:linear-gradient(135deg,#cf1f45 0%,#e7395d 50%,#f25a78 100%);padding:46px 56px 38px;text-align:center;\">\n              <div style=\"font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.65);padding-bottom:16px;\">LA NOUVELLE ÉCOLE</div>\n              <div class=\"title\" style=\"font-size:31px;font-weight:800;color:#ffffff;line-height:1.2;letter-spacing:-0.4px;padding-bottom:14px;\">Validation de votre module e-learning</div>\n            </td>\n          </tr>\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:40px 56px 20px;\">\n              <div style=\"font-size:16px;color:#1b1f32;line-height:1.75;padding-bottom:24px;\">Bonjour {{ $('Webhook').item.json.body.fields['Prénom'] }},</div>\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:24px;\">\n                <tr>\n                  <td style=\"background-color:#f8f9fc;border:1px solid #e8ebf2;border-radius:18px;padding:26px 26px 24px;\">\n                    <div style=\"font-size:15px;color:#1b1f32;line-height:1.8;padding-bottom:14px;\">Vous n’avez pas encore terminé le module e-learning de la semaine {{ $('Webhook').item.json.body.weekNumber }} de votre formation.</div>\n                    <div style=\"font-size:15px;color:#1b1f32;line-height:1.8;padding-bottom:14px;\">👉 Tant que ce module n’est pas terminé, vous ne pouvez pas accéder à la suite de la formation.</div>\n                    <div style=\"font-size:15px;color:#1b1f32;line-height:1.8;\">Nous vous invitons à le finaliser pour débloquer la suite de la formation.</div>\n                  </td>\n                </tr>\n              </table>\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:26px;\">\n                    <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                      <tr>\n                        <td align=\"center\" bgcolor=\"#cf1f45\" style=\"border-radius:14px;\">\n                          <a href=\"https://nouvelleecole.club/dashboard\" target=\"_blank\" style=\"display:inline-block;padding:16px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;\">Accéder à votre e-learning</a>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:0 56px;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"height:1px;background-color:#eef0f5;font-size:0;line-height:0;\">&nbsp;</td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:24px 56px 34px;text-align:center;\">\n              <div style=\"font-size:13px;color:#8a8fa6;line-height:1.7;\">L’équipe La Nouvelle École</div>\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        896,
+        -576
+      ],
+      "id": "ce9ccf50-efb5-4707-954d-f4e540cb33ca",
+      "name": "vendredi standard1"
+    },
+    {
+      "parameters": {
+        "fromEmail": "=formation@nouvelleecole.club",
+        "toEmail": "={{ $('Search records').item.json.Mail }}",
+        "subject": "⚠️ Votre semaine de formation est à terminer",
+        "html": "=<!DOCTYPE html>\n<html lang=\"fr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"x-apple-disable-message-reformatting\">\n  <title>⚠️ Votre semaine de formation est à terminer</title>\n  <!--[if mso]>\n  <style>\n    body, table, td, a, span {\n      font-family: Arial, sans-serif !important;\n    }\n  </style>\n  <![endif]-->\n  <style>\n    @media only screen and (max-width: 820px) {\n      .main-container {\n        width: 100% !important;\n        border-radius: 0 !important;\n      }\n      .mobile-padding {\n        padding-left: 24px !important;\n        padding-right: 24px !important;\n      }\n      .hero-padding {\n        padding: 34px 24px 28px !important;\n      }\n      .title {\n        font-size: 24px !important;\n        line-height: 1.25 !important;\n      }\n      .button a {\n        display: block !important;\n        padding: 16px 24px !important;\n      }\n    }\n  </style>\n</head>\n<body style=\"margin:0;padding:0;background-color:#f3f4f8;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;word-spacing:normal;\">\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#f3f4f8;margin:0;padding:0;\">\n    <tr>\n      <td align=\"center\" style=\"padding:32px 16px 48px;\">\n        <table role=\"presentation\" width=\"760\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"main-container\" style=\"max-width:760px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,0.06);\">\n          <tr>\n            <td class=\"hero-padding\" style=\"background:linear-gradient(135deg,#cf1f45 0%,#e7395d 50%,#f25a78 100%);padding:46px 56px 38px;text-align:center;\">\n              <div style=\"font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.65);padding-bottom:16px;\">LA NOUVELLE ÉCOLE</div>\n              <div class=\"title\" style=\"font-size:31px;font-weight:800;color:#ffffff;line-height:1.2;letter-spacing:-0.4px;padding-bottom:14px;\">Votre module e-learning est à terminer</div>\n\n            </td>\n          </tr>\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:40px 56px 20px;\">\n              <div style=\"font-size:16px;color:#1b1f32;line-height:1.75;padding-bottom:24px;\">Bonjour {{ $('Webhook').item.json.body.fields['Prénom'] }},</div>\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:24px;\">\n                <tr>\n                  <td style=\"background-color:#f8f9fc;border:1px solid #e8ebf2;border-radius:18px;padding:26px 26px 24px;\">\n                    <div style=\"font-size:15px;color:#1b1f32;line-height:1.8;padding-bottom:14px;\">Vous avez peu avancé sur le module e-learning de la semaine {{ $('Webhook').item.json.body.weekNumber }} de votre formation.</div>\n                    <div style=\"font-size:15px;color:#1b1f32;line-height:1.8;padding-bottom:14px;\">👉 Tant que ce module n’est pas terminé, vous ne pouvez pas accéder à la suite de la formation.</div>\n                    <div style=\"font-size:15px;color:#1b1f32;line-height:1.8;\">Nous vous invitons à le finaliser pour débloquer la suite de la formation.</div>\n                  </td>\n                </tr>\n              </table>\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:26px;\">\n                    <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                      <tr>\n                        <td align=\"center\" bgcolor=\"#cf1f45\" style=\"border-radius:14px;\">\n                          <a href=\"https://nouvelleecole.club/dashboard\" target=\"_blank\" style=\"display:inline-block;padding:16px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;\">Accéder à votre e-learning</a>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:0 56px;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"height:1px;background-color:#eef0f5;font-size:0;line-height:0;\">&nbsp;</td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:24px 56px 34px;text-align:center;\">\n              <div style=\"font-size:13px;color:#8a8fa6;line-height:1.7;\">L’équipe La Nouvelle École</div>\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        896,
+        -368
+      ],
+      "id": "a2202960-1908-4292-a9f6-0c8d547a4afc",
+      "name": "vendredi urgent1"
+    },
+    {
+      "parameters": {
+        "fromEmail": "=formation@nouvelleecole.club",
+        "toEmail": "={{ $('Search records').item.json.Mail }}",
+        "subject": "=⚠️ Accès à la suite de votre formation bloqué",
+        "html": "=<!DOCTYPE html>\n<html lang=\"fr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"x-apple-disable-message-reformatting\">\n  <title>⚠️ Accès à la suite de votre formation bloqué</title>\n  <!--[if mso]>\n  <style>\n    body, table, td, a, span {\n      font-family: Arial, sans-serif !important;\n    }\n  </style>\n  <![endif]-->\n  <style>\n    @media only screen and (max-width: 820px) {\n      .main-container {\n        width: 100% !important;\n        border-radius: 0 !important;\n      }\n      .mobile-padding {\n        padding-left: 24px !important;\n        padding-right: 24px !important;\n      }\n      .hero-padding {\n        padding: 34px 24px 28px !important;\n      }\n      .title {\n        font-size: 24px !important;\n        line-height: 1.25 !important;\n      }\n      .button a {\n        display: block !important;\n        padding: 16px 24px !important;\n      }\n    }\n  </style>\n</head>\n<body style=\"margin:0;padding:0;background-color:#f3f4f8;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;word-spacing:normal;\">\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#f3f4f8;margin:0;padding:0;\">\n    <tr>\n      <td align=\"center\" style=\"padding:32px 16px 48px;\">\n        <table role=\"presentation\" width=\"760\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"main-container\" style=\"max-width:760px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,0.06);\">\n          <tr>\n            <td class=\"hero-padding\" style=\"background:linear-gradient(135deg,#cf1f45 0%,#e7395d 50%,#f25a78 100%);padding:46px 56px 38px;text-align:center;\">\n              <div style=\"font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.65);padding-bottom:16px;\">LA NOUVELLE ÉCOLE</div>\n              <div class=\"title\" style=\"font-size:31px;font-weight:800;color:#ffffff;line-height:1.2;letter-spacing:-0.4px;padding-bottom:14px;\">Accès à la suite de la formation bloqué</div>\n\n            </td>\n          </tr>\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:40px 56px 20px;\">\n              <div style=\"font-size:16px;color:#1b1f32;line-height:1.75;padding-bottom:24px;\">Bonjour {{ $('Webhook').item.json.body.fields['Prénom'] }},</div>\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:24px;\">\n                <tr>\n                  <td style=\"background-color:#f8f9fc;border:1px solid #e8ebf2;border-radius:18px;padding:26px 26px 24px;\">\n                    <div style=\"font-size:15px;color:#1b1f32;line-height:1.8;padding-bottom:14px;\">Vous n’avez pas terminé le module e-learning de la semaine {{ $('Webhook').item.json.body.weekNumber }} de votre formation.</div>\n                    <div style=\"font-size:15px;color:#1b1f32;line-height:1.8;padding-bottom:14px;\">👉 Tant que ce module n’est pas terminé, vous ne pouvez pas accéder à la suite de la formation.</div>\n                    <div style=\"font-size:15px;color:#1b1f32;line-height:1.8;\">Nous vous invitons à le finaliser pour débloquer la suite de la formation.</div>\n                  </td>\n                </tr>\n              </table>\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:26px;\">\n                    <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                      <tr>\n                        <td align=\"center\" bgcolor=\"#cf1f45\" style=\"border-radius:14px;\">\n                          <a href=\"https://nouvelleecole.club/dashboard\" target=\"_blank\" style=\"display:inline-block;padding:16px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;\">Accéder à votre e-learning</a>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:0 56px;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"height:1px;background-color:#eef0f5;font-size:0;line-height:0;\">&nbsp;</td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:24px 56px 34px;text-align:center;\">\n              <div style=\"font-size:13px;color:#8a8fa6;line-height:1.7;\">L’équipe La Nouvelle École</div>\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        912,
+        -144
+      ],
+      "id": "8d6ea997-ce3b-43f0-a41c-db93cff9de6d",
+      "name": "Lundi standard1"
+    },
+    {
+      "parameters": {
+        "fromEmail": "=formation@nouvelleecole.club",
+        "toEmail": "={{ $('Search records').item.json.Mail }}",
+        "subject": "🚨 Action requise pour poursuivre votre formation",
+        "html": "=<!DOCTYPE html>\n<html lang=\"fr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"x-apple-disable-message-reformatting\">\n  <title>🚨 Action requise pour poursuivre votre formation</title>\n  <!--[if mso]>\n  <style>\n    body, table, td, a, span {\n      font-family: Arial, sans-serif !important;\n    }\n  </style>\n  <![endif]-->\n  <style>\n    @media only screen and (max-width: 820px) {\n      .main-container {\n        width: 100% !important;\n        border-radius: 0 !important;\n      }\n      .mobile-padding {\n        padding-left: 24px !important;\n        padding-right: 24px !important;\n      }\n      .hero-padding {\n        padding: 34px 24px 28px !important;\n      }\n      .title {\n        font-size: 24px !important;\n        line-height: 1.25 !important;\n      }\n      .button a {\n        display: block !important;\n        padding: 16px 24px !important;\n      }\n    }\n  </style>\n</head>\n<body style=\"margin:0;padding:0;background-color:#f3f4f8;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;word-spacing:normal;\">\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#f3f4f8;margin:0;padding:0;\">\n    <tr>\n      <td align=\"center\" style=\"padding:32px 16px 48px;\">\n        <table role=\"presentation\" width=\"760\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"main-container\" style=\"max-width:760px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,0.06);\">\n          <tr>\n            <td class=\"hero-padding\" style=\"background:linear-gradient(135deg,#cf1f45 0%,#e7395d 50%,#f25a78 100%);padding:46px 56px 38px;text-align:center;\">\n              <div style=\"font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.65);padding-bottom:16px;\">LA NOUVELLE ÉCOLE</div>\n              <div class=\"title\" style=\"font-size:31px;font-weight:800;color:#ffffff;line-height:1.2;letter-spacing:-0.4px;padding-bottom:14px;\">Action requise pour continuer</div>\n\n            </td>\n          </tr>\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:40px 56px 20px;\">\n              <div style=\"font-size:16px;color:#1b1f32;line-height:1.75;padding-bottom:24px;\">Bonjour {{ $('Webhook').item.json.body.fields['Prénom'] }},</div>\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:24px;\">\n                <tr>\n                  <td style=\"background-color:#f8f9fc;border:1px solid #e8ebf2;border-radius:18px;padding:26px 26px 24px;\">\n                    <div style=\"font-size:15px;color:#1b1f32;line-height:1.8;padding-bottom:14px;\">Vous avez peu avancé sur le module e-learning de la semaine {{ $('Webhook').item.json.body.weekNumber }} de votre formation.</div>\n                    <div style=\"font-size:15px;color:#1b1f32;line-height:1.8;padding-bottom:14px;\">👉 Tant que ce module n’est pas terminé, vous ne pouvez pas accéder à la suite de la formation.</div>\n                    <div style=\"font-size:15px;color:#1b1f32;line-height:1.8;\">Nous vous invitons à le finaliser pour débloquer la suite de la formation.</div>\n                  </td>\n                </tr>\n              </table>\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:26px;\">\n                    <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                      <tr>\n                        <td align=\"center\" bgcolor=\"#cf1f45\" style=\"border-radius:14px;\">\n                          <a href=\"https://nouvelleecole.club/dashboard\" target=\"_blank\" style=\"display:inline-block;padding:16px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;\">Accéder à votre e-learning</a>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:0 56px;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"height:1px;background-color:#eef0f5;font-size:0;line-height:0;\">&nbsp;</td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:24px 56px 34px;text-align:center;\">\n              <div style=\"font-size:13px;color:#8a8fa6;line-height:1.7;\">L’équipe La Nouvelle École</div>\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        928,
+        80
+      ],
+      "id": "347cfbe2-d156-40c9-908f-c26176662807",
+      "name": "Lundi urgent1"
+    },
+    {
+      "parameters": {
+        "fromEmail": "=formation@nouvelleecole.club",
+        "toEmail": "={{ $('Search records').item.json.Mail }}",
+        "subject": "🚨 Retard important sur votre formation",
+        "html": "=<!DOCTYPE html>\n<html lang=\"fr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"x-apple-disable-message-reformatting\">\n  <title>🚨 Retard important sur votre formation</title>\n  <!--[if mso]>\n  <style>\n    body, table, td, a, span {\n      font-family: Arial, sans-serif !important;\n    }\n  </style>\n  <![endif]-->\n  <style>\n    @media only screen and (max-width: 820px) {\n      .main-container {\n        width: 100% !important;\n        border-radius: 0 !important;\n      }\n      .mobile-padding {\n        padding-left: 24px !important;\n        padding-right: 24px !important;\n      }\n      .hero-padding {\n        padding: 34px 24px 28px !important;\n      }\n      .title {\n        font-size: 24px !important;\n        line-height: 1.25 !important;\n      }\n      .button a {\n        display: block !important;\n        padding: 16px 24px !important;\n      }\n    }\n  </style>\n</head>\n<body style=\"margin:0;padding:0;background-color:#f3f4f8;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;word-spacing:normal;\">\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#f3f4f8;margin:0;padding:0;\">\n    <tr>\n      <td align=\"center\" style=\"padding:32px 16px 48px;\">\n        <table role=\"presentation\" width=\"760\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"main-container\" style=\"max-width:760px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,0.06);\">\n          <tr>\n            <td class=\"hero-padding\" style=\"background:linear-gradient(135deg,#cf1f45 0%,#e7395d 50%,#f25a78 100%);padding:46px 56px 38px;text-align:center;\">\n              <div style=\"font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.65);padding-bottom:16px;\">LA NOUVELLE ÉCOLE</div>\n              <div class=\"title\" style=\"font-size:31px;font-weight:800;color:#ffffff;line-height:1.2;letter-spacing:-0.4px;padding-bottom:14px;\">Retard important sur votre formation</div>\n            </td>\n          </tr>\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:40px 56px 20px;\">\n              <div style=\"font-size:16px;color:#1b1f32;line-height:1.75;padding-bottom:24px;\">Bonjour {{ $('Webhook').item.json.body.fields['Prénom'] }},</div>\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:24px;\">\n                <tr>\n                  <td style=\"background-color:#f8f9fc;border:1px solid #e8ebf2;border-radius:18px;padding:26px 26px 24px;\">\n                    <div style=\"font-size:15px;color:#1b1f32;line-height:1.8;padding-bottom:14px;\">Nous constatons un retard dans votre progression de formation.</div>\n                    <div style=\"font-size:15px;color:#1b1f32;line-height:1.8;padding-bottom:14px;\">👉 Certains contenus ne sont pas encore validés, ce qui empêche l’accès à la suite du parcours.</div>\n                    <div style=\"font-size:15px;color:#1b1f32;line-height:1.8;\">Si nous ne vous avons pas encore contacté à ce sujet, nous reviendrons vers vous prochainement.</div>\n                  </td>\n                </tr>\n              </table>\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:26px;\">\n                    <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                      <tr>\n                        <td align=\"center\" bgcolor=\"#cf1f45\" style=\"border-radius:14px;\">\n                          <a href=\"https://nouvelleecole.club/dashboard\" target=\"_blank\" style=\"display:inline-block;padding:16px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;\">Accéder à votre e-learning</a>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:0 56px;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"height:1px;background-color:#eef0f5;font-size:0;line-height:0;\">&nbsp;</td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:24px 56px 34px;text-align:center;\">\n              <div style=\"font-size:13px;color:#8a8fa6;line-height:1.7;\">L’équipe La Nouvelle École</div>\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        944,
+        288
+      ],
+      "id": "86f4ea29-9f1e-49b8-88aa-18967e8089c4",
+      "name": "Rappel critique1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "apercu-retire-11-7",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -192,
+        -240
+      ],
+      "id": "26aebc2b-8a18-4261-b467-fcfe6997f5c1",
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "apercu-retire-11-8",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -192,
+        -704
+      ],
+      "id": "e9b5465f-7f53-42b8-8704-0d170090a249",
+      "name": "Webhook4"
+    },
+    {
+      "parameters": {
+        "fromEmail": "formation@nouvelleecole.club",
+        "toEmail": "={{ $json.body.fields.Mail }}",
+        "subject": "Lien d'accès à la formation",
+        "html": "=<!DOCTYPE html>\n<html lang=\"fr\" xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n  <meta name=\"x-apple-disable-message-reformatting\">\n  <title>Ta formation commence demain</title>\n\n  <!--[if mso]>\n  <style>\n    body, table, td, a, span {\n      font-family: Arial, sans-serif !important;\n    }\n  </style>\n  <![endif]-->\n\n  <style>\n    @media only screen and (max-width: 820px) {\n      .main-container {\n        width: 100% !important;\n        border-radius: 0 !important;\n      }\n\n      .mobile-padding {\n        padding-left: 24px !important;\n        padding-right: 24px !important;\n      }\n\n      .hero-padding {\n        padding: 36px 24px 32px !important;\n      }\n\n      .title {\n        font-size: 24px !important;\n        line-height: 1.25 !important;\n      }\n\n      .button a {\n        display: block !important;\n        padding: 16px 24px !important;\n      }\n\n      .code-value {\n        font-size: 15px !important;\n      }\n    }\n  </style>\n</head>\n\n<body style=\"margin:0;padding:0;background-color:#f0f2f8;font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;word-spacing:normal;\">\n  <div style=\"display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;\">\n    Ton accès e-learning est prêt. Retrouve ici ton lien de connexion et tes identifiants pour commencer ta formation demain.\n  </div>\n\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#f0f2f8;margin:0;padding:0;\">\n    <tr>\n      <td align=\"center\" style=\"padding:32px 16px 48px;\">\n\n        <table role=\"presentation\" width=\"800\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"main-container\" style=\"max-width:800px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,0.06);\">\n\n          <!-- HEADER -->\n          <tr>\n            <td class=\"hero-padding\" style=\"background:linear-gradient(135deg,#c91a3d 0%,#e8254a 45%,#f4476b 100%);padding:52px 56px 44px;text-align:center;\">\n\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:20px;\">\n                    <span style=\"font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.58);\">\n                      LA NOUVELLE ÉCOLE\n                    </span>\n                  </td>\n                </tr>\n              </table>\n\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td class=\"title\" align=\"center\" style=\"font-size:32px;font-weight:800;color:#ffffff;line-height:1.2;letter-spacing:-0.6px;padding-bottom:18px;\">\n                    Rappel : Ta formation a commencé !                  </td>\n                </tr>\n              </table>\n\n              <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" align=\"center\">\n                <tr>\n                  <td style=\"background-color:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.20);border-radius:999px;padding:9px 20px;font-size:14px;font-weight:600;color:#ffffff;\">\n                    📖 {{ $json.body.fields.Formation }}\n                  </td>\n                </tr>\n              </table>\n\n            </td>\n          </tr>\n\n          <!-- BODY -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:42px 56px 18px;\">\n\n              <!-- INTRO -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"font-size:16px;color:#13162a;line-height:1.7;padding-bottom:26px;\">\n                    Bonjour {{ $json.body.fields['Prénom'] }} 👋,<br><br>\n                    Nous avons remarqué que tu n'as pas encore pu avancer dans ta formation.<br>\nN'hésite surtout pas à nous faire part de tes difficultés si jamais tu en as. ☺️<br><br>\n                    Tu trouveras ci-dessous ton lien de connexion ainsi que tes identifiants pour te connecter et continuer ton parcours.\n                  </td>\n                </tr>\n              </table>\n\n              <!-- ACCESS CARD -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:#f7f8fc;border:1px solid #e8eaf1;border-radius:18px;padding:26px 26px 24px;\">\n\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:13px;font-weight:800;color:#8a8fa6;letter-spacing:1.4px;text-transform:uppercase;padding-bottom:16px;\">\n                          🔑 Tes codes d'accès\n                        </td>\n                      </tr>\n                    </table>\n\n                    <!-- IDENTIFIANT -->\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:12px;\">\n                      <tr>\n                        <td style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:12px;padding:14px 18px;\">\n                          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                            <tr>\n                              <td style=\"font-size:11px;font-weight:700;color:#8a8fa6;letter-spacing:0.6px;text-transform:uppercase;padding-bottom:5px;\">\n                                Identifiant\n                              </td>\n                            </tr>\n                            <tr>\n                              <td class=\"code-value\" style=\"font-size:16px;font-weight:700;color:#13162a;font-family:'Courier New',Courier,monospace;letter-spacing:0.3px;word-break:break-word;\">\n                                {{ $json.body.fields['Identifiant E-learning'] }}\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n\n                    <!-- MOT DE PASSE -->\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"background-color:#ffffff;border:1px solid #e8eaf1;border-radius:12px;padding:14px 18px;\">\n                          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                            <tr>\n                              <td style=\"font-size:11px;font-weight:700;color:#8a8fa6;letter-spacing:0.6px;text-transform:uppercase;padding-bottom:5px;\">\n                                Mot de passe\n                              </td>\n                            </tr>\n                            <tr>\n                              <td class=\"code-value\" style=\"font-size:16px;font-weight:700;color:#13162a;font-family:'Courier New',Courier,monospace;letter-spacing:0.3px;word-break:break-word;\">\n                                {{ $json.body.fields['Mot de passe'] }}\n                              </td>\n                            </tr>\n                          </table>\n                        </td>\n                      </tr>\n                    </table>\n\n                  </td>\n                </tr>\n              </table>\n\n              <!-- BUTTON -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"padding-bottom:28px;\">\n                    <table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" class=\"button\">\n                      <tr>\n                        <td align=\"center\" style=\"background:linear-gradient(135deg,#c91a3d,#e8254a);border-radius:14px;\">\n                          <a href=\"https://nouvelleecole.club/index.php/app/\" target=\"_blank\" style=\"display:inline-block;padding:16px 34px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;\">\n                            Accéder à ma formation\n                          </a>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n              <!-- INFO BOX -->\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-bottom:28px;\">\n                <tr>\n                  <td style=\"background-color:rgba(232,37,74,0.04);border:1px solid rgba(232,37,74,0.09);border-radius:14px;padding:20px 22px;\">\n                    <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                      <tr>\n                        <td style=\"font-size:14px;font-weight:700;color:#e8254a;padding-bottom:8px;\">\n                          💡 Petit conseil\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"font-size:13px;color:#5a5f7a;line-height:1.7;\">\n                        \n                          En cas de difficulté de connexion, notre équipe reste disponible pour t'aider.\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n            </td>\n          </tr>\n\n          <!-- DIVIDER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:0 56px;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"height:1px;background-color:#eef0f5;font-size:0;line-height:0;\"> </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <!-- FOOTER -->\n          <tr>\n            <td class=\"mobile-padding\" style=\"padding:24px 56px 32px;text-align:center;\">\n              <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n                <tr>\n                  <td align=\"center\" style=\"font-size:13px;color:#8a8fa6;line-height:1.6;padding-bottom:6px;\">\n                    La Nouvelle École t'accompagne tout au long de ta formation 🤝\n                  </td>\n                </tr>\n                <tr>\n                  <td align=\"center\" style=\"font-size:12px;color:#a2a7bc;line-height:1.6;\">\n                    À très vite sur la plateforme\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n        </table>\n\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+        "options": {
+          "bccEmail": "contact@nouvelleecole.fr"
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        464,
+        -704
+      ],
+      "id": "619b3691-9b66-4359-877d-2a4d4dc21446",
+      "name": "Send email1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fdaf83c5-43fb-46de-9e2e-8101128200e7",
+              "leftValue": "={{ $json.body.fields[\"Progression Semaine 1\"] }}",
+              "rightValue": "0%",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "6196623c-ddde-4bad-b7e7-d3bf7e9d4baa",
+              "leftValue": "={{ $json.body.fields[\"Progression Semaine 1\"] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        -704
+      ],
+      "id": "39586889-e53e-4d3c-850b-dde009e51662",
+      "name": "Filter3"
+    },
+    {
+      "parameters": {
+        "amount": 9,
+        "unit": "hours"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        32,
+        -704
+      ],
+      "id": "353ca2ed-aa0d-4e98-9b58-08aa02706d5c",
+      "name": "Wait"
+    }
+  ],
+  "connections": {
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "vendredi standard1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "vendredi urgent1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Lundi standard1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Lundi urgent1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rappel critique1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook4": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email1": {
+      "main": [
+        []
+      ]
+    },
+    "Filter3": {
+      "main": [
+        [
+          {
+            "node": "Send email1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Filter3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

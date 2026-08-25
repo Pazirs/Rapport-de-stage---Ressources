@@ -1,0 +1,257 @@
+{
+  "name": "[APERCU] Suppression WordPress si Formation = Annulé 😞",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "apercu-retire-6-0",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        256
+      ],
+      "id": "45110aca-c15d-46ca-8e9b-0e208a7a7ed6",
+      "name": "Webhook1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\n\nconst identifiant =\n  String(\n    item.body?.identifiantElearning ??\n    item.identifiantElearning ??\n    \"\"\n  ).trim();\n\nconst motDePasse =\n  String(\n    item.body?.motDePasse ??\n    item.motDePasse ??\n    \"\"\n  ).trim();\n\nif (!identifiant) {\n  throw new Error(\"identifiantElearning manquant dans le webhook.\");\n}\n\n// motDePasse non obligatoire pour la suppression,\n// on le garde juste au cas où tu veux logger / vérifier plus tard\n\nreturn [\n  {\n    json: {\n      identifiant,\n      motDePasse\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        256
+      ],
+      "id": "434797f6-4e40-4bf0-839f-75c4f818359b",
+      "name": "Code Sécurité1"
+    },
+    {
+      "parameters": {
+        "url": "=https://nouvelleecole.club/index.php/wp-json/mp/v1/members?search={{ encodeURIComponent($json.identifiant) }}&per_page=10",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "MEMBERPRESS-API-KEY",
+              "value": "***RETIRE-POUR-APERCU***"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        256
+      ],
+      "id": "70f6b358-c4ec-4b3e-8343-c51eb43a51bb",
+      "name": "HTTP Search MemberPress1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const identifiant = $('Code Sécurité1').first().json.identifiant.toLowerCase().trim();\nconst inputItems = $input.all();\nconst members = inputItems.map(item => item.json);\n\nconst exactMatches = members.filter((member) => {\n  const email = String(member.email || \"\").trim().toLowerCase();\n  const username = String(member.username || \"\").trim().toLowerCase();\n  return email === identifiant || username === identifiant;\n});\n\nif (exactMatches.length === 0) {\n  throw new Error(`Aucun membre WordPress / MemberPress trouvé pour ${identifiant}`);\n}\n\nif (exactMatches.length > 1) {\n  throw new Error(`Plusieurs membres exacts trouvés pour ${identifiant}. Arrêt de sécurité.`);\n}\n\nconst member = exactMatches[0];\n\nif (!member.id) {\n  throw new Error(\"Le membre trouvé n'a pas d'id exploitable pour la suppression.\");\n}\n\nreturn [\n  {\n    json: {\n      identifiant,\n      memberpressId: member.id,\n      memberpressEmail: member.email || \"\",\n      memberpressUsername: member.username || \"\"\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        256
+      ],
+      "id": "57bc8624-935c-4350-8e55-cd1c402ff3e2",
+      "name": "Code Validation Match Exact1"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://nouvelleecole.club/index.php/wp-json/mp/v1/members/{{ $json.memberpressId }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "MEMBERPRESS-API-KEY",
+              "value": "***RETIRE-POUR-APERCU***"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1920,
+        256
+      ],
+      "id": "801bc5b1-9cec-4564-885d-57182ffc6d99",
+      "name": "HTTP Delete MemberPress1"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appMASQUE00000000003",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblMASQUE00000000002",
+          "mode": "id"
+        },
+        "filterByFormula": "=AND({Identifiant E-learning} = '{{ $json.identifiant }}', {Certificateur} != 'Annulé', NOT({Annuler la formation}))",
+        "limit": 1,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        256
+      ],
+      "name": "Fiche active avec cet identifiant ?",
+      "alwaysOutputData": true,
+      "id": "cad0f94d-842c-4835-a8a0-2bf292b465cd"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "identifiant-encore-utilisé-?",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        256
+      ],
+      "name": "Identifiant encore utilisé ?",
+      "id": "a6e3ed67-d03b-4412-9e49-82790c39429a"
+    },
+    {
+      "parameters": {
+        "sendTo": "salarie2@nouvelleecole.fr",
+        "subject": "=[E-learning] Suppression BLOQUÉE — identifiant encore utilisé : {{ $('Code Sécurité1').first().json.identifiant }}",
+        "emailType": "text",
+        "message": "=La fiche annulée demande la suppression du compte WordPress, mais une fiche ACTIVE utilise le même identifiant.\n\nIdentifiant : {{ $('Code Sécurité1').first().json.identifiant }}\nFiche active : https://airtable.com/appMASQUE00000000003/tblMASQUE00000000002/{{ $json.id }}\nApprenant : {{ $json.fields.Apprenant }}\n\nLe compte n'a PAS été supprimé (c'est celui de la fiche active).\nÀ vérifier : le mot de passe du compte est celui de l'ancienne fiche, il peut différer de celui affiché sur la fiche active.\n\nExécution n8n : {{ $execution.url }}",
+        "options": {
+          "appendAttribution": false,
+          "ccList": "salarie3@nouvelleecole.fr"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1440,
+        60
+      ],
+      "name": "Alerte suppression bloquée",
+      "id": "5d6d69eb-0cf5-478b-8be1-664f62c95351"
+    }
+  ],
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Code Sécurité1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Sécurité1": {
+      "main": [
+        [
+          {
+            "node": "Fiche active avec cet identifiant ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Search MemberPress1": {
+      "main": [
+        [
+          {
+            "node": "Code Validation Match Exact1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Validation Match Exact1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Delete MemberPress1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fiche active avec cet identifiant ?": {
+      "main": [
+        [
+          {
+            "node": "Identifiant encore utilisé ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Identifiant encore utilisé ?": {
+      "main": [
+        [
+          {
+            "node": "Alerte suppression bloquée",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Search MemberPress1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  }
+}

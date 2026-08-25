@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jargon Adobe Illustrator — La Nouvelle École</title>
+
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:            #0e0f14;
+    --surface:       #15161e;
+    --surface2:      #1c1e2a;
+    --accent:        #e8363a;
+    --accent-dim:    rgba(232,54,58,0.12);
+    --accent-border: rgba(232,54,58,0.3);
+    --accent2:       #ff7b7d;
+    --text:          #e8e6f0;
+    --muted:         #7b7a8e;
+    --border:        #252636;
+  }
+
+  /* —— CURSOR —————————————— */
+  * { cursor: none !important; }
+  #cursor-dot {
+    position:fixed; top:0; left:0; width:8px; height:8px;
+    background:var(--accent); border-radius:50%;
+    pointer-events:none; z-index:9999; transform:translate(-50%,-50%);
+  }
+  #cursor-ring {
+    position:fixed; top:0; left:0; width:36px; height:36px;
+    border:1.5px solid rgba(232,54,58,0.5); border-radius:50%;
+    pointer-events:none; z-index:9998; transform:translate(-50%,-50%);
+    transition: width .25s cubic-bezier(.22,1,.36,1),
+                height .25s cubic-bezier(.22,1,.36,1),
+                border-color .25s;
+  }
+  body.cursor-hover #cursor-ring { width:58px; height:58px; border-color:rgba(232,54,58,.85); }
+  body.cursor-hover #cursor-dot  { opacity:.5; }
+
+  /* —— BASE ———————————————— */
+  html { scroll-behavior:smooth; }
+  body {
+    background:var(--bg); color:var(--text);
+    font-family:"Space Grotesk",sans-serif;
+    font-size:15px; line-height:1.7; overflow-x:hidden;
+  }
+
+  /* —— HEADER —————————————— */
+  header {
+    position:relative; overflow:hidden;
+    border-bottom:1px solid var(--border);
+  }
+  .header-bg {
+    position:absolute; inset:0;
+    background-image:url("data:image/png;base64,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");
+    background-size:cover; background-position:center 20%;
+    opacity:0.07; filter:grayscale(50%) blur(3px); transform:scale(1.04);
+  }
+  .header-overlay {
+    position:absolute; inset:0;
+    background:rgba(14,15,20,0.93);
+  }
+  .header-grid {
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(232,54,58,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,54,58,0.04) 1px, transparent 1px);
+    background-size:52px 52px;
+  }
+  .header-accent-line {
+    position:absolute; bottom:0; left:0; right:0; height:2px;
+    background:linear-gradient(to right, transparent 0%, var(--accent) 40%, var(--accent) 60%, transparent 100%);
+  }
+
+  .header-inner {
+    position:relative; z-index:2;
+    display:grid;
+    grid-template-columns:1fr auto;
+    align-items:center;
+    gap:48px;
+    padding:48px 80px;
+    max-width:1100px; margin:0 auto;
+  }
+  .header-left { display:flex; flex-direction:column; gap:14px; }
+
+  .brand-tag { display:inline-flex; align-items:center; gap:8px; width:fit-content; }
+  .brand-bar { width:3px; height:16px; background:var(--accent); border-radius:2px; flex-shrink:0; }
+  .brand-text {
+    font-family:"JetBrains Mono",monospace; font-size:11px;
+    font-weight:600; color:var(--muted); letter-spacing:0.14em; text-transform:uppercase;
+  }
+  .brand-text strong { color:var(--text); }
+
+  .header-title {
+    font-size:64px; font-weight:700; letter-spacing:-0.03em;
+    color:#fff; line-height:1;
+  }
+  .header-title span { color:var(--accent); }
+
+  .header-meta { display:flex; align-items:center; gap:16px; padding-top:4px; }
+  .header-sep-v { width:1px; height:20px; background:var(--border); }
+  .meta-item {
+    font-family:"JetBrains Mono",monospace; font-size:11px;
+    color:var(--muted); letter-spacing:0.08em;
+    display:flex; align-items:center; gap:6px;
+  }
+  .meta-dot { width:4px; height:4px; border-radius:50%; background:var(--accent); flex-shrink:0; }
+  .meta-num {
+    font-size:18px; font-weight:700; color:#fff;
+    font-family:"Space Grotesk",sans-serif; letter-spacing:-0.01em; margin-right:2px;
+  }
+
+  /* Logo côté droit */
+  .header-right { display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .logo-wrap {
+    position:relative; width:140px; height:140px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .logo-ring {
+    position:absolute; inset:-12px;
+    border:1px solid var(--accent-border); border-radius:50%;
+    animation:spin 18s linear infinite;
+  }
+  .logo-ring::after {
+    content:''; position:absolute; top:-3px; left:50%;
+    width:6px; height:6px; margin-left:-3px;
+    background:var(--accent); border-radius:50%;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .logo-wrap img {
+    width:120px; height:120px; object-fit:contain;
+    display:block; position:relative; z-index:1;
+    filter:drop-shadow(0 0 18px rgba(255,107,0,0.3));
+    transition:filter .3s, transform .3s;
+  }
+  .logo-wrap:hover img {
+    filter:drop-shadow(0 0 28px rgba(255,107,0,0.55));
+    transform:scale(1.06);
+  }
+
+  /* —— NAV —————————————————— */
+  .chapter-nav {
+    background:var(--surface); border-bottom:1px solid var(--border);
+    display:flex; justify-content:center;
+    position:sticky; top:0; z-index:50;
+  }
+  .chapter-nav a {
+    font-family:"JetBrains Mono",monospace; font-size:11px; font-weight:600;
+    letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--muted); text-decoration:none;
+    padding:13px 22px; border-bottom:2px solid transparent;
+    transition:color .15s, border-color .15s; white-space:nowrap;
+  }
+  .chapter-nav a:hover,
+  .chapter-nav a.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+  /* —— CONTAINER ———————————— */
+  .container { max-width:900px; margin:0 auto; padding:48px 64px; }
+
+  /* —— CHAPTER —————————————— */
+  .chapter {
+    margin-bottom:56px;
+    scroll-margin-top:72px;
+    opacity:0; transform:translateY(22px);
+    transition:opacity .45s ease, transform .45s ease;
+  }
+  .chapter.visible { opacity:1; transform:translateY(0); }
+
+  .chapter-header {
+    display:flex; align-items:center; gap:16px;
+    margin-bottom:20px; padding-bottom:16px;
+    border-bottom:1px solid var(--border);
+  }
+  .chapter-num {
+    font-family:"JetBrains Mono",monospace; font-size:12px;
+    color:var(--accent); font-weight:600; letter-spacing:0.12em; min-width:32px;
+  }
+  .chapter-title { font-size:18px; font-weight:700; color:#fff; letter-spacing:-0.01em; }
+  .chapter-line { flex:1; height:1px; background:linear-gradient(to right, var(--border), transparent); }
+
+  /* —— ENTRIES —————————————— */
+  .entries { display:flex; flex-direction:column; gap:2px; }
+
+  .entry {
+    display:grid; grid-template-columns:220px 1fr;
+    border-radius:6px; overflow:hidden;
+    position:relative; z-index:1;
+    transition:transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s cubic-bezier(.22,1,.36,1);
+    will-change:transform;
+  }
+  .entry:hover {
+    transform:translateX(7px) translateY(-1px) scale(1.013);
+    box-shadow:-4px 0 0 var(--accent), 0 10px 36px rgba(0,0,0,.45);
+    z-index:2;
+  }
+  .entry:hover .term  { background:#222540; }
+  .entry:hover .def   { background:#1a1d2e; color:var(--text); }
+  .entry:hover .term-name { letter-spacing:0.06em; }
+
+  .term {
+    background:var(--surface2); padding:14px 20px;
+    border-right:2px solid var(--accent); transition:background .2s;
+    display:flex; flex-direction:column; justify-content:center; gap:3px;
+  }
+  .term-name {
+    font-family:"JetBrains Mono",monospace; font-size:13px; font-weight:600;
+    color:var(--accent); letter-spacing:0.02em; display:block;
+    transition:letter-spacing .2s;
+  }
+  .term-fr { font-size:11px; color:var(--muted); letter-spacing:0.05em; display:block; }
+  .def {
+    background:var(--surface); padding:14px 20px;
+    font-size:14px; color:#c8c6d8; line-height:1.6;
+    transition:background .2s, color .2s;
+  }
+
+  /* —— SUB-SECTIONS —————————— */
+  .sub-section {
+    background:var(--surface2); border-left:2px solid var(--accent);
+    padding:14px 20px; margin-top:10px; border-radius:0 6px 6px 0;
+  }
+  .sub-section.alt { border-left-color:var(--accent2); }
+  .sub-title {
+    font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--muted);
+    font-weight:600; letter-spacing:0.12em; margin-bottom:10px; text-transform:uppercase;
+  }
+  .sub-grid { display:flex; flex-wrap:wrap; gap:8px; }
+
+  .sub-item {
+    background:var(--accent-dim); border:1px solid var(--accent-border);
+    border-radius:4px; padding:7px 14px; font-size:13px; color:#c8c6d8; line-height:1.4;
+    transition:transform .18s cubic-bezier(.22,1,.36,1), background .15s, border-color .15s;
+  }
+  .sub-item:hover { transform:translateY(-3px) scale(1.04); background:rgba(232,54,58,.2); border-color:rgba(232,54,58,.55); }
+  .sub-item strong {
+    font-family:"JetBrains Mono",monospace; color:var(--accent);
+    font-size:12px; display:block; margin-bottom:2px; font-weight:600;
+  }
+  .sub-item.alt { background:rgba(255,123,125,.08); border-color:rgba(255,123,125,.2); }
+  .sub-item.alt:hover { background:rgba(255,123,125,.2); border-color:rgba(255,123,125,.55); }
+  .sub-item.alt strong { color:var(--accent2); }
+
+  /* Note encadrée */
+  .note {
+    background:rgba(232,54,58,0.06); border:1px solid var(--accent-border);
+    border-left:3px solid var(--accent);
+    border-radius:0 4px 4px 0;
+    padding:10px 16px; margin-top:8px;
+    font-size:13px; color:var(--muted); line-height:1.55;
+  }
+  .note em { color:var(--accent); font-style:normal; font-family:"JetBrains Mono",monospace; font-size:12px; }
+
+  /* —— FOOTER ———————————————— */
+  footer {
+    border-top:1px solid var(--border); padding:24px 64px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .footer-left { display:flex; align-items:center; gap:10px; font-family:"JetBrains Mono",monospace; font-size:12px; color:var(--muted); }
+  .footer-bar { width:3px; height:14px; background:var(--accent); border-radius:2px; }
+  .footer-left strong { color:var(--text); }
+  .footer-right { font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--border); letter-spacing:0.08em; }
+</style>
+</head>
+<body>
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<header>
+  <div class="header-bg"></div>
+  <div class="header-overlay"></div>
+  <div class="header-grid"></div>
+  <div class="header-accent-line"></div>
+
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="brand-tag">
+        <div class="brand-bar"></div>
+        <span class="brand-text">La <strong>Nouvelle École</strong> &nbsp;·&nbsp; Logiciels 3D &amp; Fabrication additive</span>
+      </div>
+      <h1 class="header-title">Jargon <span>Adobe Illustrator</span></h1>
+      <div class="header-meta">
+        <div class="meta-item">
+          <span class="meta-dot"></span>
+          <span><span class="meta-num">6</span> sections</span>
+        </div>
+        <div class="header-sep-v"></div>
+        <div class="meta-item">
+          <span class="meta-dot"></span>
+          <span><span class="meta-num">35</span> définitions</span>
+        </div>
+        <div class="header-sep-v"></div>
+        <div class="meta-item">
+          <span class="meta-dot"></span>
+          <span>Interface · Tracés · Couleur · Texte</span>
+        </div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="logo-wrap">
+        <div class="logo-ring"></div>
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIiB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImZncmFkIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZjZiMDAiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZTYzYzAwIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8IS0tIEhleGFnb25lIC0tPgogIDxwb2x5Z29uIHBvaW50cz0iNjAsNiAxMDgsMzMgMTA4LDg3IDYwLDExNCAxMiw4NyAxMiwzMyIKICAgIGZpbGw9InVybCgjZmdyYWQpIiBvcGFjaXR5PSIwLjE1IiBzdHJva2U9InVybCgjZmdyYWQpIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8IS0tIEFpIGxldHRlcnMgLS0+CiAgPHRleHQgeD0iNjAiIHk9Ijc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIgogICAgZm9udC1mYW1pbHk9IkFyaWFsIEJsYWNrLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjUyIiBmb250LXdlaWdodD0iOTAwIgogICAgZmlsbD0idXJsKCNmZ3JhZCkiPkFpPC90ZXh0Pgo8L3N2Zz4=" alt="Adobe Illustrator">
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="chapter-nav">
+  <a href="#s1" class="active">01 · Interface</a>
+  <a href="#s2">02 · Sélection</a>
+  <a href="#s3">03 · Tracés</a>
+  <a href="#s4">04 · Couleur</a>
+  <a href="#s5">05 · Texte</a>
+  <a href="#s6">06 · Sortie</a>
+</nav>
+
+<div class="container">
+
+  <!-- —— 01 —— -->
+  <div class="chapter" id="s1">
+    <div class="chapter-header">
+      <span class="chapter-num">01</span>
+      <span class="chapter-title">Interface et organisation</span>
+      <div class="chapter-line"></div>
+    </div>
+    <div class="entries">
+      <div class="entry">
+        <div class="term"><span class="term-name">Plan de travail</span></div>
+        <div class="def">Zone de création dans laquelle vous placez votre visuel. Illustrator permet d'avoir plusieurs plans de travail de tailles différentes dans un même document.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Panneau Outils</span></div>
+        <div class="def">Barre qui regroupe les principaux outils de dessin, de sélection, de texte et de transformation. Chaque outil peut aussi être appelé par son raccourci clavier.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Panneau Calques</span></div>
+        <div class="def">Panneau qui sert à organiser l'illustration, sélectionner des éléments, les masquer, les verrouiller et gérer leur ordre. Par défaut, les éléments sont souvent rangés dans un calque parent unique.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Calque</span></div>
+        <div class="def">Niveau d'organisation qui permet de séparer différentes parties d'une illustration pour travailler plus proprement et intervenir sur un ensemble précis.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Groupe</span></div>
+        <div class="def">Ensemble d'objets réunis pour être manipulés plus facilement comme un bloc, sans fusionner leur contenu.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Panneau Propriétés</span></div>
+        <div class="def">Panneau contextuel qui affiche rapidement les options utiles selon l'objet sélectionné, par exemple du texte, une forme ou une image vectorisée.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Nuancier</span></div>
+        <div class="def">Panneau ou bibliothèque de couleurs, motifs et dégradés réutilisables dans le document pour garder une palette cohérente.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- —— 02 —— -->
+  <div class="chapter" id="s2">
+    <div class="chapter-header">
+      <span class="chapter-num">02</span>
+      <span class="chapter-title">Sélection et manipulation</span>
+      <div class="chapter-line"></div>
+    </div>
+    <div class="entries">
+      <div class="entry">
+        <div class="term"><span class="term-name">Outil Sélection</span></div>
+        <div class="def">Outil principal pour sélectionner un objet entier, plusieurs objets ou un cadre de sélection afin de les déplacer, redimensionner ou transformer.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Outil Sélection directe</span></div>
+        <div class="def">Outil qui permet de sélectionner et modifier des points d'ancrage ou des segments précis à l'intérieur d'un tracé ou d'une forme.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Objet</span></div>
+        <div class="def">Élément graphique présent dans le document, par exemple une forme, un tracé, une image importée ou un bloc de texte.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Aligner / Distribuer</span></div>
+        <div class="def">Fonctions qui servent à positionner proprement plusieurs objets entre eux, par rapport à la sélection, à un objet clé ou à un plan de travail.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- —— 03 —— -->
+  <div class="chapter" id="s3">
+    <div class="chapter-header">
+      <span class="chapter-num">03</span>
+      <span class="chapter-title">Dessin vectoriel et tracés</span>
+      <div class="chapter-line"></div>
+    </div>
+    <div class="entries">
+      <div class="entry">
+        <div class="term"><span class="term-name">Tracé</span></div>
+        <div class="def">Ligne vectorielle composée de points d'ancrage et de segments. C'est une notion centrale dans Illustrator.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Point d'ancrage</span></div>
+        <div class="def">Point qui structure un tracé et permet de contrôler sa forme en modifiant sa position ou sa direction.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Segment de tracé</span></div>
+        <div class="def">Portion de tracé située entre deux points d'ancrage. Sa forme dépend du type de points et de leurs poignées.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Poignées de direction</span></div>
+        <div class="def">Poignées associées à certains points d'ancrage pour régler la direction et la courbure d'un segment.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Outil Plume</span></div>
+        <div class="def">Outil fondamental pour créer des tracés droits ou courbes en posant des points d'ancrage un par un.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Outil Point d'ancrage</span></div>
+        <div class="def">Outil utilisé pour convertir un point d'ancrage et ajuster ses poignées de direction pour passer d'un angle à une courbe, ou l'inverse.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Forme</span></div>
+        <div class="def">Objet géométrique simple comme un rectangle, une ellipse ou un polygone, souvent utilisé comme base de dessin ou de construction.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- —— 04 —— -->
+  <div class="chapter" id="s4">
+    <div class="chapter-header">
+      <span class="chapter-num">04</span>
+      <span class="chapter-title">Couleur et apparence</span>
+      <div class="chapter-line"></div>
+    </div>
+    <div class="entries">
+      <div class="entry">
+        <div class="term"><span class="term-name">Fond</span></div>
+        <div class="def">Couleur, motif ou dégradé appliqué à l'intérieur d'un objet.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Contour</span></div>
+        <div class="def">Trait appliqué autour d'un objet, avec sa couleur, son épaisseur et son style.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Dégradé</span></div>
+        <div class="def">Transition progressive entre plusieurs couleurs pour enrichir un objet vectoriel ou créer un effet de volume.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Panneau Pathfinder</span></div>
+        <div class="def">Panneau qui permet de combiner ou découper des formes, par exemple avec Réunion ou Soustraction.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Masque d'écrêtage</span></div>
+        <div class="def">Technique qui utilise un objet vectoriel pour masquer tout ou partie d'autres éléments. Seuls les objets vectoriels peuvent servir de masque d'écrêtage.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- —— 05 —— -->
+  <div class="chapter" id="s5">
+    <div class="chapter-header">
+      <span class="chapter-num">05</span>
+      <span class="chapter-title">Texte</span>
+      <div class="chapter-line"></div>
+    </div>
+    <div class="entries">
+      <div class="entry">
+        <div class="term"><span class="term-name">Objet texte</span></div>
+        <div class="def">Bloc de texte créé dans Illustrator et encore modifiable comme texte.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Texte de point</span></div>
+        <div class="def">Texte saisi à partir d'un clic simple sur le plan de travail. Il convient bien aux titres ou aux petites zones de texte.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Texte captif</span></div>
+        <div class="def">Texte contenu dans une zone ou une forme, qui passe automatiquement à la ligne dans les limites définies. On le retrouve aussi sous le nom de texte de paragraphe.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Texte curviligne</span></div>
+        <div class="def">Texte placé sur un tracé ou sur le contour d'une forme, utile pour suivre une courbe ou une trajectoire.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Caractère</span></div>
+        <div class="def">Paramètres typographiques comme la police, la taille ou l'interlignage, accessibles via le panneau Caractère.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Texte vectorisé</span></div>
+        <div class="def">Texte converti en formes vectorielles modifiables comme des tracés, mais qui n'est plus éditable comme du texte normal.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- —— 06 —— -->
+  <div class="chapter" id="s6">
+    <div class="chapter-header">
+      <span class="chapter-num">06</span>
+      <span class="chapter-title">Image et sortie</span>
+      <div class="chapter-line"></div>
+    </div>
+    <div class="entries">
+      <div class="entry">
+        <div class="term"><span class="term-name">Vectorisation de l'image</span></div>
+        <div class="def">Conversion d'une image pixellisée en illustration vectorielle modifiable, à partir des couleurs et des formes détectées.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Développer la vectorisation</span></div>
+        <div class="def">Action qui transforme le résultat de la vectorisation en objets modifiables, que l'on peut ensuite dissocier et retravailler.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">Exporter</span></div>
+        <div class="def">Action d'enregistrer l'illustration dans un format de sortie adapté, comme PNG, JPEG, SVG ou PDF, y compris avec plusieurs plans de travail.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">SVG</span></div>
+        <div class="def">Format vectoriel de sortie très courant pour le web et certains usages techniques, apprécié pour sa netteté et sa légèreté.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">PDF</span></div>
+        <div class="def">Format de diffusion qui conserve la mise en page, les polices et les images, très utilisé pour l'impression ou l'envoi de fichiers finis.</div>
+      </div>
+      <div class="entry">
+        <div class="term"><span class="term-name">PNG / JPEG</span></div>
+        <div class="def">Formats pixellisés d'export courants pour le web, la prévisualisation ou certains usages bureautiques.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-left">
+    <div class="footer-bar"></div>
+    <span>La <strong>Nouvelle École</strong> — support de cours</span>
+  </div>
+  <div class="footer-right">Adobe Illustrator Glossaire &nbsp;·&nbsp; v1.0</div>
+</footer>
+
+<script>
+  const dot=document.getElementById("cursor-dot");
+  const ring=document.getElementById("cursor-ring");
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener("mousemove",e=>{
+    mx=e.clientX; my=e.clientY;
+    dot.style.left=mx+"px"; dot.style.top=my+"px";
+  });
+  (function loop(){
+    rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+    ring.style.left=rx+"px"; ring.style.top=ry+"px";
+    requestAnimationFrame(loop);
+  })();
+  document.querySelectorAll(".entry,.sub-item,a").forEach(el=>{
+    el.addEventListener("mouseenter",()=>document.body.classList.add("cursor-hover"));
+    el.addEventListener("mouseleave",()=>document.body.classList.remove("cursor-hover"));
+  });
+  const chapters=document.querySelectorAll(".chapter");
+  const navLinks=document.querySelectorAll(".chapter-nav a");
+  const revObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible");});
+  },{threshold:0.08});
+  navLinks.forEach(link=>{
+    link.addEventListener("click",()=>{
+      navLinks.forEach(a=>a.classList.toggle("active",a===link));
+    });
+  });
+  chapters.forEach(c=>{revObs.observe(c);});
+</script>
+</body>
+</html>
